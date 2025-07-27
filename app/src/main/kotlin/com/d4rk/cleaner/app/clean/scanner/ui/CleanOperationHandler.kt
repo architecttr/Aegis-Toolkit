@@ -6,7 +6,6 @@ import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.UiSnackbar
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.UiStateScreen
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.applyResult
-import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.update
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningType
@@ -19,7 +18,8 @@ import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstant
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
-import com.d4rk.cleaner.core.utils.helpers.UiTextHelper
+import com.d4rk.android.libs.apptoolkit.core.utils.helpers.UiTextHelper
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +47,7 @@ class CleanOperationHandler(
     private val postSnackbar: (UiTextHelper, Boolean) -> Unit,
     private val updateTrashSize: (Long) -> Unit,
 ) {
-    private val RESULT_DELAY_MS = 3600L
+    private val resultDelayMs = 3600L
 
     fun analyzeFiles() {
         if (uiState.value.data?.analyzeState?.state != CleaningState.Idle) {
@@ -209,7 +209,7 @@ class CleanOperationHandler(
                 }
 
             if (result is DataState.Success) {
-                    delay(RESULT_DELAY_MS)
+                    delay(resultDelayMs)
                     uiState.update { state ->
                         val current = state.data ?: UiScannerModel()
                         state.copy(
@@ -224,6 +224,7 @@ class CleanOperationHandler(
                     loadInitialData()
                     loadWhatsAppMedia()
                     loadClipboardData()
+                    loadEmptyFoldersPreview()
                     CleaningEventBus.notifyCleaned()
             } else if (result is DataState.Error) {
                     uiState.update { s ->
@@ -295,7 +296,7 @@ class CleanOperationHandler(
                 }
 
             if (result is DataState.Success) {
-                delay(RESULT_DELAY_MS)
+                delay(resultDelayMs)
                 uiState.update { state ->
                     val current = state.data ?: UiScannerModel()
                     state.copy(
@@ -310,6 +311,7 @@ class CleanOperationHandler(
                 loadInitialData()
                 loadWhatsAppMedia()
                 loadClipboardData()
+                loadEmptyFoldersPreview()
                 CleaningEventBus.notifyCleaned()
             }
         }
