@@ -1,6 +1,7 @@
 package com.d4rk.cleaner.app.clean.dashboard.ui
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -51,6 +52,7 @@ import com.d4rk.cleaner.app.clean.scanner.ui.components.ClipboardCleanerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.ImageOptimizerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.LargeFilesCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.EmptyFolderCleanerCard
+import com.d4rk.cleaner.app.clean.scanner.ui.components.SystemStorageManagerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.PromotedAppCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.QuickScanSummaryCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.WeeklyCleanStreakCard
@@ -113,6 +115,14 @@ fun ScannerDashboardScreen(
         derivedStateOf { emptyFolders.isNotEmpty() }
     }
     val showContactsCard = true
+    val storageManagerIntent = remember {
+        Intent("android.os.storage.action.MANAGE_STORAGE").setPackage("com.android.storagemanager")
+    }
+    val showSystemStorageManagerCard by remember {
+        derivedStateOf {
+            storageManagerIntent.resolveActivity(context.packageManager) != null
+        }
+    }
 
     val dataLoaded = appManagerState.data?.apkFilesLoading == false && whatsappLoaded
     val cleanerCardsCount = if (dataLoaded) {
@@ -153,6 +163,7 @@ fun ScannerDashboardScreen(
         showApkCard,
         showClipboardCard,
         showContactsCard,
+        showSystemStorageManagerCard,
         promotedApp
     ) {
         buildList {
@@ -179,6 +190,7 @@ fun ScannerDashboardScreen(
             // Always visible cleaner options
             add(true) // image optimizer
             add(true) // cache cleaner
+            if (showSystemStorageManagerCard) add(true)
 
             // Promoted app card
             if (promotedApp != null) add(true)
@@ -473,6 +485,25 @@ fun ScannerDashboardScreen(
                 onScanClick = {
                     viewModel.onEvent(ScannerEvent.CleanCache)
                 })
+        }
+
+        if (showSystemStorageManagerCard) {
+            val storageManagerIndex = nextIndex()
+            AnimatedVisibility(
+                visible = uiState.data?.analyzeState?.isAnalyzeScreenVisible == false,
+                enter = DashboardTransitions.enter,
+                exit = DashboardTransitions.exit
+            ) {
+                SystemStorageManagerCard(
+                    modifier = Modifier
+                        .animateVisibility(
+                            visible = visibilityStates.getOrElse(index = storageManagerIndex) { false },
+                            index = storageManagerIndex
+                        )
+                        .animateContentSize(),
+                    onOpen = { context.startActivity(storageManagerIntent) }
+                )
+            }
         }
 
         promotedApp?.let { app ->

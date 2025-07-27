@@ -1,0 +1,61 @@
+package com.d4rk.cleaner.app.clean.scanner.ui.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Launch
+import androidx.compose.material.icons.outlined.Storage
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.TonalIconButtonWithText
+import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
+import com.d4rk.cleaner.R
+
+@Composable
+fun SystemStorageManagerCard(modifier: Modifier = Modifier, onOpen: () -> Unit) {
+    OutlinedCard(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(SizeConstants.ExtraLargeSize),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SizeConstants.LargeSize),
+            verticalArrangement = Arrangement.spacedBy(SizeConstants.MediumSize)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Outlined.Storage,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Column(modifier = Modifier.padding(start = SizeConstants.MediumSize)) {
+                    Text(
+                        text = stringResource(id = R.string.storage_manager_card_title),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = stringResource(id = R.string.storage_manager_card_subtitle),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+            TonalIconButtonWithText(
+                label = stringResource(id = R.string.open_storage_manager),
+                icon = Icons.Outlined.Launch,
+                onClick = onOpen,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
+    }
+}

@@ -168,6 +168,9 @@
     <string name="contacts_cleaner_card_title">Czyszczenie kontaktów</string>
     <string name="contacts_cleaner_card_subtitle">Znajdź i połącz zduplikowane kontakty</string>
     <string name="open_contacts_cleaner">Otwórz czyszczenie kontaktów</string>
+    <string name="storage_manager_card_title">Systemowy menedżer pamięci</string>
+    <string name="storage_manager_card_subtitle">Zarządzaj miejscem za pomocą wbudowanych narzędzi.</string>
+    <string name="open_storage_manager">Otwórz menedżera pamięci</string>
     <string name="scan_cache">Skanuj pamięć podręczną</string>
     <string name="apks">Pliki APK</string>
     <string name="archives">Archiwa</string>

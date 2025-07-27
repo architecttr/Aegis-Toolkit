@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">Panglinis ng Contacts</string>
     <string name="contacts_cleaner_card_subtitle">Hanapin at pagsamahin ang mga dobleng contact</string>
     <string name="open_contacts_cleaner">Buksan ang Contacts Cleaner</string>
+    <string name="storage_manager_card_title">Tagapamahala ng Imbakan ng Sistema</string>
+    <string name="storage_manager_card_subtitle">Pamahalaan ang espasyo gamit ang mga kasangkapang nakapaloob.</string>
+    <string name="open_storage_manager">Buksan ang Storage Manager</string>
     <string name="scan_cache">I-scan ang Cache</string>
     <string name="apks">Mga APK</string>
     <string name="archives">Mga Archive</string>

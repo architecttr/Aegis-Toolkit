@@ -159,6 +159,9 @@
     <string name="contacts_cleaner_card_title">連絡先クリーナー</string>
     <string name="contacts_cleaner_card_subtitle">重複した連絡先を検出して統合</string>
     <string name="open_contacts_cleaner">連絡先クリーナーを開く</string>
+    <string name="storage_manager_card_title">システムストレージマネージャー</string>
+    <string name="storage_manager_card_subtitle">組み込みツールで空き容量を管理します。</string>
+    <string name="open_storage_manager">ストレージマネージャーを開く</string>
     <string name="scan_cache">キャッシュをスキャン</string>
     <string name="apks">APK</string>
     <string name="archives">アーカイブ</string>

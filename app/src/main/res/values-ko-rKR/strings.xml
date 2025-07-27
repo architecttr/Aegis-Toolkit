@@ -159,6 +159,9 @@
     <string name="contacts_cleaner_card_title">연락처 클리너</string>
     <string name="contacts_cleaner_card_subtitle">중복 연락처 찾기 및 병합</string>
     <string name="open_contacts_cleaner">연락처 클리너 열기</string>
+    <string name="storage_manager_card_title">시스템 저장소 관리자</string>
+    <string name="storage_manager_card_subtitle">내장 도구로 공간을 관리하세요.</string>
+    <string name="open_storage_manager">저장소 관리자 열기</string>
     <string name="scan_cache">캐시 스캔</string>
     <string name="apks">APK</string>
     <string name="archives">압축 파일</string>

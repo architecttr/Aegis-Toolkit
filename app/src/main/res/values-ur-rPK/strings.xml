@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">کانٹیکٹ کلینر</string>
     <string name="contacts_cleaner_card_subtitle">ڈپلیکیٹ کانٹیکٹس تلاش کریں اور ملائیں</string>
     <string name="open_contacts_cleaner">کانٹیکٹ کلینر کھولیں</string>
+    <string name="storage_manager_card_title">سسٹم اسٹوریج مینیجر</string>
+    <string name="storage_manager_card_subtitle">بلٹ ان ٹولز سے جگہ کا انتظام کریں۔</string>
+    <string name="open_storage_manager">اسٹوریج مینیجر کھولیں</string>
     <string name="scan_cache">کیچ اسکین کریں</string>
     <string name="apks">APK فائلیں</string>
     <string name="archives">آرکائیوز</string>

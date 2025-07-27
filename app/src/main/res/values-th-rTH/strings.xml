@@ -159,6 +159,9 @@
     <string name="contacts_cleaner_card_title">ตัวล้างรายชื่อ</string>
     <string name="contacts_cleaner_card_subtitle">ค้นหาและรวมรายชื่อที่ซ้ำกัน</string>
     <string name="open_contacts_cleaner">เปิดตัวล้างรายชื่อ</string>
+    <string name="storage_manager_card_title">ตัวจัดการที่เก็บข้อมูลระบบ</string>
+    <string name="storage_manager_card_subtitle">จัดการพื้นที่ด้วยเครื่องมือในตัว.</string>
+    <string name="open_storage_manager">เปิดตัวจัดการที่เก็บข้อมูล</string>
     <string name="scan_cache">สแกนแคช</string>
     <string name="apks">ไฟล์ APK</string>
     <string name="archives">ไฟล์เก็บถาวร</string>

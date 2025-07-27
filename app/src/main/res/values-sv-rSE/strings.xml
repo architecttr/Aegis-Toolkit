@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">Kontaktrensare</string>
     <string name="contacts_cleaner_card_subtitle">Hitta och slå ihop dubbla kontakter</string>
     <string name="open_contacts_cleaner">Öppna Kontaktrensare</string>
+    <string name="storage_manager_card_title">Systemets lagringshanterare</string>
+    <string name="storage_manager_card_subtitle">Hantera utrymmet med de inbyggda verktygen.</string>
+    <string name="open_storage_manager">Öppna lagringshanteraren</string>
     <string name="scan_cache">Skanna cache</string>
     <string name="apks">APK:er</string>
     <string name="archives">Arkiv</string>

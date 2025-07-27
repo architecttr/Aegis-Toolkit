@@ -159,6 +159,9 @@
     <string name="contacts_cleaner_card_title">Pembersih Kontak</string>
     <string name="contacts_cleaner_card_subtitle">Temukan dan gabungkan kontak ganda</string>
     <string name="open_contacts_cleaner">Buka Pembersih Kontak</string>
+    <string name="storage_manager_card_title">Manajer Penyimpanan Sistem</string>
+    <string name="storage_manager_card_subtitle">Kelola ruang menggunakan alat bawaan.</string>
+    <string name="open_storage_manager">Buka Manajer Penyimpanan</string>
     <string name="scan_cache">Pindai Cache</string>
     <string name="apks">APK</string>
     <string name="archives">Arsip</string>

@@ -159,6 +159,9 @@
     <string name="contacts_cleaner_card_title">Trình dọn liên hệ</string>
     <string name="contacts_cleaner_card_subtitle">Tìm và gộp các liên hệ trùng</string>
     <string name="open_contacts_cleaner">Mở Trình dọn liên hệ</string>
+    <string name="storage_manager_card_title">Trình quản lý bộ nhớ hệ thống</string>
+    <string name="storage_manager_card_subtitle">Quản lý dung lượng bằng công cụ tích hợp.</string>
+    <string name="open_storage_manager">Mở Trình quản lý bộ nhớ</string>
     <string name="scan_cache">Quét bộ nhớ đệm</string>
     <string name="apks">Tệp APK</string>
     <string name="archives">Tệp nén</string>

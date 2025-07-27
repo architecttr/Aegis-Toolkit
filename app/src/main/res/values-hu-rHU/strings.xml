@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">Névjegytisztító</string>
     <string name="contacts_cleaner_card_subtitle">Keresse meg és egyesítse a duplikált névjegyeket</string>
     <string name="open_contacts_cleaner">Névjegytisztító megnyitása</string>
+    <string name="storage_manager_card_title">Rendszer tárhelykezelő</string>
+    <string name="storage_manager_card_subtitle">Kezeld a helyet a beépített eszközökkel.</string>
+    <string name="open_storage_manager">Tárhelykezelő megnyitása</string>
     <string name="scan_cache">Gyorsítótár vizsgálata</string>
     <string name="apks">APK-k</string>
     <string name="archives">Archívumok</string>

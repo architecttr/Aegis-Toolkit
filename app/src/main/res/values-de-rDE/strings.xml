@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">Kontaktbereinigung</string>
     <string name="contacts_cleaner_card_subtitle">Doppelte Kontakte finden und zusammenführen</string>
     <string name="open_contacts_cleaner">Kontaktbereinigung öffnen</string>
+    <string name="storage_manager_card_title">Systemspeicher-Manager</string>
+    <string name="storage_manager_card_subtitle">Verwalte den Speicher mit den integrierten Tools.</string>
+    <string name="open_storage_manager">Speicherverwaltung öffnen</string>
     <string name="scan_cache">Cache scannen</string>
     <string name="apks">APKs</string>
     <string name="archives">Archive</string>

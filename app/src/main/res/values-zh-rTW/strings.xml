@@ -159,6 +159,9 @@
     <string name="contacts_cleaner_card_title">聯絡人清理</string>
     <string name="contacts_cleaner_card_subtitle">尋找並合併重複的聯絡人</string>
     <string name="open_contacts_cleaner">開啟聯絡人清理</string>
+    <string name="storage_manager_card_title">系統儲存管理員</string>
+    <string name="storage_manager_card_subtitle">使用內建工具管理空間。</string>
+    <string name="open_storage_manager">開啟儲存管理員</string>
     <string name="scan_cache">掃描快取</string>
     <string name="apks">APK</string>
     <string name="archives">壓縮檔</string>

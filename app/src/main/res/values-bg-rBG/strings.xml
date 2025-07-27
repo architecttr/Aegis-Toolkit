@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">Почистване на контакти</string>
     <string name="contacts_cleaner_card_subtitle">Намира и обединява дублирани контакти</string>
     <string name="open_contacts_cleaner">Отвори чистач на контакти</string>
+    <string name="storage_manager_card_title">Системен мениджър на хранилището</string>
+    <string name="storage_manager_card_subtitle">Управлявайте мястото с вградените инструменти.</string>
+    <string name="open_storage_manager">Отвори мениджъра на хранилището</string>
     <string name="scan_cache">Сканирай кеша</string>
     <string name="apks">APK файлове</string>
     <string name="archives">Архиви</string>

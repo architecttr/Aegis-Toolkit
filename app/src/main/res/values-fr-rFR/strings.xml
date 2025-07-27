@@ -165,6 +165,9 @@
     <string name="contacts_cleaner_card_title">Nettoyeur de contacts</string>
     <string name="contacts_cleaner_card_subtitle">Trouver et fusionner les contacts en double</string>
     <string name="open_contacts_cleaner">Ouvrir le Nettoyeur de contacts</string>
+    <string name="storage_manager_card_title">Gestionnaire de stockage système</string>
+    <string name="storage_manager_card_subtitle">Gérez l’espace avec les outils intégrés.</string>
+    <string name="open_storage_manager">Ouvrir le Gestionnaire de stockage</string>
     <string name="scan_cache">Analyser le cache</string>
     <string name="apks">APK</string>
     <string name="archives">Archives</string>
