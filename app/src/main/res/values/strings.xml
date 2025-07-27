@@ -156,7 +156,9 @@
     <string name="link_cleaned">Link cleaned</string>
     <string name="link_cleaner_card_title">Link Cleaner</string>
     <string name="link_cleaner_card_subtitle">Remove tracking parameters from links</string>
+    <string name="link">Link</string>
     <string name="clean_link">Clean Link</string>
+    <string name="paste_from_clipboard">Paste</string>
     <string name="share_via">Share via</string>
     <string name="cleaner_recommends">Cleaner Recommends</string>
     <string name="image_optimizer_card_title">Image Optimizer</string>
