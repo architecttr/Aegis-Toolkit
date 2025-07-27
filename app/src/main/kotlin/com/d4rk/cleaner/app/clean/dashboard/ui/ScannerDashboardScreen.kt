@@ -43,7 +43,6 @@ import com.d4rk.cleaner.app.clean.contacts.ui.components.ContactsCleanerCard
 import com.d4rk.cleaner.app.clean.largefiles.ui.LargeFilesActivity
 import com.d4rk.cleaner.app.clean.scanner.domain.actions.ScannerEvent
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
-import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningType
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 import com.d4rk.cleaner.app.clean.scanner.ui.ScannerViewModel
 import com.d4rk.cleaner.app.clean.scanner.ui.components.ApkCleanerCard
@@ -87,9 +86,11 @@ fun ScannerDashboardScreen(
     val clipboardText by viewModel.clipboardPreview.collectAsState()
     val largeFiles by viewModel.largestFiles.collectAsState()
     val emptyFolders by viewModel.emptyFolders.collectAsState()
+    val emptyFoldersHideUntil by viewModel.emptyFoldersHideUntil.collectAsState()
     val streakDays by viewModel.cleanStreak.collectAsState()
     val showStreakCard by viewModel.showStreakCard.collectAsState()
     val streakHideUntil by viewModel.streakHideUntil.collectAsState()
+    val cleaningApks by viewModel.cleaningApks.collectAsState()
 
     val dataStore: DataStore = koinInject()
     val adsState: Boolean by remember { dataStore.ads(default = true) }.collectAsState(initial = true)
@@ -111,8 +112,10 @@ fun ScannerDashboardScreen(
     val showLargeFilesCard by remember(largeFiles) {
         derivedStateOf { largeFiles.isNotEmpty() }
     }
-    val showEmptyFoldersCard by remember(emptyFolders) {
-        derivedStateOf { emptyFolders.isNotEmpty() }
+    val showEmptyFoldersCard by remember(emptyFolders, emptyFoldersHideUntil) {
+        derivedStateOf {
+            emptyFolders.isNotEmpty() && emptyFoldersHideUntil <= System.currentTimeMillis()
+        }
     }
     val showContactsCard = true
     val storageManagerIntent = remember {
@@ -327,7 +330,7 @@ fun ScannerDashboardScreen(
                 exit = DashboardTransitions.exit
             ) {
                 val isCleaningApks =
-                    uiState.data?.analyzeState?.state == CleaningState.Cleaning && uiState.data?.analyzeState?.cleaningType == CleaningType.DELETE && uiState.data?.analyzeState?.isAnalyzeScreenVisible == false
+                    cleaningApks && uiState.data?.analyzeState?.state == CleaningState.Cleaning
                 val apkIndex = nextIndex()
                 ApkCleanerCard(
                     modifier = Modifier

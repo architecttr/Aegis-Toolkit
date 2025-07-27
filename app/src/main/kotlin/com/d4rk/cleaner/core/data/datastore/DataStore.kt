@@ -411,6 +411,18 @@ class DataStore(val context: Context) : CommonDataStore(context = context) {
         }
     }
 
+    private val emptyFoldersHideUntilKey =
+        longPreferencesKey(AppDataStoreConstants.DATA_STORE_EMPTY_FOLDERS_HIDE_UNTIL)
+    val emptyFoldersHideUntil: Flow<Long> = dataStore.data.map { prefs ->
+        prefs[emptyFoldersHideUntilKey] ?: 0L
+    }
+
+    suspend fun saveEmptyFoldersHideUntil(timestamp: Long) {
+        dataStore.edit { prefs ->
+            prefs[emptyFoldersHideUntilKey] = timestamp
+        }
+    }
+
     private val autoCleanEnabledKey =
         booleanPreferencesKey(AppDataStoreConstants.DATA_STORE_AUTO_CLEAN_ENABLED)
     val autoCleanEnabled: Flow<Boolean> = dataStore.data.map { prefs ->
