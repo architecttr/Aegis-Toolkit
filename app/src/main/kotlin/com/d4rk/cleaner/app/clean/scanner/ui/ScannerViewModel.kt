@@ -1,7 +1,6 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
-
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
@@ -28,16 +27,15 @@ import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileEntry
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileTypesData
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.WhatsAppMediaSummary
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetPromotedAppUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetStorageInfoUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetPromotedAppUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetStorageInfoUseCase
 import com.d4rk.cleaner.app.clean.scanner.utils.helpers.getWhatsAppMediaSummary
-import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
@@ -52,7 +50,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.io.File
 

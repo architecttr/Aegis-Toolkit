@@ -3,8 +3,8 @@ package com.d4rk.cleaner.app.clean.scanner.ui
 import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
-import com.d4rk.cleaner.core.utils.helpers.ClipboardHelper
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
+import com.d4rk.cleaner.core.utils.helpers.ClipboardHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
