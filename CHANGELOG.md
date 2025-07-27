@@ -1,6 +1,7 @@
 # Version 3.5.1:
 
 - **New**: Added quick empty folder cleaner on the dashboard.
+- **Patch**: Added missing plural form for selected items in Spanish (Equatorial Guinea).
 
 # Version 3.5.0:
 

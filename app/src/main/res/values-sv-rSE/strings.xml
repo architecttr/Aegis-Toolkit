@@ -124,6 +124,8 @@
     <string name="empty_folder_card_title">Tomma mappar</string>
     <string name="empty_folder_card_subtitle">Ta bort oanvända mappar direkt.</string>
     <string name="empty_folders_found_format">%1$d tomma mappar hittades</string>
+    <string name="clean_empty_folders">Radera tomma mappar</string>
+    <string name="empty_folders_cleaned">Tomma mappar har tagits bort</string>
     <string name="whatsapp_card_title">WhatsApp-filer</string>
     <string name="whatsapp_card_subtitle">Rensa bort media du inte längre behöver.</string>
     <string name="clean_whatsapp">Rensa WhatsApp-media</string>

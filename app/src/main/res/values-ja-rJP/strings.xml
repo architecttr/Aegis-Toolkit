@@ -121,6 +121,8 @@
     <string name="empty_folder_card_title">空のフォルダ</string>
     <string name="empty_folder_card_subtitle">未使用のフォルダをすぐに削除します。</string>
     <string name="empty_folders_found_format">%1$d 個の空フォルダが見つかりました</string>
+    <string name="clean_empty_folders">空のフォルダを削除</string>
+    <string name="empty_folders_cleaned">空のフォルダが削除されました</string>
     <string name="whatsapp_card_title">WhatsAppファイル</string>
     <string name="whatsapp_card_subtitle">不要になったメディアを整理します。</string>
     <string name="clean_whatsapp">WhatsAppメディアをクリーン</string>

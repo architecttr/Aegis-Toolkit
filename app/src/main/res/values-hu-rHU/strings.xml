@@ -124,6 +124,8 @@
     <string name="empty_folder_card_title">Üres mappák</string>
     <string name="empty_folder_card_subtitle">A nem használt mappákat azonnal töröld.</string>
     <string name="empty_folders_found_format">%1$d üres mappa található</string>
+    <string name="clean_empty_folders">Üres mappák törlése</string>
+    <string name="empty_folders_cleaned">Az üres mappák törölve</string>
     <string name="whatsapp_card_title">WhatsApp fájlok</string>
     <string name="whatsapp_card_subtitle">Törölje a már nem szükséges médiát.</string>
     <string name="clean_whatsapp">WhatsApp média tisztítása</string>

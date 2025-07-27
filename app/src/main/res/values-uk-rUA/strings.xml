@@ -130,6 +130,8 @@
     <string name="empty_folder_card_title">Порожні папки</string>
     <string name="empty_folder_card_subtitle">Видаліть невикористані папки миттєво.</string>
     <string name="empty_folders_found_format">Знайдено %1$d порожніх папок</string>
+    <string name="clean_empty_folders">Видаляти порожні теки</string>
+    <string name="empty_folders_cleaned">Порожні теки видалено</string>
     <string name="whatsapp_card_title">Файли WhatsApp</string>
     <string name="whatsapp_card_subtitle">Очистіть медіа, які більше не потрібні.</string>
     <string name="clean_whatsapp">Очистити медіа WhatsApp</string>
