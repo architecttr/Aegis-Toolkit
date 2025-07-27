@@ -1,8 +1,7 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
-import android.content.ClipboardManager
-import android.content.Context
+
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
@@ -43,8 +42,6 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
-import com.d4rk.cleaner.core.utils.helpers.ClipboardHelper
-import com.d4rk.cleaner.core.utils.helpers.StreakCardHelper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,12 +78,11 @@ class ScannerViewModel(
     initialState = UiStateScreen(data = UiScannerModel())
 ) {
 
-    private val clipboardManager =
-        application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    private val clipboardListener =
-        ClipboardManager.OnPrimaryClipChangedListener { loadClipboardData() }
-    private val clipboardHelper = ClipboardHelper(application, clipboardManager)
-    private val streakHelper = StreakCardHelper(dataStore, viewModelScope, dispatchers)
+    val clipboardPreview: StateFlow<String?> get() = clipboardHandler.clipboardPreview
+
+    val cleanStreak: StateFlow<Int> get() = streakHandler.cleanStreak
+    val showStreakCard: StateFlow<Boolean> get() = streakHandler.showStreakCard
+    val streakHideUntil: StateFlow<Long> get() = streakHandler.streakHideUntil
 
     private val _whatsAppMediaSummary = MutableStateFlow(WhatsAppMediaSummary())
     val whatsAppMediaSummary: StateFlow<WhatsAppMediaSummary> = _whatsAppMediaSummary
@@ -95,16 +91,6 @@ class ScannerViewModel(
     private val _isWhatsAppInstalled = MutableStateFlow(false)
     val isWhatsAppInstalled: StateFlow<Boolean> = _isWhatsAppInstalled
 
-    private val _clipboardPreview = MutableStateFlow<String?>(null)
-    val clipboardPreview: StateFlow<String?> = _clipboardPreview
-
-    private val _cleanStreak = MutableStateFlow(0)
-    val cleanStreak: StateFlow<Int> = _cleanStreak
-
-    private val _showStreakCard = MutableStateFlow(true)
-    val showStreakCard: StateFlow<Boolean> = _showStreakCard
-    private val _streakHideUntil = MutableStateFlow(0L)
-    val streakHideUntil: StateFlow<Long> = _streakHideUntil
 
     private val _largestFiles = MutableStateFlow<List<File>>(emptyList())
     val largestFiles: StateFlow<List<File>> = _largestFiles
@@ -118,20 +104,43 @@ class ScannerViewModel(
     private val _cleaningApks = MutableStateFlow(false)
     val cleaningApks: StateFlow<Boolean> = _cleaningApks
 
+    private val clipboardHandler = ClipboardHandler(application)
+    private val streakHandler = StreakHandler(
+        dataStore = dataStore,
+        scope = viewModelScope,
+        dispatchers = dispatchers,
+        updateHideDialogVisibility = { visible ->
+            _uiState.updateData(ScreenState.Success()) { current ->
+                current.copy(isHideStreakDialogVisible = visible)
+            }
+        }
+    )
+    private val cleanOperationHandler = CleanOperationHandler(
+        scope = viewModelScope,
+        dispatchers = dispatchers,
+        dataStore = dataStore,
+        analyzeFilesUseCase = analyzeFilesUseCase,
+        cleaningManager = cleaningManager,
+        fileAnalyzer = fileAnalyzer,
+        uiState = _uiState,
+        loadInitialData = ::loadInitialData,
+        loadWhatsAppMedia = ::loadWhatsAppMedia,
+        loadClipboardData = { clipboardHandler.refresh() },
+        loadEmptyFoldersPreview = ::loadEmptyFoldersPreview,
+        postSnackbar = ::postSnackbar,
+        updateTrashSize = ::updateTrashSize
+    )
+
 
     init {
-        clipboardManager.addPrimaryClipChangedListener(clipboardListener)
         onEvent(ScannerEvent.LoadInitialData)
         loadCleanedSpace()
         checkWhatsAppInstalled()
         loadWhatsAppMedia()
-        loadClipboardData()
         loadPromotedApp()
         loadLargestFilesPreview()
         loadEmptyFoldersPreview()
         loadEmptyFoldersHideUntil()
-        loadCleanStreak()
-        loadStreakCardVisibility()
         launch(dispatchers.io) {
             CleaningEventBus.events.collectLatest {
                 onEvent(ScannerEvent.RefreshData)
@@ -142,10 +151,10 @@ class ScannerViewModel(
     override fun onEvent(event: ScannerEvent) {
         when (event) {
             is ScannerEvent.LoadInitialData -> loadInitialData()
-            is ScannerEvent.AnalyzeFiles -> analyzeFiles()
+            is ScannerEvent.AnalyzeFiles -> cleanOperationHandler.analyzeFiles()
             is ScannerEvent.RefreshData -> refreshData()
             is ScannerEvent.DeleteFiles -> deleteFiles(files = event.files)
-            is ScannerEvent.MoveToTrash -> moveToTrash(files = event.files)
+            is ScannerEvent.MoveToTrash -> cleanOperationHandler.moveToTrash(files = event.files)
             is ScannerEvent.ToggleAnalyzeScreen -> toggleAnalyzeScreen(visible = event.visible)
             is ScannerEvent.OnFileSelectionChange -> onFileSelectionChange(
                 file = event.file,
@@ -159,7 +168,7 @@ class ScannerViewModel(
                 event.isChecked
             )
 
-            is ScannerEvent.CleanFiles -> cleanFiles()
+            is ScannerEvent.CleanFiles -> cleanOperationHandler.cleanFiles(screenData)
             is ScannerEvent.CleanWhatsAppFiles -> onCleanWhatsAppFiles()
             is ScannerEvent.CleanCache -> onCleanCache()
             is ScannerEvent.MoveSelectedToTrash -> moveSelectedToTrash()
@@ -171,9 +180,9 @@ class ScannerViewModel(
                 isVisible = event.isVisible
             )
 
-            is ScannerEvent.SetHideStreakDialogVisibility -> setHideStreakDialogVisibility(event.isVisible)
-            ScannerEvent.HideStreakForNow -> hideStreakForNow()
-            ScannerEvent.HideStreakPermanently -> hideStreakPermanently()
+            is ScannerEvent.SetHideStreakDialogVisibility -> streakHandler.setHideStreakDialogVisibility(event.isVisible)
+            ScannerEvent.HideStreakForNow -> streakHandler.hideStreakForNow()
+            ScannerEvent.HideStreakPermanently -> streakHandler.hideStreakPermanently()
             is ScannerEvent.DismissSnackbar -> screenState.dismissSnackbar()
         }
     }
@@ -259,110 +268,14 @@ class ScannerViewModel(
     private fun refreshData() {
         loadInitialData()
         loadWhatsAppMedia()
-        loadClipboardData()
+        clipboardHandler.refresh()
         loadLargestFilesPreview()
         loadEmptyFoldersPreview()
         if (screenData?.analyzeState?.isAnalyzeScreenVisible == true) {
-            analyzeFiles()
+            cleanOperationHandler.analyzeFiles()
         }
     }
 
-    private fun analyzeFiles() {
-        if (_uiState.value.data?.analyzeState?.state != CleaningState.Idle) {
-            return
-        }
-
-        launch(dispatchers.io) {
-            analyzeFilesUseCase().collectLatest { result: DataState<Pair<List<File>, List<File>>, Errors> ->
-                _uiState.update { currentState: UiStateScreen<UiScannerModel> ->
-                    val currentData: UiScannerModel = currentState.data ?: UiScannerModel()
-                    when (result) {
-                        is DataState.Loading -> currentState.copy(
-                            screenState = ScreenState.IsLoading(),
-                            data = currentData.copy(
-                                analyzeState = currentData.analyzeState.copy(
-                                    state = CleaningState.Analyzing,
-                                    cleaningType = CleaningType.NONE
-                                )
-                            )
-                        )
-
-                        is DataState.Success -> {
-                            val fileTypesData = currentData.analyzeState.fileTypesData
-                            val preferences = mapOf(
-                                ExtensionsConstants.GENERIC_EXTENSIONS to dataStore.genericFilter.first(),
-                                ExtensionsConstants.IMAGE_EXTENSIONS to dataStore.deleteImageFiles.first(),
-                                ExtensionsConstants.VIDEO_EXTENSIONS to dataStore.deleteVideoFiles.first(),
-                                ExtensionsConstants.AUDIO_EXTENSIONS to dataStore.deleteAudioFiles.first(),
-                                ExtensionsConstants.OFFICE_EXTENSIONS to dataStore.deleteOfficeFiles.first(),
-                                ExtensionsConstants.ARCHIVE_EXTENSIONS to dataStore.deleteArchives.first(),
-                                ExtensionsConstants.APK_EXTENSIONS to dataStore.deleteApkFiles.first(),
-                                ExtensionsConstants.FONT_EXTENSIONS to dataStore.deleteFontFiles.first(),
-                                ExtensionsConstants.WINDOWS_EXTENSIONS to dataStore.deleteWindowsFiles.first(),
-                                ExtensionsConstants.EMPTY_FOLDERS to dataStore.deleteEmptyFolders.first(),
-                                ExtensionsConstants.OTHER_EXTENSIONS to dataStore.deleteOtherFiles.first()
-                            )
-
-                            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                                    dataStore.duplicateScanEnabled.first()
-                            val (groupedFiles, duplicateOriginals, duplicateGroups) =
-                                withContext(dispatchers.io) {
-                                    fileAnalyzer.computeGroupedFiles(
-                                        scannedFiles = result.data.first,
-                                        emptyFolders = result.data.second,
-                                        fileTypesData = fileTypesData,
-                                        preferences = preferences,
-                                        includeDuplicates = includeDuplicates
-                                    )
-                                }
-                            currentState.copy(
-                                screenState = ScreenState.Success(),
-                                data = currentData.copy(
-                                    analyzeState = currentData.analyzeState.copy(
-                                        scannedFileList = result.data.first.map {
-                                            FileEntry(
-                                                it.absolutePath,
-                                                it.length(),
-                                                it.lastModified()
-                                            )
-                                        },
-                                        emptyFolderList = result.data.second.map {
-                                            FileEntry(
-                                                it.absolutePath,
-                                                0,
-                                                it.lastModified()
-                                            )
-                                        },
-                                        groupedFiles = groupedFiles,
-                                        duplicateOriginals = duplicateOriginals,
-                                        duplicateGroups = duplicateGroups,
-                                        // Files are ready for the user to review
-                                        // before starting the cleaning step
-                                        state = CleaningState.ReadyToClean,
-                                        cleaningType = CleaningType.NONE
-                                    )
-                                )
-                            )
-                        }
-
-                        is DataState.Error -> currentState.copy(
-                            screenState = ScreenState.Error(),
-                            data = currentData.copy(
-                                analyzeState = currentData.analyzeState.copy(
-                                    state = CleaningState.Error,
-                                    cleaningType = CleaningType.NONE
-                                )
-                            ),
-                            errors = currentState.errors + UiSnackbar(
-                                message = UiTextHelper.StringResource(R.string.failed_to_analyze_files),
-                                isError = true
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
 
 
 
@@ -433,7 +346,7 @@ class ScannerViewModel(
                 launch { dataStore.saveLastScanTimestamp(timestamp = System.currentTimeMillis()) }
                 loadInitialData()
                 loadWhatsAppMedia()
-                loadClipboardData()
+                clipboardHandler.refresh()
                 loadEmptyFoldersPreview()
                 CleaningEventBus.notifyCleaned()
             }
@@ -441,85 +354,6 @@ class ScannerViewModel(
         }
     }
 
-    private fun moveToTrash(files: List<FileEntry>) {
-        launch(context = dispatchers.io) {
-            if (files.isEmpty()) {
-                postSnackbar(
-                    message = UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash),
-                    isError = false
-                )
-                return@launch
-            }
-            _uiState.update { state: UiStateScreen<UiScannerModel> ->
-                val currentData: UiScannerModel = state.data ?: UiScannerModel()
-                state.copy(
-                    data = currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            state = CleaningState.Cleaning,
-                            cleaningType = CleaningType.MOVE_TO_TRASH
-                        )
-                    )
-                )
-            }
-
-
-            val fileObjs = files.map { it.toFile() }
-            val totalFileSizeToMove: Long = fileObjs.sumOf { it.length() }
-
-            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                    dataStore.duplicateScanEnabled.first()
-            val result = cleaningManager.moveToTrash(fileObjs)
-            _uiState.applyResult(
-                result = result,
-                errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash)
-            ) { _: Unit, currentData: UiScannerModel ->
-                    val (groupedFilesUpdated2, duplicateOriginals2, duplicateGroups2) = fileAnalyzer.computeGroupedFiles(
-                        scannedFiles = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
-                            files.any { moved -> existingFile.path == moved.path }
-                        }.map { it.toFile() },
-                        emptyFolders = currentData.analyzeState.emptyFolderList.map { it.toFile() },
-                        fileTypesData = currentData.analyzeState.fileTypesData,
-                        preferences = mapOf(),
-                        includeDuplicates = includeDuplicates
-                    )
-
-                    currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            scannedFileList = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
-                                files.any { moved -> existingFile.path == moved.path }
-                            },
-                            groupedFiles = groupedFilesUpdated2,
-                            duplicateOriginals = duplicateOriginals2,
-                            duplicateGroups = duplicateGroups2,
-                            selectedFilesCount = 0,
-                            areAllFilesSelected = false,
-                            isAnalyzeScreenVisible = false,
-                            fileSelectionMap = emptyMap()
-                        )
-                    )
-
-            }
-
-            if (result is DataState.Success) {
-                delay(RESULT_DELAY_MS)
-                _uiState.update { state ->
-                    val current = state.data ?: UiScannerModel()
-                    state.copy(
-                        data = current.copy(
-                            analyzeState = current.analyzeState.copy(
-                                state = CleaningState.Result
-                            )
-                        )
-                    )
-                }
-                updateTrashSize(sizeChange = totalFileSizeToMove)
-                loadInitialData()
-                loadWhatsAppMedia()
-                loadClipboardData()
-                CleaningEventBus.notifyCleaned()
-            }
-        }
-    }
 
     fun onCloseAnalyzeComposable() {
         _uiState.update { state: UiStateScreen<UiScannerModel> ->
@@ -695,110 +529,6 @@ class ScannerViewModel(
         }
     }
 
-    fun cleanFiles() {
-        if (_uiState.value.data?.analyzeState?.state != CleaningState.ReadyToClean) {
-            return
-        }
-
-        launch(context = dispatchers.io) {
-
-            _uiState.update { state: UiStateScreen<UiScannerModel> ->
-                val currentData = state.data ?: UiScannerModel()
-                state.copy(
-                    data = currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            state = CleaningState.Cleaning,
-                            cleaningType = CleaningType.DELETE
-                        )
-                    )
-                )
-            }
-
-            val currentScreenData: UiScannerModel = screenData ?: run {
-                postSnackbar(
-                    message = UiTextHelper.StringResource(R.string.data_not_available),
-                    isError = true
-                )
-                return@launch
-            }
-
-            val selectedPaths: Set<String> =
-                currentScreenData.analyzeState.fileSelectionMap.filter { it.value }.keys
-            val filesToDelete: Set<File> = selectedPaths.map { File(it) }.toSet()
-            if (filesToDelete.isEmpty()) {
-                postSnackbar(
-                    message = UiTextHelper.StringResource(R.string.no_files_selected_to_clean),
-                    isError = false
-                )
-                return@launch
-            }
-
-            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                    dataStore.duplicateScanEnabled.first()
-            val result = cleaningManager.deleteFiles(filesToDelete)
-            _uiState.applyResult(
-                result = result,
-                errorMessage = UiTextHelper.StringResource(R.string.failed_to_delete_files)
-            ) { _: Unit, currentData: UiScannerModel ->
-                    val (groupedFilesUpdated, duplicateOriginals, duplicateGroups) = fileAnalyzer.computeGroupedFiles(
-                        scannedFiles = currentData.analyzeState.scannedFileList.filterNot { it.path in selectedPaths }
-                            .map { it.toFile() },
-                        emptyFolders = currentData.analyzeState.emptyFolderList.map { it.toFile() },
-                        fileTypesData = currentData.analyzeState.fileTypesData,
-                        preferences = mapOf(),
-                        includeDuplicates = includeDuplicates
-                    )
-
-                    currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            scannedFileList = currentData.analyzeState.scannedFileList.filterNot { it.path in selectedPaths },
-                            groupedFiles = groupedFilesUpdated,
-                            duplicateOriginals = duplicateOriginals,
-                            duplicateGroups = duplicateGroups,
-                            selectedFilesCount = 0,
-                            areAllFilesSelected = false,
-                            fileSelectionMap = emptyMap(),
-                            isAnalyzeScreenVisible = false
-                        ),
-                        storageInfo = currentData.storageInfo.copy(
-                            isFreeSpaceLoading = true,
-                            isCleanedSpaceLoading = true
-                        )
-                    )
-                }
-
-            if (result is DataState.Success) {
-                    delay(RESULT_DELAY_MS)
-                    _uiState.update { state ->
-                        val current = state.data ?: UiScannerModel()
-                        state.copy(
-                            data = current.copy(
-                                analyzeState = current.analyzeState.copy(
-                                    state = CleaningState.Result
-                                )
-                            )
-                        )
-                    }
-                    launch {
-                        dataStore.saveLastScanTimestamp(timestamp = System.currentTimeMillis())
-                    }
-                    loadInitialData()
-                    loadWhatsAppMedia()
-                    loadClipboardData()
-                    CleaningEventBus.notifyCleaned()
-            } else if (result is DataState.Error) {
-                    _uiState.update { s ->
-                        val currentErrorData = s.data ?: UiScannerModel()
-                        s.copy(
-                            data = currentErrorData.copy(
-                                analyzeState = currentErrorData.analyzeState.copy(
-                                    state = CleaningState.Error
-                                )
-                            )
-                        )
-                    }
-            }
-        }
     }
 
     fun moveSelectedToTrash() {
@@ -891,7 +621,7 @@ class ScannerViewModel(
                 updateTrashSize(totalFileSizeToMove)
                 loadInitialData()
                 loadWhatsAppMedia()
-                loadClipboardData()
+                clipboardHandler.refresh()
                 CleaningEventBus.notifyCleaned()
             } else if (result is DataState.Error) {
                     _uiState.update { s ->
@@ -969,9 +699,6 @@ class ScannerViewModel(
         }
     }
 
-    private fun loadCleanStreak() {
-        streakHelper.observeCleanStreak { _cleanStreak.value = it }
-    }
 
     private fun loadLargestFilesPreview() {
         launch(dispatchers.io) {
@@ -1052,7 +779,7 @@ class ScannerViewModel(
                         )
                     )
                 }
-                analyzeFiles()
+                cleanOperationHandler.analyzeFiles()
             }
         } else {
             _uiState.updateData(ScreenState.Success()) { currentData ->
@@ -1118,59 +845,11 @@ class ScannerViewModel(
         postSnackbar(UiTextHelper.StringResource(R.string.feature_not_available), isError = false)
     }
 
-    fun setHideStreakDialogVisibility(isVisible: Boolean) {
-        _uiState.updateData(ScreenState.Success()) { currentData ->
-            currentData.copy(isHideStreakDialogVisible = isVisible)
-        }
-    }
-
-    fun hideStreakForNow() {
-        launch(dispatchers.io) { dataStore.saveStreakHideUntil(startOfNextWeek()) }
-        setHideStreakDialogVisibility(false)
-    }
-
-    fun hideStreakPermanently() {
-        launch(dispatchers.io) { dataStore.saveShowStreakCard(false) }
-        setHideStreakDialogVisibility(false)
-    }
-
-    private fun loadStreakCardVisibility() {
-        streakHelper.observeStreakVisibility(
-            onUpdate = { _showStreakCard.value = it },
-            onHideUntil = { _streakHideUntil.value = it }
-        )
-    }
-
-    private fun startOfNextWeek(): Long {
-        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            java.time.LocalDate.now()
-                .with(java.time.temporal.TemporalAdjusters.next(java.time.DayOfWeek.MONDAY))
-                .atStartOfDay(java.time.ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
-        } else {
-            val cal = java.util.Calendar.getInstance()
-            val dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK)
-            var daysUntilMonday = (java.util.Calendar.MONDAY - dayOfWeek + 7) % 7
-            if (daysUntilMonday == 0) daysUntilMonday = 7
-            cal.add(java.util.Calendar.DAY_OF_YEAR, daysUntilMonday)
-            cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
-            cal.set(java.util.Calendar.MINUTE, 0)
-            cal.set(java.util.Calendar.SECOND, 0)
-            cal.set(java.util.Calendar.MILLISECOND, 0)
-            cal.timeInMillis
-        }
-    }
-
     fun onClipboardClear() {
-        runCatching { clipboardHelper.clearClipboard() }
-        _clipboardPreview.value = null
-        CleaningEventBus.notifyCleaned()
+        clipboardHandler.onClipboardClear()
     }
 
-    private fun loadClipboardData() {
-        _clipboardPreview.value = clipboardHelper.getClipboardText()
-    }
+
 
     private fun postSnackbar(message: UiTextHelper, isError: Boolean) {
         screenState.showSnackbar(
@@ -1184,7 +863,7 @@ class ScannerViewModel(
     }
 
     override fun onCleared() {
-        clipboardManager.removePrimaryClipChangedListener(clipboardListener)
+        clipboardHandler.unregister()
         super.onCleared()
     }
 }
