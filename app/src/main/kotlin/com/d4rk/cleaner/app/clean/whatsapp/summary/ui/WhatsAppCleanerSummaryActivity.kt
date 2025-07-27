@@ -1,28 +1,11 @@
 package com.d4rk.cleaner.app.clean.whatsapp.summary.ui
 
-import android.os.Bundle
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import com.d4rk.android.libs.apptoolkit.app.theme.style.AppTheme
+import androidx.compose.runtime.Composable
+import com.d4rk.cleaner.core.ui.BaseCleanupActivity
 
-class WhatsAppCleanerActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            AppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    WhatsappCleanerSummaryScreen(activity = this)
-                }
-            }
-        }
+class WhatsAppCleanerActivity : BaseCleanupActivity() {
+    @Composable
+    override fun ScreenContent() {
+        WhatsappCleanerSummaryScreen(activity = this)
     }
 }
