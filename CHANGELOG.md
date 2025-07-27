@@ -1,7 +1,8 @@
 # Version 3.5.1:
 
 - **New**: Added quick empty folder cleaner on the dashboard.
-- **Patch**: Added missing plural form for selected items in Spanish (Equatorial Guinea).
+- **New**: Added a shortcut to the System Storage Manager.
+- **Minor**: Improved the UI of the Contacts Cleaner screen.
 
 # Version 3.5.0:
 
