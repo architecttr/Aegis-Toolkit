@@ -121,6 +121,8 @@
     <string name="empty_folder_card_title">Thư mục trống</string>
     <string name="empty_folder_card_subtitle">Xóa ngay các thư mục không dùng.</string>
     <string name="empty_folders_found_format">Tìm thấy %1$d thư mục trống</string>
+    <string name="clean_empty_folders">Xóa thư mục trống</string>
+    <string name="empty_folders_cleaned">Các thư mục trống đã được xóa</string>
     <string name="whatsapp_card_title">Tệp WhatsApp</string>
     <string name="whatsapp_card_subtitle">Dọn dẹp phương tiện bạn không cần nữa.</string>
     <string name="clean_whatsapp">Dọn sạch phương tiện WhatsApp</string>

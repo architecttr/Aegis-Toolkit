@@ -127,6 +127,8 @@
     <string name="empty_folder_card_title">Foldere goale</string>
     <string name="empty_folder_card_subtitle">Șterge instant folderele nefolosite.</string>
     <string name="empty_folders_found_format">S-au găsit %1$d foldere goale</string>
+    <string name="clean_empty_folders">Șterge folderele goale</string>
+    <string name="empty_folders_cleaned">Folderele goale au fost eliminate</string>
     <string name="whatsapp_card_title">Fișiere WhatsApp</string>
     <string name="whatsapp_card_subtitle">Curăță fișierele media de care nu mai ai nevoie.</string>
     <string name="clean_whatsapp">Curăță fișierele WhatsApp</string>

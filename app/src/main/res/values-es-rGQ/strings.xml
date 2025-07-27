@@ -127,6 +127,8 @@
     <string name="empty_folder_card_title">Carpetas vacías</string>
     <string name="empty_folder_card_subtitle">Elimina las carpetas sin uso al instante.</string>
     <string name="empty_folders_found_format">%1$d carpetas vacías encontradas</string>
+    <string name="clean_empty_folders">Eliminar carpetas vacías</string>
+    <string name="empty_folders_cleaned">Carpetas vacías eliminadas</string>
     <string name="whatsapp_card_title">Archivos de WhatsApp</string>
     <string name="whatsapp_card_subtitle">Elimina los archivos que ya no necesites.</string>
     <string name="clean_whatsapp">Limpiar archivos de WhatsApp</string>
