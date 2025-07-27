@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="clear_cache_btn_text" msgid="8597272828928143723">"ລຶບລ້າງແຄສ"</string>
+    <string name="storage_settings_for_app" msgid="229425418984637483">"ບ່ອນຈັດເກັບຂໍ້ມູນ ແລະ ແຄສ"</string>
+    <string name="storage_label" msgid="2522307545547515733">"ພື້ນທີ່ຈັດເກັບຂໍ້ມູນ"</string>
+    <string name="allow" msgid="3763244945363657722">"ອະນຸຍາດ"</string>
+    <string name="deny" msgid="7326117222944479942">"ປະ​ຕິ​ເສດ"</string>
+    <string name="menu_item_settings" msgid="1413723516369078665">"ຕັ້ງຄ່າ"</string>
+    <string name="menu_item_help" msgid="4570953476186849841">"ຊ່ວຍເຫຼືອ"</string>
+    <string name="filter" msgid="9039576690686251462">"ໂຕກັ່ນຕອງ"</string>
+    <string name="clear_user_data_text" msgid="6773186434260397947">"ລຶບພື້ນທີ່ຈັດເກັບຂໍ້ມູນ"</string>
+    <string name="message_no_matches_found" msgid="6965828658999779258">"ບໍ່ພົບຂໍ້ມູນທີ່ກົງກັນ."</string>
+    <string name="force_stop" msgid="2681771622136916280">"ບັງ​ຄັບ​ປິດ"</string>
+    <string name="clear_data_dlg_title" msgid="180446967743732410">"ລຶບຂໍ້ມູນແອັບບໍ່?"</string>
+    <string name="clear_data_dlg_text" msgid="3440011276559762619">"ຂໍ້ມູນຂອງແອັບນີ້, ຮວມທັງໄຟລ໌ ແລະ ການຕັ້ງຄ່າ, ຈະຖືກລຶບອອກຈາກອຸປະກອນນີ້ຢ່າງຖາວອນ"</string>
+    <string name="dlg_delete" msgid="1790919205039397659">"ລຶບ"</string>
+    <string name="save" msgid="3125033126936493822">"ບັນທຶກ"</string>
+    <string name="contrast_title" msgid="6885768151336508075">"ຄອນທຣາສ"</string>
+    <string name="dark_theme_main_switch_title" msgid="4045147031947562280">"ໃຊ້ຮູບແບບສີສັນມືດ"</string>
+    <string name="force_stop_dlg_title" msgid="86745852555490146">"ບັງ​ຄັບ​ປິດ?"</string>
+</resources>

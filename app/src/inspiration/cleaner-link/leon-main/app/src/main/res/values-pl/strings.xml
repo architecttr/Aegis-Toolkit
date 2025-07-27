@@ -1,0 +1,47 @@
+<!--
+  ~ Léon - The URL Cleaner
+  ~ Copyright (C) 2024 Sven Jacobs
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="screen_main">Ekran główny</string>
+    <string name="screen_settings">Ustawienia</string>
+    <string name="scaffold_title">Léon – Oczyszczacz URL</string>
+    <string name="share">Udostępnij</string>
+    <string name="open">Open</string>> <!-- TODO: translate -->
+    <string name="copy">Kopiuj</string>
+    <string name="clipboard_message">Link skopiowany do schowka</string>
+    <string name="clipboard_empty_message">Clipboard is empty</string> <!-- TODO: translate -->
+    <string name="how_to_title">Jak wykonać</string>
+    <string name="how_to_text">When sharing text, choose \"URL Cleaner\". Then click on \"Share\" in this app to send text to target app. Alternatively, click the button above to import contents from the clipboard.</string>
+    <string name="cleaned_url">URL Oczyszczony</string>
+    <string name="original_url">URL Źródłowy</string>
+    <string name="sanitizers">Sanityzatory</string>
+    <string name="licenses">Licencje</string>
+    <string name="sanitizers_description">Włącz lub wyłącz sanityzatory</string>
+    <string name="decode_url">Odkoduj URL</string>
+    <string name="import_from_clipboard">Importuj ze schowka</string>
+    <string name="reset">Wyzeruj</string>
+    <string name="extract_url">Wyodrębnij tylko URL</string>
+    <string name="register_as_browser">Zarejestruj Léona jako przeglądarkę</string>
+    <string name="open_in_custom_tabs">Open URLs in browser custom tabs</string> <!-- TODO: translate -->
+    <string name="action_after_clean">Action after clean</string> <!-- TODO: translate -->
+    <string name="do_nothing">Do nothing</string> <!-- TODO: translate -->
+    <string name="open_share_menu">Open share menu</string> <!-- TODO: translate -->
+    <string name="open_url">Open URL</string> <!-- TODO: translate -->
+    <string name="copy_to_clipboard">Copy to clipboard</string> <!-- TODO: translate -->
+    <string name="process_text_action_name">Clean URL (Léon)</string> <!-- TODO: translate -->
+</resources>

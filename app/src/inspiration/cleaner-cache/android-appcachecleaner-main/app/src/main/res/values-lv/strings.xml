@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="clear_cache_btn_text" msgid="8597272828928143723">"Notīrīt kešatmiņu"</string>
+    <string name="storage_settings_for_app" msgid="229425418984637483">"Krātuve un kešatmiņa"</string>
+    <string name="storage_label" msgid="2522307545547515733">"Krātuve"</string>
+    <string name="allow" msgid="3763244945363657722">"Atļaut"</string>
+    <string name="deny" msgid="7326117222944479942">"Aizliegt"</string>
+    <string name="menu_item_settings" msgid="1413723516369078665">"Iestatījumi"</string>
+    <string name="menu_item_help" msgid="4570953476186849841">"Palīdzība"</string>
+    <string name="filter" msgid="9039576690686251462">"Filtrs"</string>
+    <string name="clear_user_data_text" msgid="6773186434260397947">"Notīrīt krātuvi"</string>
+    <string name="message_no_matches_found" msgid="6965828658999779258">"Nav atrasta neviena atbilstība."</string>
+    <string name="force_stop" msgid="2681771622136916280">"Veikt piespiedu apturēšanu"</string>
+    <string name="clear_data_dlg_title" msgid="180446967743732410">"Vai dzēst lietotnes datus?"</string>
+    <string name="clear_data_dlg_text" msgid="3440011276559762619">"Šīs lietotnes dati, tostarp faili un iestatījumi, tiks neatgriezeniski dzēsti no šīs ierīces."</string>
+    <string name="dlg_delete" msgid="1790919205039397659">"Dzēst"</string>
+    <string name="save" msgid="3125033126936493822">"Saglabāt"</string>
+    <string name="contrast_title" msgid="6885768151336508075">"Kontrasts"</string>
+    <string name="dark_theme_main_switch_title" msgid="4045147031947562280">"Izmantot tumšo motīvu"</string>
+    <string name="force_stop_dlg_title" msgid="86745852555490146">"Vai veikt piespiedu apturēšanu?"</string>
+</resources>

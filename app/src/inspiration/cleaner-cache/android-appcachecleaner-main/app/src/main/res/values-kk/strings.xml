@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="clear_cache_btn_text" msgid="8597272828928143723">"Кэшті тазалау"</string>
+    <string name="storage_settings_for_app" msgid="229425418984637483">"Жад және кэш"</string>
+    <string name="storage_label" msgid="2522307545547515733">"Жад"</string>
+    <string name="allow" msgid="3763244945363657722">"Рұқсат беру"</string>
+    <string name="deny" msgid="7326117222944479942">"Тыйым салу"</string>
+    <string name="menu_item_settings" msgid="1413723516369078665">"Параметрлер"</string>
+    <string name="menu_item_help" msgid="4570953476186849841">"Анықтама"</string>
+    <string name="filter" msgid="9039576690686251462">"Сүзгі"</string>
+    <string name="clear_user_data_text" msgid="6773186434260397947">"Жадты тазалау"</string>
+    <string name="message_no_matches_found" msgid="6965828658999779258">"Ешқандай сәйкестік табылмады."</string>
+    <string name="force_stop" msgid="2681771622136916280">"Күштеп тоқтату"</string>
+    <string name="clear_data_dlg_title" msgid="180446967743732410">"Қолданба деректері жойылсын ба?"</string>
+    <string name="clear_data_dlg_text" msgid="3440011276559762619">"Осы қолданба деректері, соның ішінде файлдар мен параметрлер бұл құрылғыдан біржола жойылады."</string>
+    <string name="dlg_delete" msgid="1790919205039397659">"Жою"</string>
+    <string name="save" msgid="3125033126936493822">"Сақтау"</string>
+    <string name="contrast_title" msgid="6885768151336508075">"Контраст"</string>
+    <string name="dark_theme_main_switch_title" msgid="4045147031947562280">"Қараңғы режимді пайдалану"</string>
+    <string name="force_stop_dlg_title" msgid="86745852555490146">"Тоқтатылсын ба?"</string>
+</resources>

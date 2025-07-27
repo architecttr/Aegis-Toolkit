@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="clear_cache_btn_text" msgid="8597272828928143723">"Keshni tozalash"</string>
+    <string name="storage_settings_for_app" msgid="229425418984637483">"Xotira va kesh"</string>
+    <string name="storage_label" msgid="2522307545547515733">"Xotira"</string>
+    <string name="allow" msgid="3763244945363657722">"Ruxsat berish"</string>
+    <string name="deny" msgid="7326117222944479942">"Rad etish"</string>
+    <string name="menu_item_settings" msgid="1413723516369078665">"Sozlamalar"</string>
+    <string name="menu_item_help" msgid="4570953476186849841">"Yordam"</string>
+    <string name="filter" msgid="9039576690686251462">"Saralash"</string>
+    <string name="clear_user_data_text" msgid="6773186434260397947">"Xotirani tozalash"</string>
+    <string name="message_no_matches_found" msgid="6965828658999779258">"Hech narsa topilmadi."</string>
+    <string name="force_stop" msgid="2681771622136916280">"Majburan to‘xtatish"</string>
+    <string name="clear_data_dlg_title" msgid="180446967743732410">"Bu ilova maʼlumotlari oʻchirilsinmi?"</string>
+    <string name="clear_data_dlg_text" msgid="3440011276559762619">"Ushbu ilovaning maʼlumotlari, jumladan, fayllari va sozlamalari bu qurilmadan butunlay oʻchirib tashlanadi"</string>
+    <string name="dlg_delete" msgid="1790919205039397659">"Oʻchirish"</string>
+    <string name="save" msgid="3125033126936493822">"Saqlash"</string>
+    <string name="contrast_title" msgid="6885768151336508075">"Kontrast"</string>
+    <string name="dark_theme_main_switch_title" msgid="4045147031947562280">"Tungi mavzu ishlatish"</string>
+    <string name="force_stop_dlg_title" msgid="86745852555490146">"Majburan to‘xtatilsinmi?"</string>
+</resources>
