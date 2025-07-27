@@ -23,6 +23,7 @@ free and open-source software
 - App management
 - WhatsApp media cleaner
 - Clipboard cleaner
+- Link cleaner
 - Image optimization
 - Clean empty folders
 - Clean logs, temporary files, caches, and corpse files
