@@ -389,12 +389,6 @@ fun ScannerDashboardScreen(
                             index = linkIndex
                         )
                         .animateContentSize(),
-                    linkText = null,
-                    onCleanClick = {
-                        IntentsHelper.openActivity(
-                            context = context, activityClass = LinkCleanerActivity::class.java
-                        )
-                    }
                 )
             }
         }

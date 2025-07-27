@@ -159,6 +159,8 @@
     <string name="link_cleaned">Link curățat</string>
     <string name="link_cleaner_card_title">Curățare linkuri</string>
     <string name="link_cleaner_card_subtitle">Elimină parametrii de tracking din linkuri</string>
+    <string name="link">Link</string>
+    <string name="paste_from_clipboard">Lipește</string>
     <string name="clean_link">Curăță linkul</string>
     <string name="share_via">Distribuie prin</string>
     <string name="cleaner_recommends">Recomandările Cleaner</string>

@@ -168,6 +168,8 @@
     <string name="link_cleaned">تم تنظيف الرابط</string>
     <string name="link_cleaner_card_title">منظف الروابط</string>
     <string name="link_cleaner_card_subtitle">إزالة معلمات التتبع من الروابط</string>
+    <string name="link">رابط</string>
+    <string name="paste_from_clipboard">لصق</string>
     <string name="clean_link">تنظيف الرابط</string>
     <string name="share_via">مشاركة عبر</string>
     <string name="cleaner_recommends">يوصي Cleaner</string>

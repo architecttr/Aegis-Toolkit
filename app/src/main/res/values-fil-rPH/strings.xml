@@ -156,6 +156,8 @@
     <string name="link_cleaned">Nalinis ang link</string>
     <string name="link_cleaner_card_title">Tagalinis ng Link</string>
     <string name="link_cleaner_card_subtitle">Alisin ang mga tracking parameter sa mga link</string>
+    <string name="link">Link</string>
+    <string name="paste_from_clipboard">I-paste</string>
     <string name="clean_link">Linisin ang Link</string>
     <string name="share_via">Ibahagi sa pamamagitan ng</string>
     <string name="cleaner_recommends">Inirerekomenda ng Cleaner</string>

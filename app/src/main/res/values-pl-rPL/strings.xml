@@ -162,6 +162,8 @@
     <string name="link_cleaned">Link wyczyszczony</string>
     <string name="link_cleaner_card_title">Czyszczenie linków</string>
     <string name="link_cleaner_card_subtitle">Usuń parametry śledzące z linków</string>
+    <string name="link">Link</string>
+    <string name="paste_from_clipboard">Wklej</string>
     <string name="clean_link">Wyczyść link</string>
     <string name="share_via">Udostępnij przez</string>
     <string name="cleaner_recommends">Rekomendacje Cleaner</string>

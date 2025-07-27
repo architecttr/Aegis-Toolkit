@@ -162,6 +162,8 @@
     <string name="link_cleaned">Ссылка очищена</string>
     <string name="link_cleaner_card_title">Очистка ссылок</string>
     <string name="link_cleaner_card_subtitle">Удаляет параметры отслеживания из ссылок</string>
+    <string name="link">Ссылка</string>
+    <string name="paste_from_clipboard">Вставить</string>
     <string name="clean_link">Очистить ссылку</string>
     <string name="share_via">Поделиться через</string>
     <string name="cleaner_recommends">Рекомендации Cleaner</string>

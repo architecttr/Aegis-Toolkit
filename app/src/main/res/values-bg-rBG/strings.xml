@@ -156,6 +156,8 @@
     <string name="link_cleaned">Връзката е почистена</string>
     <string name="link_cleaner_card_title">Почистващ връзки</string>
     <string name="link_cleaner_card_subtitle">Премахнете проследяващите параметри от връзките</string>
+    <string name="link">Връзка</string>
+    <string name="paste_from_clipboard">Поставяне</string>
     <string name="clean_link">Почисти връзката</string>
     <string name="share_via">Сподели чрез</string>
     <string name="cleaner_recommends">Cleaner препоръчва</string>

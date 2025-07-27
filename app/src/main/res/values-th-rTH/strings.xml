@@ -153,6 +153,8 @@
     <string name="link_cleaned">ลิงก์ถูกล้างแล้ว</string>
     <string name="link_cleaner_card_title">ตัวล้างลิงก์</string>
     <string name="link_cleaner_card_subtitle">ลบพารามิเตอร์ติดตามออกจากลิงก์</string>
+    <string name="link">ลิงก์</string>
+    <string name="paste_from_clipboard">วาง</string>
     <string name="clean_link">ล้างลิงก์</string>
     <string name="share_via">แชร์ผ่าน</string>
     <string name="cleaner_recommends">คำแนะนำจาก Cleaner</string>

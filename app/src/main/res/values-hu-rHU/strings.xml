@@ -156,6 +156,8 @@
     <string name="link_cleaned">A linket megtisztították</string>
     <string name="link_cleaner_card_title">Linktisztító</string>
     <string name="link_cleaner_card_subtitle">Távolítsa el a követőparamétereket a linkekből</string>
+    <string name="link">Link</string>
+    <string name="paste_from_clipboard">Beillesztés</string>
     <string name="clean_link">Link tisztítása</string>
     <string name="share_via">Megosztás ezzel</string>
     <string name="cleaner_recommends">A Cleaner ajánlja</string>

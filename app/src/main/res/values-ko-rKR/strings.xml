@@ -153,6 +153,8 @@
     <string name="link_cleaned">링크가 정리되었습니다</string>
     <string name="link_cleaner_card_title">링크 클리너</string>
     <string name="link_cleaner_card_subtitle">링크에서 추적 파라미터 제거</string>
+    <string name="link">링크</string>
+    <string name="paste_from_clipboard">붙여넣기</string>
     <string name="clean_link">링크 정리</string>
     <string name="share_via">공유 방법</string>
     <string name="cleaner_recommends">Cleaner 추천</string>

@@ -156,6 +156,8 @@
     <string name="link_cleaned">Link bereinigt</string>
     <string name="link_cleaner_card_title">Link-Reiniger</string>
     <string name="link_cleaner_card_subtitle">Entfernt Tracking-Parameter aus Links</string>
+    <string name="link">Link</string>
+    <string name="paste_from_clipboard">Einfügen</string>
     <string name="clean_link">Link bereinigen</string>
     <string name="share_via">Teilen über</string>
     <string name="cleaner_recommends">Cleaner empfiehlt</string>

@@ -153,6 +153,8 @@
     <string name="link_cleaned">連結已清理</string>
     <string name="link_cleaner_card_title">連結清理</string>
     <string name="link_cleaner_card_subtitle">移除連結中的追蹤參數</string>
+    <string name="link">連結</string>
+    <string name="paste_from_clipboard">貼上</string>
     <string name="clean_link">清理連結</string>
     <string name="share_via">分享方式</string>
     <string name="cleaner_recommends">Cleaner 推薦</string>
