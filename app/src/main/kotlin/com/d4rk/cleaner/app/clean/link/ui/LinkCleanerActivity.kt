@@ -12,7 +12,7 @@ class LinkCleanerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val text = intent?.getStringExtra(Intent.EXTRA_TEXT)
-        if (text != null) {
+        text?.let {
             val cleaned = UrlCleaner.clean(text)
             Toast.makeText(this, R.string.link_cleaned, Toast.LENGTH_SHORT).show()
             val share = Intent(Intent.ACTION_SEND).apply {
@@ -20,7 +20,7 @@ class LinkCleanerActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_TEXT, cleaned)
             }
             startActivity(Intent.createChooser(share, getString(R.string.share_via)))
-        } else {
+        } ?: run {
             Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
         }
         finishAndRemoveTask()
