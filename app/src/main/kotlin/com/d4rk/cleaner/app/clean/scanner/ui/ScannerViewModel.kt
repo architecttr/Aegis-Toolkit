@@ -60,6 +60,7 @@ import kotlinx.coroutines.yield
 import java.io.File
 
 private const val RESULT_DELAY_MS = 3600L
+private const val EMPTY_FOLDERS_HIDE_DURATION_MS = 5 * 60 * 1000L
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScannerViewModel(
@@ -108,6 +109,12 @@ class ScannerViewModel(
     private val _emptyFolders = MutableStateFlow<List<File>>(emptyList())
     val emptyFolders: StateFlow<List<File>> = _emptyFolders
 
+    private val _emptyFoldersHideUntil = MutableStateFlow(0L)
+    val emptyFoldersHideUntil: StateFlow<Long> = _emptyFoldersHideUntil
+
+    private val _cleaningApks = MutableStateFlow(false)
+    val cleaningApks: StateFlow<Boolean> = _cleaningApks
+
 
     init {
         clipboardManager.addPrimaryClipChangedListener(clipboardListener)
@@ -119,6 +126,7 @@ class ScannerViewModel(
         loadPromotedApp()
         loadLargestFilesPreview()
         loadEmptyFoldersPreview()
+        loadEmptyFoldersHideUntil()
         loadCleanStreak()
         loadStreakCardVisibility()
         launch(dispatchers.io) {
@@ -452,7 +460,7 @@ class ScannerViewModel(
     }
 
 
-    private fun deleteFiles(files: Set<FileEntry>) {
+    private fun deleteFiles(files: Set<FileEntry>, fromApkCleaner: Boolean = false) {
         launch(context = dispatchers.io) {
             if (files.isEmpty()) {
                 postSnackbar(
@@ -461,6 +469,7 @@ class ScannerViewModel(
                 )
                 return@launch
             }
+            if (fromApkCleaner) _cleaningApks.value = true
             _uiState.update { state: UiStateScreen<UiScannerModel> ->
                 val currentData: UiScannerModel = state.data ?: UiScannerModel()
                 state.copy(
@@ -525,6 +534,7 @@ class ScannerViewModel(
                     CleaningEventBus.notifyCleaned()
                 }
             }
+            _cleaningApks.value = false
         }
     }
 
@@ -1082,8 +1092,20 @@ class ScannerViewModel(
         launch(dispatchers.io) {
             getEmptyFoldersUseCase().collectLatest { result ->
                 if (result is DataState.Success) {
-                    _emptyFolders.value = result.data
+                    if (_emptyFoldersHideUntil.value <= System.currentTimeMillis()) {
+                        _emptyFolders.value = result.data
+                    } else {
+                        _emptyFolders.value = emptyList()
+                    }
                 }
+            }
+        }
+    }
+
+    private fun loadEmptyFoldersHideUntil() {
+        launch(dispatchers.io) {
+            dataStore.emptyFoldersHideUntil.collect { timestamp ->
+                _emptyFoldersHideUntil.value = timestamp
             }
         }
     }
@@ -1177,7 +1199,7 @@ class ScannerViewModel(
     fun onCleanApks(apkFiles: List<File>) {
         val entries =
             apkFiles.map { FileEntry(it.absolutePath, it.length(), it.lastModified()) }.toSet()
-        deleteFiles(entries)
+        deleteFiles(entries, fromApkCleaner = true)
     }
 
     fun onCleanEmptyFolders(folders: List<File>) {
@@ -1185,6 +1207,9 @@ class ScannerViewModel(
             folders.map { FileEntry(it.absolutePath, 0, it.lastModified()) }.toSet()
         deleteFiles(entries)
         _emptyFolders.value = emptyList()
+        launch(dispatchers.io) {
+            dataStore.saveEmptyFoldersHideUntil(System.currentTimeMillis() + EMPTY_FOLDERS_HIDE_DURATION_MS)
+        }
         postSnackbar(UiTextHelper.StringResource(R.string.empty_folders_cleaned), isError = false)
     }
 
