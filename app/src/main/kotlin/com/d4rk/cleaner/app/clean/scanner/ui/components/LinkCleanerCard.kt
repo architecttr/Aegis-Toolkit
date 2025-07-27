@@ -33,6 +33,7 @@ import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.SmallVertical
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.link.ui.LinkCleanerActivity
+import com.d4rk.cleaner.core.utils.extensions.isValidUrl
 import kotlinx.coroutines.launch
 
 @Composable
@@ -105,7 +106,7 @@ fun LinkCleanerCard(
                 TonalIconButtonWithText(
                     label = stringResource(id = R.string.clean_link),
                     icon = Icons.Outlined.LinkOff,
-                    enabled = linkText.isNotBlank(),
+                    enabled = linkText.isValidUrl(),
                     onClick = {
                         val intent = Intent(context, LinkCleanerActivity::class.java).apply {
                             putExtra(Intent.EXTRA_TEXT, linkText)
