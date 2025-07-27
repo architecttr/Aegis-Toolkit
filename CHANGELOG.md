@@ -1,3 +1,7 @@
+# Version 3.5.1:
+
+- **New**: Added quick empty folder cleaner on the dashboard.
+
 # Version 3.5.0:
 
 - **New**: Added automatic scheduling for daily cleaning routines.

@@ -8,6 +8,7 @@ interface ScannerRepositoryInterface {
     suspend fun getStorageInfo(): UiScannerModel
     suspend fun getFileTypes(): FileTypesData
     suspend fun getAllFiles(): Pair<List<File>, List<File>>
+    suspend fun getEmptyFolders(): List<File>
     suspend fun getTrashFiles(): List<File>
     suspend fun getLargestFiles(limit: Int): List<File>
     suspend fun deleteFiles(filesToDelete: Set<File>)

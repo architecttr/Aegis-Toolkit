@@ -50,6 +50,7 @@ import com.d4rk.cleaner.app.clean.scanner.ui.components.CacheCleanerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.ClipboardCleanerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.ImageOptimizerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.LargeFilesCard
+import com.d4rk.cleaner.app.clean.scanner.ui.components.EmptyFolderCleanerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.PromotedAppCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.QuickScanSummaryCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.WeeklyCleanStreakCard
@@ -83,6 +84,7 @@ fun ScannerDashboardScreen(
     val whatsappInstalled by viewModel.isWhatsAppInstalled.collectAsState()
     val clipboardText by viewModel.clipboardPreview.collectAsState()
     val largeFiles by viewModel.largestFiles.collectAsState()
+    val emptyFolders by viewModel.emptyFolders.collectAsState()
     val streakDays by viewModel.cleanStreak.collectAsState()
     val showStreakCard by viewModel.showStreakCard.collectAsState()
     val streakHideUntil by viewModel.streakHideUntil.collectAsState()
@@ -107,6 +109,9 @@ fun ScannerDashboardScreen(
     val showLargeFilesCard by remember(largeFiles) {
         derivedStateOf { largeFiles.isNotEmpty() }
     }
+    val showEmptyFoldersCard by remember(emptyFolders) {
+        derivedStateOf { emptyFolders.isNotEmpty() }
+    }
     val showContactsCard = true
 
     val dataLoaded = appManagerState.data?.apkFilesLoading == false && whatsappLoaded
@@ -116,6 +121,7 @@ fun ScannerDashboardScreen(
             showApkCard,
             showClipboardCard,
             showLargeFilesCard,
+            showEmptyFoldersCard,
             showContactsCard
         ).count { it }
     } else 0
@@ -164,6 +170,7 @@ fun ScannerDashboardScreen(
             if (showApkCard) add(true)
             if (showClipboardCard) add(true)
             if (showLargeFilesCard) add(true)
+            if (showEmptyFoldersCard) add(true)
             if (showContactsCard) add(true)
 
             // Middle ad
@@ -368,6 +375,27 @@ fun ScannerDashboardScreen(
                             activityClass = LargeFilesActivity::class.java
                         )
                     }
+                )
+            }
+        }
+
+        if (showEmptyFoldersCard) {
+            AnimatedVisibility(
+                visible = showEmptyFoldersCard,
+                enter = DashboardTransitions.enter,
+                exit = DashboardTransitions.exit
+            ) {
+                val emptyFolderIndex = nextIndex()
+                EmptyFolderCleanerCard(
+                    modifier = Modifier
+                        .animateVisibility(
+                            visible = uiState.data?.analyzeState?.isAnalyzeScreenVisible == false &&
+                                    visibilityStates.getOrElse(index = emptyFolderIndex) { false },
+                            index = emptyFolderIndex
+                        )
+                        .animateContentSize(),
+                    folders = emptyFolders,
+                    onCleanClick = { viewModel.onCleanEmptyFolders(it) }
                 )
             }
         }

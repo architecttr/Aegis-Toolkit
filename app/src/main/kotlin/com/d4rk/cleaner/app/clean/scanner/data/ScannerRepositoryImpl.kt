@@ -319,4 +319,25 @@ class ScannerRepositoryImpl(
             result
         }
     }
+
+    override suspend fun getEmptyFolders(): List<File> {
+        return withContext(Dispatchers.IO) {
+            val emptyFolders = mutableListOf<File>()
+            val stack: ArrayDeque<File> = ArrayDeque()
+            val root = Environment.getExternalStorageDirectory()
+            stack.addFirst(root)
+            while (stack.isNotEmpty()) {
+                val dir = stack.removeFirst()
+                if (dir.isDirectory && !dir.absolutePath.startsWith(trashDir.absolutePath)) {
+                    val children = dir.listFiles()
+                    if (children == null || children.isEmpty()) {
+                        emptyFolders.add(dir)
+                    } else {
+                        children.filter { it.isDirectory }.forEach { stack.addLast(it) }
+                    }
+                }
+            }
+            emptyFolders
+        }
+    }
 }
