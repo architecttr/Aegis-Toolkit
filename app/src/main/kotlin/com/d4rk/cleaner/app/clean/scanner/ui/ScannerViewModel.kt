@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.net.toUri
+import androidx.lifecycle.viewModelScope
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -29,22 +30,21 @@ import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileTypesData
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.WhatsAppMediaSummary
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetPromotedAppUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetStorageInfoUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.MoveToTrashUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.UpdateTrashSizeUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
+import com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer
 import com.d4rk.cleaner.app.clean.scanner.utils.helpers.getWhatsAppMediaSummary
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
-import com.d4rk.cleaner.core.utils.extensions.clearClipboardCompat
-import com.d4rk.cleaner.core.utils.extensions.partialMd5
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
+import com.d4rk.cleaner.core.utils.helpers.ClipboardHelper
+import com.d4rk.cleaner.core.utils.helpers.StreakCardHelper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +59,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.io.File
 
+// Delay to allow storage operations to settle before refreshing UI.
+// Making this configurable clarifies the wait after cleaning tasks.
 private const val RESULT_DELAY_MS = 3600L
 private const val EMPTY_FOLDERS_HIDE_DURATION_MS = 5 * 60 * 1000L
 
@@ -68,9 +70,8 @@ class ScannerViewModel(
     private val getStorageInfoUseCase: GetStorageInfoUseCase,
     private val getFileTypesUseCase: GetFileTypesUseCase,
     private val analyzeFilesUseCase: AnalyzeFilesUseCase,
-    private val deleteFilesUseCase: DeleteFilesUseCase,
-    private val moveToTrashUseCase: MoveToTrashUseCase,
-    private val updateTrashSizeUseCase: UpdateTrashSizeUseCase,
+    private val cleaningManager: CleaningManager,
+    private val fileAnalyzer: FileAnalyzer,
     private val getPromotedAppUseCase: GetPromotedAppUseCase,
     private val getLargestFilesUseCase: GetLargestFilesUseCase,
     private val getEmptyFoldersUseCase: GetEmptyFoldersUseCase,
@@ -84,6 +85,8 @@ class ScannerViewModel(
         application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     private val clipboardListener =
         ClipboardManager.OnPrimaryClipChangedListener { loadClipboardData() }
+    private val clipboardHelper = ClipboardHelper(application, clipboardManager)
+    private val streakHelper = StreakCardHelper(dataStore, viewModelScope, dispatchers)
 
     private val _whatsAppMediaSummary = MutableStateFlow(WhatsAppMediaSummary())
     val whatsAppMediaSummary: StateFlow<WhatsAppMediaSummary> = _whatsAppMediaSummary
@@ -304,7 +307,7 @@ class ScannerViewModel(
                                     dataStore.duplicateScanEnabled.first()
                             val (groupedFiles, duplicateOriginals, duplicateGroups) =
                                 withContext(dispatchers.io) {
-                                    computeGroupedFiles(
+                                    fileAnalyzer.computeGroupedFiles(
                                         scannedFiles = result.data.first,
                                         emptyFolders = result.data.second,
                                         fileTypesData = fileTypesData,
@@ -361,103 +364,6 @@ class ScannerViewModel(
         }
     }
 
-    private fun computeGroupedFiles(
-        scannedFiles: List<File>,
-        emptyFolders: List<File>,
-        fileTypesData: FileTypesData,
-        preferences: Map<String, Boolean>,
-        includeDuplicates: Boolean
-    ): Triple<Map<String, List<FileEntry>>, Set<FileEntry>, List<List<FileEntry>>> {
-        val knownExtensions: Set<String> =
-            (fileTypesData.imageExtensions + fileTypesData.videoExtensions + fileTypesData.audioExtensions + fileTypesData.officeExtensions + fileTypesData.archiveExtensions + fileTypesData.apkExtensions + fileTypesData.fontExtensions + fileTypesData.windowsExtensions).toSet()
-
-        val baseDefaultTitles = listOf(
-            "Images",
-            "Videos",
-            "Audios",
-            "Documents",
-            "Archives",
-            "APKs",
-            "Fonts",
-            "Windows Files",
-            "Empty Folders",
-            "Other Files"
-        )
-
-        val baseFinalTitles = baseDefaultTitles.mapIndexed { index, fallback ->
-            fileTypesData.fileTypesTitles.getOrElse(index) { fallback }
-        }
-
-        val duplicatesTitle = if (includeDuplicates) {
-            fileTypesData.fileTypesTitles.getOrElse(10) { "Duplicates" }
-        } else null
-
-        val filesMap: LinkedHashMap<String, MutableList<FileEntry>> = linkedMapOf()
-        filesMap.putAll(baseFinalTitles.associateWith { mutableListOf() })
-        duplicatesTitle?.let { filesMap[it] = mutableListOf() }
-
-        val duplicateGroups: List<List<FileEntry>> = if (includeDuplicates) {
-            findDuplicateGroups(scannedFiles)
-        } else emptyList()
-        val duplicateFiles: Set<String> =
-            if (includeDuplicates) duplicateGroups.flatten().map { it.path }.toSet() else emptySet()
-        val duplicateOriginals: Set<FileEntry> =
-            if (includeDuplicates) duplicateGroups.mapNotNull { group ->
-                group.minByOrNull { it.modified }
-            }.toSet() else emptySet()
-
-        scannedFiles.forEach { file: File ->
-            val entry = FileEntry(
-                path = file.absolutePath,
-                size = if (file.isDirectory) 0 else file.length(),
-                modified = file.lastModified()
-            )
-            if (includeDuplicates && entry.path in duplicateFiles) {
-                duplicatesTitle?.let { title ->
-                    filesMap.getOrPut(title) { mutableListOf() }.add(entry)
-                }
-            } else {
-                val category: String? = when (val extension: String = file.extension.lowercase()) {
-                    in fileTypesData.imageExtensions -> if (preferences[ExtensionsConstants.IMAGE_EXTENSIONS] == true) baseFinalTitles[0] else null
-                    in fileTypesData.videoExtensions -> if (preferences[ExtensionsConstants.VIDEO_EXTENSIONS] == true) baseFinalTitles[1] else null
-                    in fileTypesData.audioExtensions -> if (preferences[ExtensionsConstants.AUDIO_EXTENSIONS] == true) baseFinalTitles[2] else null
-                    in fileTypesData.officeExtensions -> if (preferences[ExtensionsConstants.OFFICE_EXTENSIONS] == true) baseFinalTitles[3] else null
-                    in fileTypesData.archiveExtensions -> if (preferences[ExtensionsConstants.ARCHIVE_EXTENSIONS] == true) baseFinalTitles[4] else null
-                    in fileTypesData.apkExtensions -> if (preferences[ExtensionsConstants.APK_EXTENSIONS] == true) baseFinalTitles[5] else null
-                    in fileTypesData.fontExtensions -> if (preferences[ExtensionsConstants.FONT_EXTENSIONS] == true) baseFinalTitles[6] else null
-                    in fileTypesData.windowsExtensions -> if (preferences[ExtensionsConstants.WINDOWS_EXTENSIONS] == true) baseFinalTitles[7] else null
-                    else -> if (!knownExtensions.contains(extension) && preferences[ExtensionsConstants.OTHER_EXTENSIONS] == true) baseFinalTitles[9] else null
-                }
-                category?.let { filesMap[it]?.add(element = entry) }
-            }
-        }
-
-        val emptyFoldersTitle = baseFinalTitles[8]
-        if (preferences[ExtensionsConstants.EMPTY_FOLDERS] == true) {
-            filesMap[emptyFoldersTitle] =
-                emptyFolders.map { FileEntry(it.absolutePath, 0, it.lastModified()) }
-                    .toMutableList()
-        }
-
-        val filteredMap = filesMap.filter { (key, value) ->
-            value.isNotEmpty() || (key == emptyFoldersTitle && preferences[ExtensionsConstants.EMPTY_FOLDERS] == true)
-        }
-
-        return Triple(filteredMap, duplicateOriginals, duplicateGroups)
-    }
-
-    private fun findDuplicateGroups(
-        files: List<File>
-    ): List<List<FileEntry>> {
-        val hashMap = mutableMapOf<String, MutableList<File>>()
-        files.filter { it.isFile }.forEach { file ->
-            val hash = file.partialMd5() ?: return@forEach
-            hashMap.getOrPut(hash) { mutableListOf() }.add(file)
-        }
-        return hashMap.values.filter { it.size > 1 }.map { group ->
-            group.map { FileEntry(it.absolutePath, it.length(), it.lastModified()) }
-        }
-    }
 
 
     private fun deleteFiles(files: Set<FileEntry>, fromApkCleaner: Boolean = false) {
@@ -484,14 +390,14 @@ class ScannerViewModel(
 
 
             val fileObjs = files.map { it.toFile() }.toSet()
-            deleteFilesUseCase(filesToDelete = fileObjs).collectLatest { result: DataState<Unit, Errors> ->
-                val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                        dataStore.duplicateScanEnabled.first()
-                _uiState.applyResult(
-                    result = result,
-                    errorMessage = UiTextHelper.StringResource(R.string.failed_to_delete_files)
-                ) { data, currentData ->
-                    val (groupedFilesUpdated, duplicateOriginals, duplicateGroups) = computeGroupedFiles(
+            val result = cleaningManager.deleteFiles(fileObjs)
+            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
+                    dataStore.duplicateScanEnabled.first()
+            _uiState.applyResult(
+                result = result,
+                errorMessage = UiTextHelper.StringResource(R.string.failed_to_delete_files)
+            ) { data, currentData ->
+                    val (groupedFilesUpdated, duplicateOriginals, duplicateGroups) = fileAnalyzer.computeGroupedFiles(
                         scannedFiles = currentData.analyzeState.scannedFileList.filterNot {
                             files.contains(
                                 it
@@ -521,18 +427,15 @@ class ScannerViewModel(
                             isCleanedSpaceLoading = true
                         )
                     )
-                }
+            }
 
-                if (result is DataState.Success) {
-                    launch {
-                        dataStore.saveLastScanTimestamp(timestamp = System.currentTimeMillis())
-                    }
-                    loadInitialData()
-                    loadWhatsAppMedia()
-                    loadClipboardData()
-                    loadEmptyFoldersPreview()
-                    CleaningEventBus.notifyCleaned()
-                }
+            if (result is DataState.Success) {
+                launch { dataStore.saveLastScanTimestamp(timestamp = System.currentTimeMillis()) }
+                loadInitialData()
+                loadWhatsAppMedia()
+                loadClipboardData()
+                loadEmptyFoldersPreview()
+                CleaningEventBus.notifyCleaned()
             }
             _cleaningApks.value = false
         }
@@ -565,12 +468,12 @@ class ScannerViewModel(
 
             val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
                     dataStore.duplicateScanEnabled.first()
-            moveToTrashUseCase(filesToMove = fileObjs).collectLatest { result: DataState<Unit, Errors> ->
-                _uiState.applyResult(
-                    result = result,
-                    errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash)
-                ) { _: Unit, currentData: UiScannerModel ->
-                    val (groupedFilesUpdated2, duplicateOriginals2, duplicateGroups2) = computeGroupedFiles(
+            val result = cleaningManager.moveToTrash(fileObjs)
+            _uiState.applyResult(
+                result = result,
+                errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash)
+            ) { _: Unit, currentData: UiScannerModel ->
+                    val (groupedFilesUpdated2, duplicateOriginals2, duplicateGroups2) = fileAnalyzer.computeGroupedFiles(
                         scannedFiles = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
                             files.any { moved -> existingFile.path == moved.path }
                         }.map { it.toFile() },
@@ -595,26 +498,25 @@ class ScannerViewModel(
                         )
                     )
 
-                }
+            }
 
-                if (result is DataState.Success) {
-                    delay(RESULT_DELAY_MS)
-                    _uiState.update { state ->
-                        val current = state.data ?: UiScannerModel()
-                        state.copy(
-                            data = current.copy(
-                                analyzeState = current.analyzeState.copy(
-                                    state = CleaningState.Result
-                                )
+            if (result is DataState.Success) {
+                delay(RESULT_DELAY_MS)
+                _uiState.update { state ->
+                    val current = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = current.copy(
+                            analyzeState = current.analyzeState.copy(
+                                state = CleaningState.Result
                             )
                         )
-                    }
-                    updateTrashSize(sizeChange = totalFileSizeToMove)
-                    loadInitialData()
-                    loadWhatsAppMedia()
-                    loadClipboardData()
-                    CleaningEventBus.notifyCleaned()
+                    )
                 }
+                updateTrashSize(sizeChange = totalFileSizeToMove)
+                loadInitialData()
+                loadWhatsAppMedia()
+                loadClipboardData()
+                CleaningEventBus.notifyCleaned()
             }
         }
     }
@@ -833,12 +735,12 @@ class ScannerViewModel(
 
             val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
                     dataStore.duplicateScanEnabled.first()
-            deleteFilesUseCase(filesToDelete = filesToDelete).collectLatest { result: DataState<Unit, Errors> ->
-                _uiState.applyResult(
-                    result = result,
-                    errorMessage = UiTextHelper.StringResource(R.string.failed_to_delete_files)
-                ) { _: Unit, currentData: UiScannerModel ->
-                    val (groupedFilesUpdated, duplicateOriginals, duplicateGroups) = computeGroupedFiles(
+            val result = cleaningManager.deleteFiles(filesToDelete)
+            _uiState.applyResult(
+                result = result,
+                errorMessage = UiTextHelper.StringResource(R.string.failed_to_delete_files)
+            ) { _: Unit, currentData: UiScannerModel ->
+                    val (groupedFilesUpdated, duplicateOriginals, duplicateGroups) = fileAnalyzer.computeGroupedFiles(
                         scannedFiles = currentData.analyzeState.scannedFileList.filterNot { it.path in selectedPaths }
                             .map { it.toFile() },
                         emptyFolders = currentData.analyzeState.emptyFolderList.map { it.toFile() },
@@ -865,7 +767,7 @@ class ScannerViewModel(
                     )
                 }
 
-                if (result is DataState.Success) {
+            if (result is DataState.Success) {
                     delay(RESULT_DELAY_MS)
                     _uiState.update { state ->
                         val current = state.data ?: UiScannerModel()
@@ -884,7 +786,7 @@ class ScannerViewModel(
                     loadWhatsAppMedia()
                     loadClipboardData()
                     CleaningEventBus.notifyCleaned()
-                } else if (result is DataState.Error) {
+            } else if (result is DataState.Error) {
                     _uiState.update { s ->
                         val currentErrorData = s.data ?: UiScannerModel()
                         s.copy(
@@ -895,7 +797,6 @@ class ScannerViewModel(
                             )
                         )
                     }
-                }
             }
         }
     }
@@ -943,12 +844,12 @@ class ScannerViewModel(
 
             val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
                     dataStore.duplicateScanEnabled.first()
-            moveToTrashUseCase(fileObjs).collectLatest { result ->
-                _uiState.applyResult(
-                    result = result,
-                    errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash)
-                ) { _, currentData ->
-                    val (groupedFilesUpdated3, duplicateOriginals3, duplicateGroups3) = computeGroupedFiles(
+            val result = cleaningManager.moveToTrash(fileObjs)
+            _uiState.applyResult(
+                result = result,
+                errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash)
+            ) { _, currentData ->
+                    val (groupedFilesUpdated3, duplicateOriginals3, duplicateGroups3) = fileAnalyzer.computeGroupedFiles(
                         scannedFiles = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
                             existingFile.path in selectedPaths
                         }.map { it.toFile() },
@@ -973,26 +874,26 @@ class ScannerViewModel(
                             fileSelectionMap = emptyMap()
                         )
                     )
-                }
+            }
 
-                if (result is DataState.Success) {
-                    delay(RESULT_DELAY_MS)
-                    _uiState.update { state ->
-                        val current = state.data ?: UiScannerModel()
-                        state.copy(
-                            data = current.copy(
-                                analyzeState = current.analyzeState.copy(
-                                    state = CleaningState.Result
-                                )
+            if (result is DataState.Success) {
+                delay(RESULT_DELAY_MS)
+                _uiState.update { state ->
+                    val current = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = current.copy(
+                            analyzeState = current.analyzeState.copy(
+                                state = CleaningState.Result
                             )
                         )
-                    }
-                    updateTrashSize(totalFileSizeToMove)
-                    loadInitialData()
-                    loadWhatsAppMedia()
-                    loadClipboardData()
-                    CleaningEventBus.notifyCleaned()
-                } else if (result is DataState.Error) {
+                    )
+                }
+                updateTrashSize(totalFileSizeToMove)
+                loadInitialData()
+                loadWhatsAppMedia()
+                loadClipboardData()
+                CleaningEventBus.notifyCleaned()
+            } else if (result is DataState.Error) {
                     _uiState.update { s ->
                         val currentErrorData = s.data ?: UiScannerModel()
                         s.copy(
@@ -1003,20 +904,18 @@ class ScannerViewModel(
                             )
                         )
                     }
-                }
             }
         }
     }
 
     private fun updateTrashSize(sizeChange: Long) {
         launch(dispatchers.io) {
-            updateTrashSizeUseCase(sizeChange).collectLatest { result ->
-                _uiState.applyResult(
-                    result = result,
-                    errorMessage = UiTextHelper.StringResource(R.string.failed_to_update_trash_size)
-                ) { data, currentData ->
-                    currentData
-                }
+            val result = cleaningManager.updateTrashSize(sizeChange)
+            _uiState.applyResult(
+                result = result,
+                errorMessage = UiTextHelper.StringResource(R.string.failed_to_update_trash_size)
+            ) { data, currentData ->
+                currentData
             }
         }
     }
@@ -1071,11 +970,7 @@ class ScannerViewModel(
     }
 
     private fun loadCleanStreak() {
-        launch(dispatchers.io) {
-            dataStore.streakCount.collect { streak ->
-                _cleanStreak.value = streak
-            }
-        }
+        streakHelper.observeCleanStreak { _cleanStreak.value = it }
     }
 
     private fun loadLargestFilesPreview() {
@@ -1240,14 +1135,10 @@ class ScannerViewModel(
     }
 
     private fun loadStreakCardVisibility() {
-        launch(dispatchers.io) {
-            combine(dataStore.showStreakCard, dataStore.streakHideUntil) { show, hide ->
-                _streakHideUntil.value = hide
-                show && hide <= System.currentTimeMillis()
-            }.collect { visible ->
-                _showStreakCard.value = visible
-            }
-        }
+        streakHelper.observeStreakVisibility(
+            onUpdate = { _showStreakCard.value = it },
+            onHideUntil = { _streakHideUntil.value = it }
+        )
     }
 
     private fun startOfNextWeek(): Long {
@@ -1272,17 +1163,13 @@ class ScannerViewModel(
     }
 
     fun onClipboardClear() {
-        runCatching {
-            clipboardManager.clearClipboardCompat()
-        }
+        runCatching { clipboardHelper.clearClipboard() }
         _clipboardPreview.value = null
         CleaningEventBus.notifyCleaned()
     }
 
     private fun loadClipboardData() {
-        val text = clipboardManager.primaryClip?.takeIf { it.itemCount > 0 }
-            ?.getItemAt(0)?.coerceToText(application)?.toString()?.trim()
-        _clipboardPreview.value = text
+        _clipboardPreview.value = clipboardHelper.getClipboardText()
     }
 
     private fun postSnackbar(message: UiTextHelper, isError: Boolean) {
