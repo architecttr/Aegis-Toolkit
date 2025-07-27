@@ -158,6 +158,12 @@
     <string name="clipboard_current_format">Aktualny schowek: %1$s</string>
     <string name="clean_clipboard">Wyczyść schowek</string>
     <string name="clipboard_cleaned">Schowek został wyczyszczony</string>
+    <string name="link_cleaner">Czyszczenie linków</string>
+    <string name="link_cleaned">Link wyczyszczony</string>
+    <string name="link_cleaner_card_title">Czyszczenie linków</string>
+    <string name="link_cleaner_card_subtitle">Usuń parametry śledzące z linków</string>
+    <string name="clean_link">Wyczyść link</string>
+    <string name="share_via">Udostępnij przez</string>
     <string name="cleaner_recommends">Rekomendacje Cleaner</string>
     <string name="image_optimizer_card_title">Optymalizator obrazów</string>
     <string name="image_optimizer_card_subtitle">Kompresuj zdjęcia bez utraty jakości.&#10;Zaoszczędź miejsce jednym stuknięciem.</string>

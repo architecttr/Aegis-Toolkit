@@ -48,6 +48,7 @@ import com.d4rk.cleaner.app.clean.scanner.ui.ScannerViewModel
 import com.d4rk.cleaner.app.clean.scanner.ui.components.ApkCleanerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.CacheCleanerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.ClipboardCleanerCard
+import com.d4rk.cleaner.app.clean.scanner.ui.components.LinkCleanerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.ImageOptimizerCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.LargeFilesCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.EmptyFolderCleanerCard
@@ -57,6 +58,7 @@ import com.d4rk.cleaner.app.clean.scanner.ui.components.QuickScanSummaryCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.WeeklyCleanStreakCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.WhatsAppCleanerCard
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.WhatsAppCleanerActivity
+import com.d4rk.cleaner.app.clean.link.ui.LinkCleanerActivity
 import com.d4rk.cleaner.app.images.picker.ui.ImagePickerActivity
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import org.koin.compose.koinInject
@@ -109,6 +111,7 @@ fun ScannerDashboardScreen(
     val showClipboardCard by remember(clipboardText) {
         derivedStateOf { !clipboardText.isNullOrBlank() }
     }
+    val showLinkCleanerCard = true
     val showLargeFilesCard by remember(largeFiles) {
         derivedStateOf { largeFiles.isNotEmpty() }
     }
@@ -133,6 +136,7 @@ fun ScannerDashboardScreen(
             showWhatsAppCard,
             showApkCard,
             showClipboardCard,
+            showLinkCleanerCard,
             showLargeFilesCard,
             showEmptyFoldersCard,
             showContactsCard
@@ -165,6 +169,7 @@ fun ScannerDashboardScreen(
         showWhatsAppCard,
         showApkCard,
         showClipboardCard,
+        showLinkCleanerCard,
         showContactsCard,
         showSystemStorageManagerCard,
         promotedApp
@@ -183,6 +188,7 @@ fun ScannerDashboardScreen(
             if (showWhatsAppCard) add(true)
             if (showApkCard) add(true)
             if (showClipboardCard) add(true)
+            if (showLinkCleanerCard) add(true)
             if (showLargeFilesCard) add(true)
             if (showEmptyFoldersCard) add(true)
             if (showContactsCard) add(true)
@@ -365,6 +371,31 @@ fun ScannerDashboardScreen(
                         )
                         .animateContentSize(),
                     clipboardText = clipboardText, onCleanClick = { viewModel.onClipboardClear() })
+            }
+        }
+
+        if (showLinkCleanerCard) {
+            AnimatedVisibility(
+                visible = showLinkCleanerCard,
+                enter = DashboardTransitions.enter,
+                exit = DashboardTransitions.exit
+            ) {
+                val linkIndex = nextIndex()
+                LinkCleanerCard(
+                    modifier = Modifier
+                        .animateVisibility(
+                            visible = uiState.data?.analyzeState?.isAnalyzeScreenVisible == false &&
+                                    visibilityStates.getOrElse(index = linkIndex) { false },
+                            index = linkIndex
+                        )
+                        .animateContentSize(),
+                    linkText = null,
+                    onCleanClick = {
+                        IntentsHelper.openActivity(
+                            context = context, activityClass = LinkCleanerActivity::class.java
+                        )
+                    }
+                )
             }
         }
 

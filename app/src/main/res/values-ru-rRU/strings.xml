@@ -158,6 +158,12 @@
     <string name="clipboard_current_format">Текущий буфер: %1$s</string>
     <string name="clean_clipboard">Очистить буфер обмена</string>
     <string name="clipboard_cleaned">Буфер обмена очищен</string>
+    <string name="link_cleaner">Очистка ссылок</string>
+    <string name="link_cleaned">Ссылка очищена</string>
+    <string name="link_cleaner_card_title">Очистка ссылок</string>
+    <string name="link_cleaner_card_subtitle">Удаляет параметры отслеживания из ссылок</string>
+    <string name="clean_link">Очистить ссылку</string>
+    <string name="share_via">Поделиться через</string>
     <string name="cleaner_recommends">Рекомендации Cleaner</string>
     <string name="image_optimizer_card_title">Оптимизация изображений</string>
     <string name="image_optimizer_card_subtitle">Сжимайте фото без потери качества.&#10;Экономьте место одним нажатием.</string>

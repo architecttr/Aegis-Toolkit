@@ -149,6 +149,12 @@
     <string name="clipboard_current_format">คลิปบอร์ดปัจจุบัน: %1$s</string>
     <string name="clean_clipboard">ล้างคลิปบอร์ด</string>
     <string name="clipboard_cleaned">คลิปบอร์ดได้รับการทำความสะอาด</string>
+    <string name="link_cleaner">ตัวล้างลิงก์</string>
+    <string name="link_cleaned">ลิงก์ถูกล้างแล้ว</string>
+    <string name="link_cleaner_card_title">ตัวล้างลิงก์</string>
+    <string name="link_cleaner_card_subtitle">ลบพารามิเตอร์ติดตามออกจากลิงก์</string>
+    <string name="clean_link">ล้างลิงก์</string>
+    <string name="share_via">แชร์ผ่าน</string>
     <string name="cleaner_recommends">คำแนะนำจาก Cleaner</string>
     <string name="image_optimizer_card_title">ตัวเพิ่มประสิทธิภาพรูปภาพ</string>
     <string name="image_optimizer_card_subtitle">บีบอัดรูปภาพโดยไม่ลดคุณภาพ&#10;ประหยัดพื้นที่ด้วยการแตะครั้งเดียว</string>

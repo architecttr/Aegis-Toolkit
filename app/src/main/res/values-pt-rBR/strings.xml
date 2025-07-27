@@ -155,6 +155,12 @@
     <string name="clipboard_current_format">Área de transferência atual: %1$s</string>
     <string name="clean_clipboard">Limpar área de transferência</string>
     <string name="clipboard_cleaned">A área de transferência foi limpa</string>
+    <string name="link_cleaner">Limpador de links</string>
+    <string name="link_cleaned">Link limpo</string>
+    <string name="link_cleaner_card_title">Limpador de links</string>
+    <string name="link_cleaner_card_subtitle">Remova parâmetros de rastreamento dos links</string>
+    <string name="clean_link">Limpar link</string>
+    <string name="share_via">Compartilhar via</string>
     <string name="cleaner_recommends">Recomendações do Cleaner</string>
     <string name="image_optimizer_card_title">Otimizador de imagens</string>
     <string name="image_optimizer_card_subtitle">Comprime fotos sem perder qualidade.&#10;Economize espaço com um toque.</string>

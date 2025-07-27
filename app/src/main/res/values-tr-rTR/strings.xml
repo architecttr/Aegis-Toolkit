@@ -152,6 +152,12 @@
     <string name="clipboard_current_format">Geçerli pano: %1$s</string>
     <string name="clean_clipboard">Panoyu Temizle</string>
     <string name="clipboard_cleaned">Pano temizlendi</string>
+    <string name="link_cleaner">Bağlantı Temizleyici</string>
+    <string name="link_cleaned">Bağlantı temizlendi</string>
+    <string name="link_cleaner_card_title">Bağlantı Temizleyici</string>
+    <string name="link_cleaner_card_subtitle">Bağlantılardan izleme parametrelerini kaldırın</string>
+    <string name="clean_link">Bağlantıyı temizle</string>
+    <string name="share_via">Şununla paylaş</string>
     <string name="cleaner_recommends">Cleaner Öneriyor</string>
     <string name="image_optimizer_card_title">Görüntü Optimize Edici</string>
     <string name="image_optimizer_card_subtitle">Fotoğrafları kalite kaybı olmadan sıkıştırın.&#10;Tek dokunuşla yer açın.</string>

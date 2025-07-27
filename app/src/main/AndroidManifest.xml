@@ -117,6 +117,17 @@
             android:exported="true"
             android:label="@string/clipboard_clean"
             android:parentActivityName=".app.main.ui.MainActivity" />
+        <activity
+            android:name=".app.clean.link.ui.LinkCleanerActivity"
+            android:exported="true"
+            android:label="@string/link_cleaner"
+            android:parentActivityName=".app.main.ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

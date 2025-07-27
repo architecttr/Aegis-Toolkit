@@ -152,6 +152,12 @@
     <string name="clipboard_current_format">Aktuális vágólap: %1$s</string>
     <string name="clean_clipboard">Vágólap törlése</string>
     <string name="clipboard_cleaned">A vágólapot megtisztították</string>
+    <string name="link_cleaner">Linktisztító</string>
+    <string name="link_cleaned">A linket megtisztították</string>
+    <string name="link_cleaner_card_title">Linktisztító</string>
+    <string name="link_cleaner_card_subtitle">Távolítsa el a követőparamétereket a linkekből</string>
+    <string name="clean_link">Link tisztítása</string>
+    <string name="share_via">Megosztás ezzel</string>
     <string name="cleaner_recommends">A Cleaner ajánlja</string>
     <string name="image_optimizer_card_title">Képoptimalizáló</string>
     <string name="image_optimizer_card_subtitle">Tömörítsd a fotókat minőségromlás nélkül.&#10;Takaríts meg helyet egyetlen érintéssel.</string>

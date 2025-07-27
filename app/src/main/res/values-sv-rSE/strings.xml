@@ -152,6 +152,12 @@
     <string name="clipboard_current_format">Aktuellt urklipp: %1$s</string>
     <string name="clean_clipboard">Rensa urklipp</string>
     <string name="clipboard_cleaned">Urklipp har rengjorts</string>
+    <string name="link_cleaner">Länkrensare</string>
+    <string name="link_cleaned">Länken rensad</string>
+    <string name="link_cleaner_card_title">Länkrensare</string>
+    <string name="link_cleaner_card_subtitle">Ta bort spårningsparametrar från länkar</string>
+    <string name="clean_link">Rensa länk</string>
+    <string name="share_via">Dela via</string>
     <string name="cleaner_recommends">Cleaner rekommenderar</string>
     <string name="image_optimizer_card_title">Bildoptimerare</string>
     <string name="image_optimizer_card_subtitle">Komprimera foton utan kvalitetsförlust.&#10;Spara utrymme med ett tryck.</string>
