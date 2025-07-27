@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/tv_state_condition_1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_icon_junk"
+            android:layout_width="@dimen/dimen_img_junk"
+            android:layout_height="@dimen/dimen_img_junk"
+            android:layout_margin="@dimen/dimen_big_16dp"
+            android:padding="@dimen/dimen_big_16dp"
+            android:src="@drawable/ic_junk_clean" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_state_condition_1"
+        style="@style/textview_condition_1"
+        tools:text="@string/text_junk_condition_1_clean"/>
+
+    <TextView
+        android:id="@+id/tv_state_condition_2"
+        style="@style/textview_condition_2"
+        tools:text="@string/text_junk_condition_2_clean" />
+
+
+    <RelativeLayout
+        android:id="@+id/layout_button"
+        style="@style/layout_button">
+
+        <Button
+            android:id="@+id/mainbutton"
+            style="@style/button_do_cleaner"
+            android:text="@string/button_clean" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_height_footer"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/dimen_big_16dp"
+        android:weightSum="4">
+
+        <LinearLayout style="@style/layout_junk">
+
+            <TextView
+                android:id="@+id/cachetext"
+                style="@style/text_view_junk" />
+
+            <TextView
+                android:id="@+id/cache"
+                style="@style/circle_junk"
+                android:text="@string/text_junk_cache" />
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/layout_junk">
+
+            <TextView
+                android:id="@+id/temptext"
+                style="@style/text_view_junk" />
+
+            <TextView
+                android:id="@+id/temp"
+                style="@style/circle_junk"
+                android:text="@string/text_junk_temp" />
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/layout_junk">
+
+            <TextView
+                android:id="@+id/residuetext"
+                style="@style/text_view_junk" />
+
+            <TextView
+                android:id="@+id/residue"
+                style="@style/circle_junk"
+                android:text="@string/text_junk_residual" />
+
+        </LinearLayout>
+
+        <LinearLayout style="@style/layout_junk">
+
+            <TextView
+                android:id="@+id/systemtext"
+                style="@style/text_view_junk" />
+
+            <TextView
+                android:id="@+id/system"
+                style="@style/circle_junk"
+                android:text="@string/text_junk_system" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
