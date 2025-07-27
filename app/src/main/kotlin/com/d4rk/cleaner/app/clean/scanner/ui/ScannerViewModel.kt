@@ -529,7 +529,6 @@ class ScannerViewModel(
         }
     }
 
-    }
 
     fun moveSelectedToTrash() {
         if (_uiState.value.data?.analyzeState?.state != CleaningState.ReadyToClean) {
