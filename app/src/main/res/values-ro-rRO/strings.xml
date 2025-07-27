@@ -165,6 +165,9 @@
     <string name="contacts_cleaner_card_title">Curățător contacte</string>
     <string name="contacts_cleaner_card_subtitle">Găsește și combină contactele duplicate</string>
     <string name="open_contacts_cleaner">Deschide Curățător contacte</string>
+    <string name="storage_manager_card_title">Manager de stocare al sistemului</string>
+    <string name="storage_manager_card_subtitle">Gestionează spațiul cu instrumentele integrate.</string>
+    <string name="open_storage_manager">Deschide Managerul de stocare</string>
     <string name="scan_cache">Scanează cache-ul</string>
     <string name="apks">APK-uri</string>
     <string name="archives">Arhive</string>

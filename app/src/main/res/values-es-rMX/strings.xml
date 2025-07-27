@@ -165,6 +165,9 @@
     <string name="contacts_cleaner_card_title">Limpiador de contactos</string>
     <string name="contacts_cleaner_card_subtitle">Busca y combina contactos duplicados</string>
     <string name="open_contacts_cleaner">Abrir Limpiador de contactos</string>
+    <string name="storage_manager_card_title">Administrador de almacenamiento del sistema</string>
+    <string name="storage_manager_card_subtitle">Administra espacio con las herramientas integradas.</string>
+    <string name="open_storage_manager">Abrir Administrador de almacenamiento</string>
     <string name="scan_cache">Escanear caché</string>
     <string name="apks">APKs</string>
     <string name="archives">Archivos comprimidos</string>

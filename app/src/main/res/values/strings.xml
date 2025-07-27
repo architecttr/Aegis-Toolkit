@@ -164,6 +164,9 @@
     <string name="contacts_cleaner_card_title">Contacts Cleaner</string>
     <string name="contacts_cleaner_card_subtitle">Find and merge duplicate contacts</string>
     <string name="open_contacts_cleaner">Open Contacts Cleaner</string>
+    <string name="storage_manager_card_title">System Storage Manager</string>
+    <string name="storage_manager_card_subtitle">Manage space using the built-in tools.</string>
+    <string name="open_storage_manager">Open Storage Manager</string>
     <string name="scan_cache">Scan Cache</string>
     <string name="apks">APKs</string>
     <string name="archives">Archives</string>

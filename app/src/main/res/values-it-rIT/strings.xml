@@ -165,6 +165,9 @@
     <string name="contacts_cleaner_card_title">Pulizia contatti</string>
     <string name="contacts_cleaner_card_subtitle">Trova e unisci i contatti duplicati</string>
     <string name="open_contacts_cleaner">Apri Pulizia contatti</string>
+    <string name="storage_manager_card_title">Gestore archiviazione di sistema</string>
+    <string name="storage_manager_card_subtitle">Gestisci lo spazio con gli strumenti integrati.</string>
+    <string name="open_storage_manager">Apri Gestore archiviazione</string>
     <string name="scan_cache">Scansione cache</string>
     <string name="apks">APK</string>
     <string name="archives">Archivi</string>

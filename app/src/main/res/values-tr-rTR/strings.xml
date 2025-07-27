@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">Kişi Temizleyici</string>
     <string name="contacts_cleaner_card_subtitle">Yinelenen kişileri bulup birleştirin</string>
     <string name="open_contacts_cleaner">Kişi Temizleyici\'yi aç</string>
+    <string name="storage_manager_card_title">Sistem Depolama Yöneticisi</string>
+    <string name="storage_manager_card_subtitle">Yerleşik araçlarla alanı yönetin.</string>
+    <string name="open_storage_manager">Depolama Yöneticisini aç</string>
     <string name="scan_cache">Önbelleği Tara</string>
     <string name="apks">APK\'lar</string>
     <string name="archives">Arşivler</string>

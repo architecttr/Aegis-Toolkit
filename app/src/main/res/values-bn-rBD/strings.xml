@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">কন্টাক্টস ক্লিনার</string>
     <string name="contacts_cleaner_card_subtitle">নকল কন্টাক্ট খুঁজে মিশিয়ে দিন</string>
     <string name="open_contacts_cleaner">কন্টাক্টস ক্লিনার খুলুন</string>
+    <string name="storage_manager_card_title">সিস্টেম স্টোরেজ ম্যানেজার</string>
+    <string name="storage_manager_card_subtitle">অন্তর্নির্মিত টুল দিয়ে জায়গা ব্যবস্থাপনা করুন।</string>
+    <string name="open_storage_manager">স্টোরেজ ম্যানেজার খুলুন</string>
     <string name="scan_cache">ক্যাশে স্ক্যান করুন</string>
     <string name="apks">এপিকে ফাইল</string>
     <string name="archives">আর্কাইভসমূহ</string>

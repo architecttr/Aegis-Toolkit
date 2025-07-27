@@ -162,6 +162,9 @@
     <string name="contacts_cleaner_card_title">संपर्क क्लीनर</string>
     <string name="contacts_cleaner_card_subtitle">डुप्लीकेट संपर्क खोजें और मिलाएँ</string>
     <string name="open_contacts_cleaner">संपर्क क्लीनर खोलें</string>
+    <string name="storage_manager_card_title">सिस्टम स्टोरेज प्रबंधक</string>
+    <string name="storage_manager_card_subtitle">बिल्ट-इन टूल से स्थान प्रबंधित करें।</string>
+    <string name="open_storage_manager">स्टोरेज प्रबंधक खोलें</string>
     <string name="scan_cache">कैश स्कैन करें</string>
     <string name="apks">एपीके</string>
     <string name="archives">अभिलेखागार</string>

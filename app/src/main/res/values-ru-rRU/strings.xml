@@ -168,6 +168,9 @@
     <string name="contacts_cleaner_card_title">Очистка контактов</string>
     <string name="contacts_cleaner_card_subtitle">Находит и объединяет повторяющиеся контакты</string>
     <string name="open_contacts_cleaner">Открыть очистку контактов</string>
+    <string name="storage_manager_card_title">Системный менеджер хранилища</string>
+    <string name="storage_manager_card_subtitle">Управляйте местом с помощью встроенных инструментов.</string>
+    <string name="open_storage_manager">Открыть менеджер хранилища</string>
     <string name="scan_cache">Сканировать кеш</string>
     <string name="apks">APK</string>
     <string name="archives">Архивы</string>
