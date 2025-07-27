@@ -1,40 +1,31 @@
 package com.d4rk.cleaner.app.images.compressor.ui
 
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
-import com.d4rk.android.libs.apptoolkit.app.theme.style.AppTheme
+import com.d4rk.cleaner.core.ui.BaseCleanupActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ImageOptimizerActivity : AppCompatActivity() {
+class ImageOptimizerActivity : BaseCleanupActivity() {
     private val viewModel: ImageOptimizerViewModel by viewModel()
 
+    private var selectedImageUriString: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        val selectedImageUriString: String? = intent.getStringExtra("selectedImageUri")
+        selectedImageUriString = intent.getStringExtra("selectedImageUri")
         if (!selectedImageUriString.isNullOrEmpty()) {
             lifecycleScope.launch {
-                viewModel.onImageSelected(selectedImageUriString.toUri())
+                viewModel.onImageSelected(selectedImageUriString!!.toUri())
             }
         }
+        super.onCreate(savedInstanceState)
+    }
 
-        setContent {
-            AppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
-                ) {
-                    ImageOptimizerScreen(activity = this@ImageOptimizerActivity, viewModel)
-                }
-            }
-        }
+    @Composable
+    override fun ScreenContent() {
+        ImageOptimizerScreen(activity = this@ImageOptimizerActivity, viewModel)
     }
 }
