@@ -121,6 +121,9 @@
         <item quantity="other">+%1$d още</item>
     </plurals>
     <string name="clean_apks">Изтрий инсталаторите</string>
+    <string name="empty_folder_card_title">Празни папки</string>
+    <string name="empty_folder_card_subtitle">Премахнете неизползваните папки веднага.</string>
+    <string name="empty_folders_found_format">%1$d празни папки намерени</string>
     <string name="whatsapp_card_title">Файлове от WhatsApp</string>
     <string name="whatsapp_card_subtitle">Изчистете медията, която вече не ви трябва.</string>
     <string name="clean_whatsapp">Почистване на WhatsApp медия</string>

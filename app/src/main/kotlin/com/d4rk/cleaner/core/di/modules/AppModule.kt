@@ -47,6 +47,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetPromotedAppUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.MoveToTrashUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.UpdateTrashSizeUseCase
@@ -126,6 +127,7 @@ val appModule: Module = module {
             updateTrashSizeUseCase = get(),
             getPromotedAppUseCase = get(),
             getLargestFilesUseCase = get(),
+            getEmptyFoldersUseCase = get(),
             dispatchers = get(),
             dataStore = get()
         )
@@ -208,6 +210,7 @@ val appModule: Module = module {
     single<GetTrashFilesUseCase> { GetTrashFilesUseCase(repository = get()) }
     single<RestoreFromTrashUseCase> { RestoreFromTrashUseCase(repository = get()) }
     single<GetLargestFilesUseCase> { GetLargestFilesUseCase(repository = get()) }
+    single<GetEmptyFoldersUseCase> { GetEmptyFoldersUseCase(repository = get()) }
     viewModel<TrashViewModel> {
         TrashViewModel(
             getTrashFilesUseCase = get(),

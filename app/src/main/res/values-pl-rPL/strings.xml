@@ -127,6 +127,9 @@
         <item quantity="other">+%1$d więcej</item>
     </plurals>
     <string name="clean_apks">Usuń instalatory</string>
+    <string name="empty_folder_card_title">Puste foldery</string>
+    <string name="empty_folder_card_subtitle">Usuń nieużywane foldery natychmiast.</string>
+    <string name="empty_folders_found_format">Znaleziono %1$d pustych folderów</string>
     <string name="whatsapp_card_title">Pliki WhatsApp</string>
     <string name="whatsapp_card_subtitle">Wyczyść media, których już nie potrzebujesz.</string>
     <string name="clean_whatsapp">Wyczyść multimedia WhatsApp</string>

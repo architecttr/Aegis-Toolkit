@@ -32,6 +32,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetPromotedAppUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetStorageInfoUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.MoveToTrashUseCase
@@ -71,6 +72,7 @@ class ScannerViewModel(
     private val updateTrashSizeUseCase: UpdateTrashSizeUseCase,
     private val getPromotedAppUseCase: GetPromotedAppUseCase,
     private val getLargestFilesUseCase: GetLargestFilesUseCase,
+    private val getEmptyFoldersUseCase: GetEmptyFoldersUseCase,
     private val dispatchers: DispatcherProvider,
     private val dataStore: DataStore
 ) : ScreenViewModel<UiScannerModel, ScannerEvent, ScannerAction>(
@@ -103,6 +105,9 @@ class ScannerViewModel(
     private val _largestFiles = MutableStateFlow<List<File>>(emptyList())
     val largestFiles: StateFlow<List<File>> = _largestFiles
 
+    private val _emptyFolders = MutableStateFlow<List<File>>(emptyList())
+    val emptyFolders: StateFlow<List<File>> = _emptyFolders
+
 
     init {
         clipboardManager.addPrimaryClipChangedListener(clipboardListener)
@@ -113,6 +118,7 @@ class ScannerViewModel(
         loadClipboardData()
         loadPromotedApp()
         loadLargestFilesPreview()
+        loadEmptyFoldersPreview()
         loadCleanStreak()
         loadStreakCardVisibility()
         launch(dispatchers.io) {
@@ -244,6 +250,7 @@ class ScannerViewModel(
         loadWhatsAppMedia()
         loadClipboardData()
         loadLargestFilesPreview()
+        loadEmptyFoldersPreview()
         if (screenData?.analyzeState?.isAnalyzeScreenVisible == true) {
             analyzeFiles()
         }
@@ -514,6 +521,7 @@ class ScannerViewModel(
                     loadInitialData()
                     loadWhatsAppMedia()
                     loadClipboardData()
+                    loadEmptyFoldersPreview()
                     CleaningEventBus.notifyCleaned()
                 }
             }
@@ -1070,6 +1078,16 @@ class ScannerViewModel(
         }
     }
 
+    private fun loadEmptyFoldersPreview() {
+        launch(dispatchers.io) {
+            getEmptyFoldersUseCase().collectLatest { result ->
+                if (result is DataState.Success) {
+                    _emptyFolders.value = result.data
+                }
+            }
+        }
+    }
+
     private fun toggleAnalyzeScreen(visible: Boolean) {
         if (visible) {
             launch(dispatchers.io) {
@@ -1160,6 +1178,14 @@ class ScannerViewModel(
         val entries =
             apkFiles.map { FileEntry(it.absolutePath, it.length(), it.lastModified()) }.toSet()
         deleteFiles(entries)
+    }
+
+    fun onCleanEmptyFolders(folders: List<File>) {
+        val entries =
+            folders.map { FileEntry(it.absolutePath, 0, it.lastModified()) }.toSet()
+        deleteFiles(entries)
+        _emptyFolders.value = emptyList()
+        postSnackbar(UiTextHelper.StringResource(R.string.empty_folders_cleaned), isError = false)
     }
 
     fun onCleanWhatsAppFiles() {

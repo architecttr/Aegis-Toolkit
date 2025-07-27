@@ -121,6 +121,9 @@
         <item quantity="other">+%1$d daha</item>
     </plurals>
     <string name="clean_apks">Yükleyicileri Sil</string>
+    <string name="empty_folder_card_title">Boş Klasörler</string>
+    <string name="empty_folder_card_subtitle">Kullanılmayan klasörleri anında sil.</string>
+    <string name="empty_folders_found_format">%1$d boş klasör bulundu</string>
     <string name="whatsapp_card_title">WhatsApp Dosyaları</string>
     <string name="whatsapp_card_subtitle">Artık ihtiyaç duymadığın medyaları temizle.</string>
     <string name="clean_whatsapp">WhatsApp Medyasını Temizle</string>
