@@ -153,6 +153,8 @@
     <string name="link_cleaned">Liên kết đã được làm sạch</string>
     <string name="link_cleaner_card_title">Trình làm sạch liên kết</string>
     <string name="link_cleaner_card_subtitle">Loại bỏ tham số theo dõi khỏi liên kết</string>
+    <string name="link">Liên kết</string>
+    <string name="paste_from_clipboard">Dán</string>
     <string name="clean_link">Làm sạch liên kết</string>
     <string name="share_via">Chia sẻ qua</string>
     <string name="cleaner_recommends">Gợi ý từ Cleaner</string>

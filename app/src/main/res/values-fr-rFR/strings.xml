@@ -159,6 +159,8 @@
     <string name="link_cleaned">Lien nettoyé</string>
     <string name="link_cleaner_card_title">Nettoyeur de liens</string>
     <string name="link_cleaner_card_subtitle">Supprimez les paramètres de suivi des liens</string>
+    <string name="link">Lien</string>
+    <string name="paste_from_clipboard">Coller</string>
     <string name="clean_link">Nettoyer le lien</string>
     <string name="share_via">Partager via</string>
     <string name="cleaner_recommends">Recommandations de Cleaner</string>

@@ -156,6 +156,8 @@
     <string name="link_cleaned">Länken rensad</string>
     <string name="link_cleaner_card_title">Länkrensare</string>
     <string name="link_cleaner_card_subtitle">Ta bort spårningsparametrar från länkar</string>
+    <string name="link">Länk</string>
+    <string name="paste_from_clipboard">Klistra in</string>
     <string name="clean_link">Rensa länk</string>
     <string name="share_via">Dela via</string>
     <string name="cleaner_recommends">Cleaner rekommenderar</string>

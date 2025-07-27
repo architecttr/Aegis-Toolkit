@@ -156,6 +156,8 @@
     <string name="link_cleaned">لنک صاف ہوگیا</string>
     <string name="link_cleaner_card_title">لنک کلینر</string>
     <string name="link_cleaner_card_subtitle">لنکس سے ٹریکنگ پیرا میٹرز ہٹائیں</string>
+    <string name="link">لنک</string>
+    <string name="paste_from_clipboard">پیسٹ کریں</string>
     <string name="clean_link">لنک صاف کریں</string>
     <string name="share_via">کے ذریعے شیئر کریں</string>
     <string name="cleaner_recommends">Cleaner کی سفارشات</string>

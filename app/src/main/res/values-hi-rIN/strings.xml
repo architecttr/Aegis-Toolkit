@@ -156,6 +156,8 @@
     <string name="link_cleaned">लिंक साफ़ किया गया</string>
     <string name="link_cleaner_card_title">लिंक क्लीनर</string>
     <string name="link_cleaner_card_subtitle">लिंक से ट्रैकिंग पैरामीटर हटाएँ</string>
+    <string name="link">लिंक</string>
+    <string name="paste_from_clipboard">पेस्ट</string>
     <string name="clean_link">लिंक साफ़ करें</string>
     <string name="share_via">इसके माध्यम से साझा करें</string>
     <string name="cleaner_recommends">क्लीनर की सिफारिशें</string>

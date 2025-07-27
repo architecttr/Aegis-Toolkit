@@ -153,6 +153,8 @@
     <string name="link_cleaned">Tautan telah dibersihkan</string>
     <string name="link_cleaner_card_title">Pembersih Tautan</string>
     <string name="link_cleaner_card_subtitle">Hapus parameter pelacakan dari tautan</string>
+    <string name="link">Tautan</string>
+    <string name="paste_from_clipboard">Tempel</string>
     <string name="clean_link">Bersihkan Tautan</string>
     <string name="share_via">Bagikan melalui</string>
     <string name="cleaner_recommends">Rekomendasi Cleaner</string>
