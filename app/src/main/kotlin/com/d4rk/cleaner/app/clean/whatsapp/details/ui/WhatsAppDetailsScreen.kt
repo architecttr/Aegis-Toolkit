@@ -55,7 +55,9 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
+import com.d4rk.android.libs.apptoolkit.core.domain.model.ads.AdsConfig
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.UiStateScreen
+import com.d4rk.android.libs.apptoolkit.core.ui.components.ads.AdBanner
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.AnimatedIconButtonDirection
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.IconButtonWithText
 import com.d4rk.android.libs.apptoolkit.core.ui.components.dialogs.BasicAlertDialog
@@ -79,6 +81,8 @@ import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstant
 import com.d4rk.cleaner.app.clean.whatsapp.utils.helpers.openFile
 import com.google.common.io.Files.getFileExtension
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
+import org.koin.core.qualifier.named
 import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -116,6 +120,8 @@ fun DetailsScreen(
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val sortedFiles = detailsState.data?.files ?: emptyList()
     val suggested = detailsState.data?.suggested ?: emptyList()
+
+    val adsConfig: AdsConfig = koinInject(qualifier = named(name = "full_banner"))
 
     val view: View = LocalView.current
 
@@ -269,6 +275,8 @@ fun DetailsScreen(
                                 files = list
                             )
                         }
+
+                        AdBanner(modifier = Modifier.fillMaxWidth(), adsConfig = adsConfig)
 
                         if (tabs.size <= 1) {
                             DetailsStatusRow(
