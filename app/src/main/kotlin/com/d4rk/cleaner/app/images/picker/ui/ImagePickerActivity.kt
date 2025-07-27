@@ -1,7 +1,6 @@
 package com.d4rk.cleaner.app.images.picker.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels

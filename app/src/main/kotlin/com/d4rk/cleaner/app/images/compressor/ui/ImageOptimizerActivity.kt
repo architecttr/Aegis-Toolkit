@@ -1,7 +1,6 @@
 package com.d4rk.cleaner.app.images.compressor.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope

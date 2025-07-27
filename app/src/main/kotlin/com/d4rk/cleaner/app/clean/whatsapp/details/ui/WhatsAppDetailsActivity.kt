@@ -2,9 +2,9 @@ package com.d4rk.cleaner.app.clean.whatsapp.details.ui
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
-import com.d4rk.cleaner.core.ui.BaseCleanupActivity
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.actions.WhatsAppCleanerEvent
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.WhatsappCleanerSummaryViewModel
+import com.d4rk.cleaner.core.ui.BaseCleanupActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WhatsAppDetailsActivity : BaseCleanupActivity() {
