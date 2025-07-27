@@ -1,1 +1,0 @@
-* add an option to hide disabled apps

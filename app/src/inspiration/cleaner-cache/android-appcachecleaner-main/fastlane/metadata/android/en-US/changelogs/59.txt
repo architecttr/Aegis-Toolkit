@@ -1,3 +1,0 @@
-* Add themed/monochrome launcher icon
-* Add Freepik license for Broom icon
-* Add Freepik license for monochrome Broom icon

@@ -1,1 +1,0 @@
-* force enable dark theme in Settings

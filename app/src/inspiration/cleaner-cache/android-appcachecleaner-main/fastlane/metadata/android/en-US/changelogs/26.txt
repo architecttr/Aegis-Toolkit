@@ -1,3 +1,0 @@
-* add settings
-* move menu add extra search text into settings
-* add show or hide extra buttons from settings

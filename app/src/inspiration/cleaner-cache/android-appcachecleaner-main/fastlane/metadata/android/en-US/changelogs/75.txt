@@ -1,1 +1,0 @@
-* case-insensitive handling for size units (KB, MB, GB, TB)

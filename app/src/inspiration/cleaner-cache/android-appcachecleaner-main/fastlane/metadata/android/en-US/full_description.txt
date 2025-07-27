@@ -1,5 +1,0 @@
-Since the release of Android 6 (Marshmallow), the option to clear the cache of all apps at once has been restricted by Google to system apps only. This means that users no longer have the convenience of clearing the cache of all their apps simultaneously. To clear the cache of individual apps, one must manually navigate to each app's "App Info" screen, locate the "Storage" menu, and then select the "Clean cache" button.
-
-To simplify this process and save time, <b>Cache Cleaner</b> requests a list of installed apps on your device and utilizes the Accessibility service to replace the manual steps involved in clearing the cache. This allows for a more convenient and automated process of cache cleaning.
-
-<b>Cache Cleaner</b> provides the added benefit of customizable app lists. This functionality allows you to create personalized lists of specific apps, giving you the flexibility to selectively clear the cache of only the apps you choose.

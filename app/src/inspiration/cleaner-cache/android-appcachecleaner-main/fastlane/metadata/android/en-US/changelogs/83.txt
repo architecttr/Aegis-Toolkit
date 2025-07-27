@@ -1,2 +1,0 @@
-* update Accessibility Service
-* update Help menu

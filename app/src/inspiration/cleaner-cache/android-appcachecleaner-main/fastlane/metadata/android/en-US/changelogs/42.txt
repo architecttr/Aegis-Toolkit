@@ -1,1 +1,0 @@
-* fix find Storage menu if it was out of view

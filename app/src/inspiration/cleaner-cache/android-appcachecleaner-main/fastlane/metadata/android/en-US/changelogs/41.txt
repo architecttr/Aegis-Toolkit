@@ -1,1 +1,0 @@
-* fix Settings "max timeout per app"

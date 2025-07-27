@@ -1,2 +1,0 @@
-* update help menu
-* add first boot confirmation

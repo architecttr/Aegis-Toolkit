@@ -1,2 +1,0 @@
-* add French translation
-* fix Russian translation

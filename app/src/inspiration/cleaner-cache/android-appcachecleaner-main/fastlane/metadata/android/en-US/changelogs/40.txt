@@ -1,1 +1,0 @@
-* fix set default timeout per app on the first boot

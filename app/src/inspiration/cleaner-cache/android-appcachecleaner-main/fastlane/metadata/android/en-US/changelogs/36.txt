@@ -1,2 +1,0 @@
-* fix calculate and display cache size for a custom list 
-* interrupt package list preparation on screen rotation

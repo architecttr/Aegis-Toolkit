@@ -1,1 +1,0 @@
-* support Android 16

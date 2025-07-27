@@ -1,1 +1,0 @@
-* fix touch target size warnings

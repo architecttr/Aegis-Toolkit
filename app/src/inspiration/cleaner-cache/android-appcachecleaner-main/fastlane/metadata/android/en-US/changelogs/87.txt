@@ -1,1 +1,0 @@
-* fix set accessibility event timeout from the Settings

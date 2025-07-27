@@ -1,1 +1,0 @@
-* show bug 322519674 for Android 14

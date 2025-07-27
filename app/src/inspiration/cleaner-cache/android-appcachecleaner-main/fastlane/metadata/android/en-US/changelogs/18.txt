@@ -1,1 +1,0 @@
-add explanation for requested permissions

@@ -1,1 +1,0 @@
-* remove unused "Show dialog to ignore app" in the Settings

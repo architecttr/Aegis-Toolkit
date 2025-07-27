@@ -1,1 +1,0 @@
-* open AppInfo by holding app icon in package list

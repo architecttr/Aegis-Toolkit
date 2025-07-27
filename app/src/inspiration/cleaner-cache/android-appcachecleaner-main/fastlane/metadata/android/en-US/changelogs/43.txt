@@ -1,1 +1,0 @@
-* show package counter on overlay during cache clean process
