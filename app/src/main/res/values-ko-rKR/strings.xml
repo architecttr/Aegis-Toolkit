@@ -149,6 +149,12 @@
     <string name="clipboard_current_format">현재 클립보드: %1$s</string>
     <string name="clean_clipboard">클립보드 지우기</string>
     <string name="clipboard_cleaned">클립 보드가 청소되었습니다</string>
+    <string name="link_cleaner">링크 클리너</string>
+    <string name="link_cleaned">링크가 정리되었습니다</string>
+    <string name="link_cleaner_card_title">링크 클리너</string>
+    <string name="link_cleaner_card_subtitle">링크에서 추적 파라미터 제거</string>
+    <string name="clean_link">링크 정리</string>
+    <string name="share_via">공유 방법</string>
     <string name="cleaner_recommends">Cleaner 추천</string>
     <string name="image_optimizer_card_title">이미지 최적화</string>
     <string name="image_optimizer_card_subtitle">품질 저하 없이 사진을 압축합니다.&#10;한 번 탭으로 공간을 절약하세요.</string>

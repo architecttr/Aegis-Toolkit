@@ -149,6 +149,12 @@
     <string name="clipboard_current_format">現在のクリップボード: %1$s</string>
     <string name="clean_clipboard">クリップボードを消去</string>
     <string name="clipboard_cleaned">クリップボードが掃除されました</string>
+    <string name="link_cleaner">リンククリーナー</string>
+    <string name="link_cleaned">リンクをクリーンしました</string>
+    <string name="link_cleaner_card_title">リンククリーナー</string>
+    <string name="link_cleaner_card_subtitle">リンクから追跡パラメータを削除</string>
+    <string name="clean_link">リンクをクリーン</string>
+    <string name="share_via">共有方法</string>
     <string name="cleaner_recommends">Cleaner のおすすめ</string>
     <string name="image_optimizer_card_title">画像最適化</string>
     <string name="image_optimizer_card_subtitle">品質を落とさず写真を圧縮。&#10;ワンタップで容量節約。</string>

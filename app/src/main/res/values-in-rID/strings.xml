@@ -149,6 +149,12 @@
     <string name="clipboard_current_format">Clipboard saat ini: %1$s</string>
     <string name="clean_clipboard">Bersihkan Clipboard</string>
     <string name="clipboard_cleaned">Clipboard telah dibersihkan</string>
+    <string name="link_cleaner">Pembersih Tautan</string>
+    <string name="link_cleaned">Tautan telah dibersihkan</string>
+    <string name="link_cleaner_card_title">Pembersih Tautan</string>
+    <string name="link_cleaner_card_subtitle">Hapus parameter pelacakan dari tautan</string>
+    <string name="clean_link">Bersihkan Tautan</string>
+    <string name="share_via">Bagikan melalui</string>
     <string name="cleaner_recommends">Rekomendasi Cleaner</string>
     <string name="image_optimizer_card_title">Pengoptimal Gambar</string>
     <string name="image_optimizer_card_subtitle">Kompres foto tanpa mengurangi kualitas.&#10;Hemat ruang dengan satu ketukan.</string>

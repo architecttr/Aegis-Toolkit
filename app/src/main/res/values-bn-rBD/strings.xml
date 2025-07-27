@@ -152,6 +152,12 @@
     <string name="clipboard_current_format">বর্তমান ক্লিপবোর্ড: %1$s</string>
     <string name="clean_clipboard">ক্লিপবোর্ড পরিষ্কার করুন</string>
     <string name="clipboard_cleaned">ক্লিপবোর্ড পরিষ্কার করা হয়েছে</string>
+    <string name="link_cleaner">লিঙ্ক ক্লিনার</string>
+    <string name="link_cleaned">লিঙ্ক পরিষ্কার হয়েছে</string>
+    <string name="link_cleaner_card_title">লিঙ্ক ক্লিনার</string>
+    <string name="link_cleaner_card_subtitle">লিঙ্ক থেকে ট্র্যাকিং প্যারামিটার সরান</string>
+    <string name="clean_link">লিঙ্ক পরিষ্কার করুন</string>
+    <string name="share_via">মাধ্যমে শেয়ার করুন</string>
     <string name="cleaner_recommends">ক্লিনার সুপারিশ করে</string>
     <string name="image_optimizer_card_title">ইমেজ অপটিমাইজার</string>
     <string name="image_optimizer_card_subtitle">গুণগত মান না হারিয়ে ছবি কম্প্রেস করুন.&#10;এক ট্যাপে জায়গা বাঁচান।</string>

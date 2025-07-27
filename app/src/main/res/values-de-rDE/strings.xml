@@ -152,6 +152,12 @@
     <string name="clipboard_current_format">Aktuelle Zwischenablage: %1$s</string>
     <string name="clean_clipboard">Zwischenablage leeren</string>
     <string name="clipboard_cleaned">Die Zwischenablage wurde gereinigt</string>
+    <string name="link_cleaner">Link-Reiniger</string>
+    <string name="link_cleaned">Link bereinigt</string>
+    <string name="link_cleaner_card_title">Link-Reiniger</string>
+    <string name="link_cleaner_card_subtitle">Entfernt Tracking-Parameter aus Links</string>
+    <string name="clean_link">Link bereinigen</string>
+    <string name="share_via">Teilen über</string>
     <string name="cleaner_recommends">Cleaner empfiehlt</string>
     <string name="image_optimizer_card_title">Bildoptimierer</string>
     <string name="image_optimizer_card_subtitle">Fotos ohne Qualitätsverlust komprimieren.&#10;Mit einem Tipp Speicher sparen.</string>

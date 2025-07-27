@@ -155,6 +155,12 @@
     <string name="clipboard_current_format">Presse-papiers actuel : %1$s</string>
     <string name="clean_clipboard">Effacer le presse-papiers</string>
     <string name="clipboard_cleaned">Le presse-papiers a été nettoyé</string>
+    <string name="link_cleaner">Nettoyeur de liens</string>
+    <string name="link_cleaned">Lien nettoyé</string>
+    <string name="link_cleaner_card_title">Nettoyeur de liens</string>
+    <string name="link_cleaner_card_subtitle">Supprimez les paramètres de suivi des liens</string>
+    <string name="clean_link">Nettoyer le lien</string>
+    <string name="share_via">Partager via</string>
     <string name="cleaner_recommends">Recommandations de Cleaner</string>
     <string name="image_optimizer_card_title">Optimiseur d’images</string>
     <string name="image_optimizer_card_subtitle">Compressez les photos sans perte de qualité.&#10;Gagnez de la place en un geste.</string>
