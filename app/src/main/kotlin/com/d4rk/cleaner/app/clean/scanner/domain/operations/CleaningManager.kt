@@ -25,7 +25,9 @@ class CleaningManager(
         return moveToTrashUseCase(files).first()
     }
 
-    suspend fun updateTrashSize(sizeChange: Long): DataState<Unit, Errors> {
+    suspend fun updateTrashSize(
+        sizeChange: Long
+    ): DataState<Unit, com.d4rk.android.libs.apptoolkit.core.domain.model.network.Errors> {
         return updateTrashSizeUseCase(sizeChange).first()
     }
 }
