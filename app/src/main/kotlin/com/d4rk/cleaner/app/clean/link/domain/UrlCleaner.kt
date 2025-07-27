@@ -1,6 +1,6 @@
 package com.d4rk.cleaner.app.clean.link.domain
 
-import android.net.Uri
+import androidx.core.net.toUri
 
 object UrlCleaner {
     private val trackingParams = setOf(
@@ -13,7 +13,9 @@ object UrlCleaner {
     )
 
     fun clean(url: String): String {
-        val uri = try { Uri.parse(url) } catch (e: Exception) { return url }
+        val uri = runCatching {
+            url.toUri()
+        }.getOrElse { return url }
         if (uri.scheme == null) return url
         val builder = uri.buildUpon().clearQuery()
         uri.queryParameterNames
