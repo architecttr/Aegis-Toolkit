@@ -169,6 +169,10 @@
     <string name="large_files_card_title">بڑی فائلیں</string>
     <string name="large_files_card_subtitle">اپنی سب سے بڑی فائلوں کو دیکھیں اور حذف کریں۔</string>
     <string name="open_large_files">بڑی فائلیں دیکھیں</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d مزید</item>
+        <item quantity="other">+%1$d مزید</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">کانٹیکٹ کلینر</string>
     <string name="contacts_cleaner_card_subtitle">ڈپلیکیٹ کانٹیکٹس تلاش کریں اور ملائیں</string>
     <string name="open_contacts_cleaner">کانٹیکٹ کلینر کھولیں</string>

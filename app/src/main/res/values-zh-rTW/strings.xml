@@ -166,6 +166,9 @@
     <string name="large_files_card_title">大型檔案</string>
     <string name="large_files_card_subtitle">檢視並移除最大的檔案。</string>
     <string name="open_large_files">查看大型檔案</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="other">+%1$d 個以上</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">聯絡人清理</string>
     <string name="contacts_cleaner_card_subtitle">尋找並合併重複的聯絡人</string>
     <string name="open_contacts_cleaner">開啟聯絡人清理</string>

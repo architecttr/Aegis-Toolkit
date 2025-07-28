@@ -172,6 +172,11 @@
     <string name="large_files_card_title">Arquivos grandes</string>
     <string name="large_files_card_subtitle">Revise e remova seus maiores arquivos.</string>
     <string name="open_large_files">Ver arquivos grandes</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d a mais</item>
+        <item quantity="other">+%1$d a mais</item>
+        <item quantity="many">+%1$d a mais</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Limpeza de contatos</string>
     <string name="contacts_cleaner_card_subtitle">Encontre e mescle contatos duplicados</string>
     <string name="open_contacts_cleaner">Abrir Limpeza de contatos</string>

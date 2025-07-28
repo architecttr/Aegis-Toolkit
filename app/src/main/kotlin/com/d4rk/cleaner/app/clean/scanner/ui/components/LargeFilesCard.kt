@@ -84,7 +84,7 @@ fun LargeFilesCard(
                     if (files.size > preview.size) {
                         Text(
                             text = pluralStringResource(
-                                id = R.plurals.apk_card_more_format,
+                                id = R.plurals.large_files_card_more_format,
                                 count = files.size - preview.size,
                                 files.size - preview.size
                             ),

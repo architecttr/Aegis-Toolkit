@@ -169,6 +169,10 @@
     <string name="large_files_card_title">Stora filer</string>
     <string name="large_files_card_subtitle">Granska och ta bort dina största filer.</string>
     <string name="open_large_files">Visa stora filer</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d till</item>
+        <item quantity="other">+%1$d till</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Kontaktrensare</string>
     <string name="contacts_cleaner_card_subtitle">Hitta och slå ihop dubbla kontakter</string>
     <string name="open_contacts_cleaner">Öppna Kontaktrensare</string>

@@ -169,6 +169,10 @@
     <string name="large_files_card_title">Large Files</string>
     <string name="large_files_card_subtitle">Review and remove your biggest files.</string>
     <string name="open_large_files">View Large Files</string>
+    <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d more</item>
+        <item quantity="other">+%1$d more</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Contacts Cleaner</string>
     <string name="contacts_cleaner_card_subtitle">Find and merge duplicate contacts</string>
     <string name="open_contacts_cleaner">Open Contacts Cleaner</string>

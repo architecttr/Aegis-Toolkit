@@ -166,6 +166,9 @@
     <string name="large_files_card_title">File besar</string>
     <string name="large_files_card_subtitle">Tinjau dan hapus file terbesar Anda.</string>
     <string name="open_large_files">Lihat file besar</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="other">+%1$d lagi</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Pembersih Kontak</string>
     <string name="contacts_cleaner_card_subtitle">Temukan dan gabungkan kontak ganda</string>
     <string name="open_contacts_cleaner">Buka Pembersih Kontak</string>

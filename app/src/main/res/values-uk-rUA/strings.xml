@@ -175,6 +175,12 @@
     <string name="large_files_card_title">Великі файли</string>
     <string name="large_files_card_subtitle">Перегляньте та видаліть свої найбільші файли.</string>
     <string name="open_large_files">Переглянути великі файли</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d додатково</item>
+        <item quantity="few">+%1$d додатково</item>
+        <item quantity="many">+%1$d додатково</item>
+        <item quantity="other">+%1$d додатково</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Очищення контактів</string>
     <string name="contacts_cleaner_card_subtitle">Знаходить і об\'єднує дублікати контактів</string>
     <string name="open_contacts_cleaner">Відкрити очищення контактів</string>
