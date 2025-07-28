@@ -169,6 +169,10 @@
     <string name="large_files_card_title">Malalaking file</string>
     <string name="large_files_card_subtitle">Suriin at alisin ang pinakamalalaking file mo.</string>
     <string name="open_large_files">Tingnan ang malalaking file</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d pa</item>
+        <item quantity="other">+%1$d pa</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Panglinis ng Contacts</string>
     <string name="contacts_cleaner_card_subtitle">Hanapin at pagsamahin ang mga dobleng contact</string>
     <string name="open_contacts_cleaner">Buksan ang Contacts Cleaner</string>

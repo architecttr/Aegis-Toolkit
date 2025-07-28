@@ -166,6 +166,9 @@
     <string name="large_files_card_title">큰 파일</string>
     <string name="large_files_card_subtitle">가장 큰 파일을 검토하고 삭제하세요.</string>
     <string name="open_large_files">큰 파일 보기</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="other">+%1$d개 더</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">연락처 클리너</string>
     <string name="contacts_cleaner_card_subtitle">중복 연락처 찾기 및 병합</string>
     <string name="open_contacts_cleaner">연락처 클리너 열기</string>

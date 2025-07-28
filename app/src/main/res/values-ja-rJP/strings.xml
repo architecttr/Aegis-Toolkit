@@ -166,6 +166,9 @@
     <string name="large_files_card_title">大きなファイル</string>
     <string name="large_files_card_subtitle">最も大きなファイルを確認して削除しましょう。</string>
     <string name="open_large_files">大きなファイルを表示</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="other">+%1$d 件以上</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">連絡先クリーナー</string>
     <string name="contacts_cleaner_card_subtitle">重複した連絡先を検出して統合</string>
     <string name="open_contacts_cleaner">連絡先クリーナーを開く</string>

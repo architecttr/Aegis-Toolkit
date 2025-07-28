@@ -169,6 +169,10 @@
     <string name="large_files_card_title">Големи файлове</string>
     <string name="large_files_card_subtitle">Прегледайте и изтрийте най-големите си файлове.</string>
     <string name="open_large_files">Вижте големите файлове</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d още</item>
+        <item quantity="other">+%1$d още</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Почистване на контакти</string>
     <string name="contacts_cleaner_card_subtitle">Намира и обединява дублирани контакти</string>
     <string name="open_contacts_cleaner">Отвори чистач на контакти</string>

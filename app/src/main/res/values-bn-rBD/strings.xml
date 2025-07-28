@@ -169,6 +169,10 @@
     <string name="large_files_card_title">বড় ফাইল</string>
     <string name="large_files_card_subtitle">আপনার সবচেয়ে বড় ফাইলগুলো পর্যালোচনা করে মুছে ফেলুন।</string>
     <string name="open_large_files">বড় ফাইল দেখুন</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d আরও</item>
+        <item quantity="other">+%1$d আরও</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">কন্টাক্টস ক্লিনার</string>
     <string name="contacts_cleaner_card_subtitle">নকল কন্টাক্ট খুঁজে মিশিয়ে দিন</string>
     <string name="open_contacts_cleaner">কন্টাক্টস ক্লিনার খুলুন</string>

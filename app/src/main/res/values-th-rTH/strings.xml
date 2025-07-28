@@ -166,6 +166,9 @@
     <string name="large_files_card_title">ไฟล์ขนาดใหญ่</string>
     <string name="large_files_card_subtitle">ตรวจสอบและลบไฟล์ที่ใหญ่ที่สุดของคุณ</string>
     <string name="open_large_files">ดูไฟล์ขนาดใหญ่</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="other">+%1$d เพิ่มเติม</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">ตัวล้างรายชื่อ</string>
     <string name="contacts_cleaner_card_subtitle">ค้นหาและรวมรายชื่อที่ซ้ำกัน</string>
     <string name="open_contacts_cleaner">เปิดตัวล้างรายชื่อ</string>

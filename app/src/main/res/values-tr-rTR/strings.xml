@@ -169,6 +169,10 @@
     <string name="large_files_card_title">Büyük dosyalar</string>
     <string name="large_files_card_subtitle">En büyük dosyalarınızı gözden geçirip silin.</string>
     <string name="open_large_files">Büyük dosyaları görüntüle</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d daha</item>
+        <item quantity="other">+%1$d daha</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Kişi Temizleyici</string>
     <string name="contacts_cleaner_card_subtitle">Yinelenen kişileri bulup birleştirin</string>
     <string name="open_contacts_cleaner">Kişi Temizleyici\'yi aç</string>

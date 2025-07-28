@@ -172,6 +172,11 @@
     <string name="large_files_card_title">Fichiers volumineux</string>
     <string name="large_files_card_subtitle">Examinez et supprimez vos plus gros fichiers.</string>
     <string name="open_large_files">Voir les fichiers volumineux</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d de plus</item>
+        <item quantity="many">+%1$d de plus</item>
+        <item quantity="other">+%1$d de plus</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Nettoyeur de contacts</string>
     <string name="contacts_cleaner_card_subtitle">Trouver et fusionner les contacts en double</string>
     <string name="open_contacts_cleaner">Ouvrir le Nettoyeur de contacts</string>

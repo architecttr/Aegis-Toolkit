@@ -175,6 +175,12 @@
     <string name="large_files_card_title">Duże pliki</string>
     <string name="large_files_card_subtitle">Przejrzyj i usuń swoje największe pliki.</string>
     <string name="open_large_files">Zobacz duże pliki</string>
+        <plurals name="large_files_card_more_format">
+        <item quantity="one">+%1$d więcej</item>
+        <item quantity="few">+%1$d więcej</item>
+        <item quantity="many">+%1$d więcej</item>
+        <item quantity="other">+%1$d więcej</item>
+    </plurals>
     <string name="contacts_cleaner_card_title">Czyszczenie kontaktów</string>
     <string name="contacts_cleaner_card_subtitle">Znajdź i połącz zduplikowane kontakty</string>
     <string name="open_contacts_cleaner">Otwórz czyszczenie kontaktów</string>
