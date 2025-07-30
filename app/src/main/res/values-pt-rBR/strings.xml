@@ -405,4 +405,5 @@
     <string name="feature_not_available">Recurso ainda não disponível.</string>
     <string name="no_files_selected_to_clean">Nenhum arquivo selecionado para limpar.</string>
     <string name="failed_to_update_trash_size">Falha ao atualizar o tamanho do lixo: %1$s</string>
-    <string name="no_cleaning_options_selected">Escolha suas preferências de limpeza nas configurações para prosseguir.</string></resources>
+    <string name="no_cleaning_options_selected">Escolha suas preferências de limpeza nas configurações para prosseguir.</string>
+    <string name="cleaning_in_progress">Limpeza em andamento</string></resources>

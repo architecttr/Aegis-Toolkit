@@ -413,4 +413,5 @@
     <string name="feature_not_available">Funkcja jest jeszcze niedostępna.</string>
     <string name="no_files_selected_to_clean">Brak plików do czyszczenia.</string>
     <string name="failed_to_update_trash_size">Nie udało się zaktualizować rozmiaru śmieci: %1$s</string>
-    <string name="no_cleaning_options_selected">Wybierz swoje preferencje czyszczące w ustawieniach, aby kontynuować.</string></resources>
+    <string name="no_cleaning_options_selected">Wybierz swoje preferencje czyszczące w ustawieniach, aby kontynuować.</string>
+    <string name="cleaning_in_progress">Trwa czyszczenie</string></resources>

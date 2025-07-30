@@ -397,4 +397,5 @@
     <string name="feature_not_available">Funktion noch nicht verfügbar.</string>
     <string name="no_files_selected_to_clean">Keine zum Reinigen ausgewählten Dateien.</string>
     <string name="failed_to_update_trash_size">Die Müllgröße nicht aktualisieren: %1$s</string>
-    <string name="no_cleaning_options_selected">Bitte wählen Sie Ihre Reinigungseinstellungen in Einstellungen, um fortzufahren.</string></resources>
+    <string name="no_cleaning_options_selected">Bitte wählen Sie Ihre Reinigungseinstellungen in Einstellungen, um fortzufahren.</string>
+    <string name="cleaning_in_progress">Reinigung läuft</string></resources>

@@ -398,4 +398,5 @@
     <string name="no_files_selected_to_clean">A tisztításhoz nincs kiválasztott fájl.</string>
     <string name="failed_to_update_trash_size">Nem sikerült frissíteni a szemét méretét: %1$s</string>
     <string name="no_cleaning_options_selected">Kérjük, válassza ki a tisztítási beállításokat a beállításokban.</string>
+    <string name="cleaning_in_progress">Tisztítás folyamatban</string>
 </resources>

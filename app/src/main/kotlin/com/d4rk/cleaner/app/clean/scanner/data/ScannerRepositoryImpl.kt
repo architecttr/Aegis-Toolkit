@@ -5,7 +5,10 @@ import android.app.Application
 import android.content.ClipboardManager
 import android.content.Context
 import android.media.MediaScannerConnection
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
+import androidx.core.content.FileProvider
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.memory.domain.data.model.StorageInfo
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileTypesData
@@ -146,10 +149,24 @@ class ScannerRepositoryImpl(
 
     override suspend fun deleteFiles(filesToDelete: Set<File>) {
         var totalSize = 0L
-        filesToDelete.forEach { file ->
-            if (file.exists()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val uris = filesToDelete.filter { it.exists() }.map { file ->
                 totalSize += file.length()
-                file.deleteRecursively()
+                FileProvider.getUriForFile(
+                    application,
+                    "${application.packageName}.fileprovider",
+                    file
+                )
+            }
+            if (uris.isNotEmpty()) {
+                MediaStore.createDeleteRequest(application.contentResolver, uris).send()
+            }
+        } else {
+            filesToDelete.forEach { file ->
+                if (file.exists()) {
+                    totalSize += file.length()
+                    file.deleteRecursively()
+                }
             }
         }
         if (totalSize > 0) {
@@ -168,23 +185,38 @@ class ScannerRepositoryImpl(
     }
 
     override suspend fun moveToTrash(filesToMove: List<File>) {
-        if (!trashDir.exists()) {
-            trashDir.mkdirs()
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val uris = filesToMove.filter { it.exists() }.map { file ->
+                dataStore.addTrashFileOriginalPath(originalPath = file.absolutePath)
+                dataStore.addTrashSize(size = file.length())
+                FileProvider.getUriForFile(
+                    application,
+                    "${application.packageName}.fileprovider",
+                    file
+                )
+            }
+            if (uris.isNotEmpty()) {
+                MediaStore.createTrashRequest(application.contentResolver, uris, true).send()
+            }
+        } else {
+            if (!trashDir.exists()) {
+                trashDir.mkdirs()
+            }
 
-        filesToMove.forEach { file ->
-            if (file.exists()) {
-                val destination = File(trashDir, file.name)
+            filesToMove.forEach { file ->
+                if (file.exists()) {
+                    val destination = File(trashDir, file.name)
 
-                if (file.renameTo(destination)) {
-                    dataStore.addTrashFileOriginalPath(originalPath = file.absolutePath)
-                    dataStore.addTrashSize(size = file.length())
-                    MediaScannerConnection.scanFile(
-                        application,
-                        arrayOf(destination.absolutePath, file.absolutePath),
-                        null,
-                        null
-                    )
+                    if (file.renameTo(destination)) {
+                        dataStore.addTrashFileOriginalPath(originalPath = file.absolutePath)
+                        dataStore.addTrashSize(size = file.length())
+                        MediaScannerConnection.scanFile(
+                            application,
+                            arrayOf(destination.absolutePath, file.absolutePath),
+                            null,
+                            null
+                        )
+                    }
                 }
             }
         }

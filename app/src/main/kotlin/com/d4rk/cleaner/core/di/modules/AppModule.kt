@@ -231,6 +231,7 @@ val appModule: Module = module {
 
     viewModel<LargeFilesViewModel> {
         LargeFilesViewModel(
+            application = get(),
             getLargestFilesUseCase = get(),
             deleteFilesUseCase = get(),
             dispatchers = get()

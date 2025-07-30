@@ -390,4 +390,5 @@
     <string name="no_files_selected_to_clean">未選取要清理的檔案。</string>
     <string name="failed_to_update_trash_size">更新垃圾桶大小失敗：%1$s</string>
     <string name="no_cleaning_options_selected">請在設定中選擇您的清理偏好以繼續。</string>
+    <string name="cleaning_in_progress">正在清理中</string>
 </resources>

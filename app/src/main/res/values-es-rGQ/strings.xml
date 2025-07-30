@@ -406,4 +406,5 @@
     <string name="no_files_selected_to_clean">No hay archivos seleccionados para limpiar.</string>
     <string name="failed_to_update_trash_size">No se pudo actualizar el tamaño de la basura: %1$s</string>
     <string name="no_cleaning_options_selected">Elija sus preferencias de limpieza en Configuración para continuar.</string>
+    <string name="cleaning_in_progress">Limpieza en curso</string>
 </resources>
