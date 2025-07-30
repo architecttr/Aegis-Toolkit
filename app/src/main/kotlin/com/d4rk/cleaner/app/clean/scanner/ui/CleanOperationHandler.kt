@@ -1,5 +1,8 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
+import android.app.Application
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -15,6 +18,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
+import com.d4rk.cleaner.app.clean.scanner.services.FileOperationService
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
@@ -34,6 +38,7 @@ import java.io.File
  * Encapsulates heavy cleaning operations so the ViewModel stays lean.
  */
 class CleanOperationHandler(
+    private val application: Application,
     private val scope: CoroutineScope,
     private val dispatchers: DispatcherProvider,
     private val dataStore: DataStore,
@@ -158,6 +163,11 @@ class CleanOperationHandler(
         }
 
         scope.launch(dispatchers.io) {
+            ContextCompat.startForegroundService(
+                application,
+                Intent(application, FileOperationService::class.java)
+            )
+            try {
             uiState.update { state ->
                 val currentData = state.data ?: UiScannerModel()
                 state.copy(
@@ -246,11 +256,19 @@ class CleanOperationHandler(
                         )
                     }
             }
+            finally {
+                application.stopService(Intent(application, FileOperationService::class.java))
+            }
         }
     }
 
     fun moveToTrash(files: List<FileEntry>) {
         scope.launch(dispatchers.io) {
+            ContextCompat.startForegroundService(
+                application,
+                Intent(application, FileOperationService::class.java)
+            )
+            try {
             if (files.isEmpty()) {
                 postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash), false)
                 return@launch
@@ -321,6 +339,9 @@ class CleanOperationHandler(
                 loadClipboardData()
                 loadEmptyFoldersPreview()
                 CleaningEventBus.notifyCleaned()
+            }
+            finally {
+                application.stopService(Intent(application, FileOperationService::class.java))
             }
         }
     }

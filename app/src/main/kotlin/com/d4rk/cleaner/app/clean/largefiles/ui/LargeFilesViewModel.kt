@@ -1,5 +1,8 @@
 package com.d4rk.cleaner.app.clean.largefiles.ui
 
+import android.app.Application
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -13,11 +16,13 @@ import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesEvent
 import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesModel
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
+import com.d4rk.cleaner.app.clean.scanner.services.FileOperationService
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import java.io.File
 
 class LargeFilesViewModel(
+    private val application: Application,
     private val getLargestFilesUseCase: GetLargestFilesUseCase,
     private val deleteFilesUseCase: DeleteFilesUseCase,
     private val dispatchers: DispatcherProvider
@@ -85,6 +90,11 @@ class LargeFilesViewModel(
 
     private fun deleteSelected() {
         launch(context = dispatchers.io) {
+            ContextCompat.startForegroundService(
+                application,
+                Intent(application, FileOperationService::class.java)
+            )
+            try {
             val filePaths =
                 _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
             val files = filePaths.map { File(it) }.toSet()
@@ -113,6 +123,9 @@ class LargeFilesViewModel(
                     }
                 }
                 onEvent(LargeFilesEvent.LoadLargeFiles)
+            }
+            finally {
+                application.stopService(Intent(application, FileOperationService::class.java))
             }
         }
     }

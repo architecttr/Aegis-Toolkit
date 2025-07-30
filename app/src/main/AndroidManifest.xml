@@ -164,6 +164,11 @@
                 android:name="android.service.notification.disabled_filter_types"
                 android:value="alerting|conversations|ongoing|silent" />
         </service>
+        <service
+            android:name=".app.clean.scanner.services.FileOperationService"
+            android:exported="false"
+            android:foregroundServiceType="dataManagement"/>
+
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
