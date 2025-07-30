@@ -70,6 +70,8 @@ fun AnalyzeScreen(
                             coroutineScope = coroutineScope,
                             data = data,
                         )
+                    } else {
+                        NoFilesFoundScreen(viewModel = viewModel)
                     }
                 }
 
