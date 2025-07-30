@@ -8,6 +8,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileTypesData
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import com.d4rk.cleaner.app.images.utils.ImageHashUtils
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
@@ -27,6 +28,7 @@ class AutoCleanWorker(
     private val analyzeFiles: AnalyzeFilesUseCase by inject()
     private val deleteFiles: DeleteFilesUseCase by inject()
     private val getFileTypes: GetFileTypesUseCase by inject()
+    private val getEmptyFolders: GetEmptyFoldersUseCase by inject()
     private val dataStore: DataStore by inject()
 
     override suspend fun doWork(): Result {
@@ -39,9 +41,23 @@ class AutoCleanWorker(
             return Result.success()
         }
 
-        val filesState = analyzeFiles().first { it !is DataState.Loading }
-        if (filesState !is DataState.Success) return Result.success()
-        val (files, emptyFolders) = filesState.data
+        val files = mutableListOf<File>()
+        analyzeFiles().collect { state ->
+            when (state) {
+                is DataState.Success -> files.add(state.data)
+                is DataState.Error -> return Result.success()
+                else -> {}
+            }
+        }
+
+        val emptyFolders = mutableListOf<File>()
+        getEmptyFolders().collect { state ->
+            when (state) {
+                is DataState.Success -> emptyFolders.add(state.data)
+                is DataState.Error -> return Result.success()
+                else -> {}
+            }
+        }
 
         val typesState = getFileTypes().first { it !is DataState.Loading }
         val types = if (typesState is DataState.Success) typesState.data else FileTypesData()

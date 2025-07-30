@@ -19,6 +19,7 @@ import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstant
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +38,7 @@ class CleanOperationHandler(
     private val dispatchers: DispatcherProvider,
     private val dataStore: DataStore,
     private val analyzeFilesUseCase: AnalyzeFilesUseCase,
+    private val getEmptyFoldersUseCase: GetEmptyFoldersUseCase,
     private val cleaningManager: CleaningManager,
     private val fileAnalyzer: FileAnalyzer,
     private val uiState: MutableStateFlow<UiStateScreen<UiScannerModel>>,
@@ -91,7 +93,7 @@ class CleanOperationHandler(
                 }
             }
 
-            getEmptyFoldersUseCase().collect { result ->
+            getEmptyFoldersUseCase().collect { result: DataState<File, Errors> ->
                 if (result is DataState.Success) {
                     emptyFolders.add(result.data)
                 }

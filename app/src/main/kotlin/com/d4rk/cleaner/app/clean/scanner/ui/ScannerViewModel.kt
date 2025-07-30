@@ -117,6 +117,7 @@ class ScannerViewModel(
         dispatchers = dispatchers,
         dataStore = dataStore,
         analyzeFilesUseCase = analyzeFilesUseCase,
+        getEmptyFoldersUseCase = getEmptyFoldersUseCase,
         cleaningManager = cleaningManager,
         fileAnalyzer = fileAnalyzer,
         uiState = _uiState,
