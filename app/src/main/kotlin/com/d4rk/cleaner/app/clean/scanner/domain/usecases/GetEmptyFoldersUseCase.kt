@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.flow
 import java.io.File
 
 class GetEmptyFoldersUseCase(private val repository: ScannerRepositoryInterface) {
-    operator fun invoke(): Flow<DataState<List<File>, Errors>> = flow {
+    operator fun invoke(): Flow<DataState<File, Errors>> = flow {
         emit(DataState.Loading())
         runCatching {
-            repository.getEmptyFolders()
-        }.onSuccess { folders ->
-            emit(DataState.Success(folders))
+            repository.getEmptyFolders().collect { folder ->
+                emit(DataState.Success(folder))
+            }
         }.onFailure { throwable ->
             if (throwable is CancellationException) throw throwable
             emit(DataState.Error(error = throwable.toError()))
