@@ -256,7 +256,7 @@ class CleanOperationHandler(
                         )
                     }
             }
-            finally {
+            } finally {
                 application.stopService(Intent(application, FileOperationService::class.java))
             }
         }
@@ -269,32 +269,33 @@ class CleanOperationHandler(
                 Intent(application, FileOperationService::class.java)
             )
             try {
-            if (files.isEmpty()) {
-                postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash), false)
-                return@launch
-            }
-            uiState.update { state: UiStateScreen<UiScannerModel> ->
-                val currentData: UiScannerModel = state.data ?: UiScannerModel()
-                state.copy(
-                    data = currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            state = CleaningState.Cleaning,
-                            cleaningType = CleaningType.MOVE_TO_TRASH
+                if (files.isEmpty()) {
+                    postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash), false)
+                    return@launch
+                }
+
+                uiState.update { state: UiStateScreen<UiScannerModel> ->
+                    val currentData: UiScannerModel = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = currentData.copy(
+                            analyzeState = currentData.analyzeState.copy(
+                                state = CleaningState.Cleaning,
+                                cleaningType = CleaningType.MOVE_TO_TRASH
+                            )
                         )
                     )
-                )
-            }
+                }
 
-            val fileObjs = files.map { it.toFile() }
-            val totalFileSizeToMove: Long = fileObjs.sumOf { it.length() }
+                val fileObjs = files.map { it.toFile() }
+                val totalFileSizeToMove: Long = fileObjs.sumOf { it.length() }
 
-            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                    dataStore.duplicateScanEnabled.first()
-            val result = cleaningManager.moveToTrash(fileObjs)
-            uiState.applyResult(
-                result = result,
-                errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash),
-            ) { _: Unit, currentData: UiScannerModel ->
+                val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
+                        dataStore.duplicateScanEnabled.first()
+                val result = cleaningManager.moveToTrash(fileObjs)
+                uiState.applyResult(
+                    result = result,
+                    errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash),
+                ) { _: Unit, currentData: UiScannerModel ->
                     val (groupedFilesUpdated2, duplicateOriginals2, duplicateGroups2) = fileAnalyzer.computeGroupedFiles(
                         scannedFiles = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
                             files.any { moved -> existingFile.path == moved.path }
@@ -321,26 +322,26 @@ class CleanOperationHandler(
                     )
                 }
 
-            if (result is DataState.Success) {
-                delay(resultDelayMs)
-                uiState.update { state ->
-                    val current = state.data ?: UiScannerModel()
-                    state.copy(
-                        data = current.copy(
-                            analyzeState = current.analyzeState.copy(
-                                state = CleaningState.Result
+                if (result is DataState.Success) {
+                    delay(resultDelayMs)
+                    uiState.update { state ->
+                        val current = state.data ?: UiScannerModel()
+                        state.copy(
+                            data = current.copy(
+                                analyzeState = current.analyzeState.copy(
+                                    state = CleaningState.Result
+                                )
                             )
                         )
-                    )
+                    }
+                    updateTrashSize(totalFileSizeToMove)
+                    loadInitialData()
+                    loadWhatsAppMedia()
+                    loadClipboardData()
+                    loadEmptyFoldersPreview()
+                    CleaningEventBus.notifyCleaned()
                 }
-                updateTrashSize(totalFileSizeToMove)
-                loadInitialData()
-                loadWhatsAppMedia()
-                loadClipboardData()
-                loadEmptyFoldersPreview()
-                CleaningEventBus.notifyCleaned()
-            }
-            finally {
+            } finally {
                 application.stopService(Intent(application, FileOperationService::class.java))
             }
         }

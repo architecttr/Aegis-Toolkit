@@ -95,36 +95,36 @@ class LargeFilesViewModel(
                 Intent(application, FileOperationService::class.java)
             )
             try {
-            val filePaths =
-                _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
-            val files = filePaths.map { File(it) }.toSet()
-            if (files.isEmpty()) {
-                sendAction(
-                    LargeFilesAction.ShowSnackbar(
-                        UiSnackbar(
-                            message = UiTextHelper.DynamicString(
-                                "No files selected"
+                val filePaths =
+                    _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
+                val files = filePaths.map { File(it) }.toSet()
+                if (files.isEmpty()) {
+                    sendAction(
+                        LargeFilesAction.ShowSnackbar(
+                            UiSnackbar(
+                                message = UiTextHelper.DynamicString(
+                                    "No files selected"
+                                )
                             )
                         )
                     )
-                )
-                return@launch
-            }
-            deleteFilesUseCase(files).collectLatest { result ->
-                if (result is DataState.Error) {
-                    _uiState.update { current ->
-                        current.copy(
-                            errors = current.errors + UiSnackbar(
-                                message = UiTextHelper.DynamicString(
-                                    "Failed to delete files: ${result.error}"
-                                ), isError = true
-                            )
-                        )
-                    }
+                    return@launch
                 }
-                onEvent(LargeFilesEvent.LoadLargeFiles)
-            }
-            finally {
+                deleteFilesUseCase(files).collectLatest { result ->
+                    if (result is DataState.Error) {
+                        _uiState.update { current ->
+                            current.copy(
+                                errors = current.errors + UiSnackbar(
+                                    message = UiTextHelper.DynamicString(
+                                        "Failed to delete files: ${result.error}"
+                                    ), isError = true
+                                )
+                            )
+                        }
+                    }
+                    onEvent(LargeFilesEvent.LoadLargeFiles)
+                }
+            } finally {
                 application.stopService(Intent(application, FileOperationService::class.java))
             }
         }
