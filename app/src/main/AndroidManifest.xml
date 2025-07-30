@@ -167,7 +167,7 @@
         <service
             android:name=".app.clean.scanner.services.FileOperationService"
             android:exported="false"
-            android:foregroundServiceType="dataManagement"/>
+            android:foregroundServiceType="dataSync"/>
 
 
         <service
