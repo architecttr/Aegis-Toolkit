@@ -87,6 +87,9 @@ fun CleanerTopAppBar(
                     enter = TopAppBarTransitions.titleEnter,
                     exit = TopAppBarTransitions.titleExit,
                 ) {
+                    val searchTextStyle =
+                        MaterialTheme.typography.labelLarge.copy(color = LocalContentColor.current)
+
                     BasicTextField(
                         value = searchQuery,
                         onValueChange = onSearchQueryChange,
@@ -99,7 +102,7 @@ fun CleanerTopAppBar(
                                 color = MaterialTheme.colorScheme.outline,
                                 shape = CircleShape
                             ),
-                        textStyle = MaterialTheme.typography.labelLarge,
+                        textStyle = searchTextStyle,
                         singleLine = true,
                         decorationBox = { innerTextField ->
                             Row(
@@ -118,7 +121,9 @@ fun CleanerTopAppBar(
                                     if (searchQuery.isEmpty()) {
                                         Text(
                                             text = stringResource(id = R.string.search),
-                                            style = MaterialTheme.typography.labelLarge,
+                                            style = MaterialTheme.typography.labelLarge.copy(
+                                                color = LocalContentColor.current.copy(alpha = 0.6f)
+                                            ),
                                             modifier = Modifier.align(Alignment.CenterStart)
                                         )
                                     }
