@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.DeleteForever
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.IconButton
 import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.LoadingScreen
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
@@ -46,6 +48,12 @@ fun AnalyzeScreen(
             .fillMaxWidth()
             .padding(vertical = SizeConstants.LargeSize), horizontalAlignment = Alignment.End
     ) {
+        IconButton(
+            modifier = Modifier.align(Alignment.End),
+            onClick = { viewModel.onCloseAnalyzeComposable() },
+            icon = Icons.Outlined.Close,
+            iconContentDescription = null,
+        )
         OutlinedCard(
             modifier = Modifier
                 .weight(weight = 1f)
