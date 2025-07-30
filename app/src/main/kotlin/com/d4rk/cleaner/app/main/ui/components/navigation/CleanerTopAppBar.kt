@@ -13,12 +13,16 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
@@ -27,7 +31,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -48,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.d4rk.android.libs.apptoolkit.app.support.ui.SupportActivity
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.AnimatedIconButtonDirection
 import com.d4rk.android.libs.apptoolkit.core.ui.components.dropdown.CommonDropdownMenuItem
+import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.SmallHorizontalSpacer
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.android.libs.apptoolkit.core.utils.helpers.IntentsHelper
 import com.d4rk.cleaner.R
@@ -83,31 +87,45 @@ fun CleanerTopAppBar(
                     enter = TopAppBarTransitions.titleEnter,
                     exit = TopAppBarTransitions.titleExit,
                 ) {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .height(48.dp)
-                            .clip(CircleShape)
-                            .fillMaxWidth(),
-                        shape = CircleShape,
+                    BasicTextField(
                         value = searchQuery,
                         onValueChange = onSearchQueryChange,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Search,
-                                contentDescription = null,
-                                modifier = Modifier.size(SizeConstants.ButtonIconSize)
-                            )
-
-                        },
-                        placeholder = {
-                            Text(
-                                text = stringResource(id = R.string.search),
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        },
+                        modifier = Modifier
+                            .height(48.dp)
+                            .fillMaxWidth()
+                            .clip(CircleShape)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.outline,
+                                shape = CircleShape
+                            ),
                         textStyle = MaterialTheme.typography.labelLarge,
                         singleLine = true,
-                    )
+                        decorationBox = { innerTextField ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = SizeConstants.LargeSize),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SizeConstants.ButtonIconSize)
+                                )
+                                SmallHorizontalSpacer()
+                                Box(modifier = Modifier.fillMaxWidth()) {
+                                    if (searchQuery.isEmpty()) {
+                                        Text(
+                                            text = stringResource(id = R.string.search),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            modifier = Modifier.align(Alignment.CenterStart)
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        })
                 }
                 AnimatedVisibility(
                     visible = !showSearch && animatedTitleVisible.value,
