@@ -42,22 +42,32 @@ class AutoCleanWorker(
         }
 
         val files = mutableListOf<File>()
+        var errorDuringScan = false
         analyzeFiles().collect { state ->
             when (state) {
                 is DataState.Success -> files.add(state.data)
-                is DataState.Error -> return Result.success()
+                is DataState.Error -> {
+                    errorDuringScan = true
+                    return@collect
+                }
                 else -> {}
             }
         }
+        if (errorDuringScan) return Result.success()
 
         val emptyFolders = mutableListOf<File>()
+        errorDuringScan = false
         getEmptyFolders().collect { state ->
             when (state) {
                 is DataState.Success -> emptyFolders.add(state.data)
-                is DataState.Error -> return Result.success()
+                is DataState.Error -> {
+                    errorDuringScan = true
+                    return@collect
+                }
                 else -> {}
             }
         }
+        if (errorDuringScan) return Result.success()
 
         val typesState = getFileTypes().first { it !is DataState.Loading }
         val types = if (typesState is DataState.Success) typesState.data else FileTypesData()
