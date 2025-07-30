@@ -175,8 +175,7 @@ class CleanOperationHandler(
                 return@launch
             }
 
-            val selectedPaths: Set<String> =
-                currentScreenData.analyzeState.fileSelectionMap.filter { it.value }.keys
+            val selectedPaths: Set<String> = currentScreenData.analyzeState.selectedFiles
             val filesToDelete: Set<File> = selectedPaths.map { File(it) }.toSet()
             if (filesToDelete.isEmpty()) {
                 postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_to_clean), false)
@@ -207,7 +206,7 @@ class CleanOperationHandler(
                             duplicateGroups = duplicateGroups,
                             selectedFilesCount = 0,
                             areAllFilesSelected = false,
-                            fileSelectionMap = emptyMap(),
+                            selectedFiles = mutableSetOf(),
                             isAnalyzeScreenVisible = false
                         ),
                         storageInfo = currentData.storageInfo.copy(
@@ -299,7 +298,7 @@ class CleanOperationHandler(
                             selectedFilesCount = 0,
                             areAllFilesSelected = false,
                             isAnalyzeScreenVisible = false,
-                            fileSelectionMap = emptyMap()
+                            selectedFiles = mutableSetOf()
                         )
                     )
                 }

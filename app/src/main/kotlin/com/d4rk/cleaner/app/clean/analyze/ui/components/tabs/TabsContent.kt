@@ -77,10 +77,10 @@ fun TabsContent(
                 val filesWithoutOriginals =
                     allFilesInCategory.filterNot { it in duplicateOriginals }
                 val allCategorySelected = filesWithoutOriginals.all { file ->
-                    data.analyzeState.fileSelectionMap[file.path] == true
+                    file.path in data.analyzeState.selectedFiles
                 }
                 val noneSelected = filesWithoutOriginals.none { file ->
-                    data.analyzeState.fileSelectionMap[file.path] == true
+                    file.path in data.analyzeState.selectedFiles
                 }
                 val toggleState = when {
                     filesWithoutOriginals.isEmpty() -> ToggleableState.Off
@@ -158,7 +158,7 @@ fun TabsContent(
             DuplicateGroupsSection(
                 modifier = Modifier,
                 filesByDate = filesByDate,
-                fileSelectionStates = data.analyzeState.fileSelectionMap.mapKeys { File(it.key) },
+                fileSelectionStates = data.analyzeState.selectedFiles.associate { File(it) to true },
                 onFileSelectionChange = viewModel::onFileSelectionChange,
                 onDateSelectionChange = { files, checked ->
                     viewModel.onEvent(
@@ -175,7 +175,7 @@ fun TabsContent(
             FilesByDateSection(
                 modifier = Modifier,
                 filesByDate = filesByDateRaw,
-                fileSelectionStates = data.analyzeState.fileSelectionMap.mapKeys { File(it.key) },
+                fileSelectionStates = data.analyzeState.selectedFiles.associate { File(it) to true },
                 onFileSelectionChange = viewModel::onFileSelectionChange,
                 onDateSelectionChange = { files, checked ->
                     viewModel.onEvent(
