@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.FolderOff
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Icon
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.IconButton
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.OutlinedIconButtonWithText
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.LargeVerticalSpacer
 import com.d4rk.cleaner.R
@@ -23,7 +25,15 @@ import com.d4rk.cleaner.app.clean.scanner.ui.ScannerViewModel
 
 @Composable
 fun NoFilesFoundScreen(viewModel: ScannerViewModel) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        IconButton(
+            modifier = Modifier.align(Alignment.TopEnd),
+            onClick = { viewModel.onCloseAnalyzeComposable() },
+            icon = Icons.Outlined.Close,
+            iconContentDescription = null,
+        )
+
+        Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
                 imageVector = Icons.Outlined.FolderOff,
@@ -45,6 +55,7 @@ fun NoFilesFoundScreen(viewModel: ScannerViewModel) {
                 iconContentDescription = null,
                 label = stringResource(id = com.d4rk.android.libs.apptoolkit.R.string.try_again)
             )
+        }
         }
     }
 }
