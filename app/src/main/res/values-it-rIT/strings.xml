@@ -405,4 +405,5 @@
     <string name="feature_not_available">Funzionalità non ancora disponibile.</string>
     <string name="no_files_selected_to_clean">Nessun file selezionato per pulire.</string>
     <string name="failed_to_update_trash_size">Impossibile aggiornare la dimensione della spazzatura: %1$s</string>
-    <string name="no_cleaning_options_selected">Scegli le tue preferenze di pulizia nelle impostazioni per procedere.</string></resources>
+    <string name="no_cleaning_options_selected">Scegli le tue preferenze di pulizia nelle impostazioni per procedere.</string>
+    <string name="cleaning_in_progress">Pulizia in corso</string></resources>

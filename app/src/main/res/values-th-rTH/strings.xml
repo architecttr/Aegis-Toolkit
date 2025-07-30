@@ -390,4 +390,5 @@
     <string name="no_files_selected_to_clean">ไม่มีไฟล์ที่เลือกเพื่อทำความสะอาด</string>
     <string name="failed_to_update_trash_size">ไม่สามารถอัปเดตขนาดถังขยะ: %1$s</string>
     <string name="no_cleaning_options_selected">โปรดเลือกการตั้งค่าการทำความสะอาดของคุณในการตั้งค่าเพื่อดำเนินการต่อ</string>
+    <string name="cleaning_in_progress">กำลังทำความสะอาด</string>
 </resources>

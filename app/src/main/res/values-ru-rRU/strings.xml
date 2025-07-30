@@ -413,4 +413,5 @@
     <string name="feature_not_available">Функция пока недоступна.</string>
     <string name="no_files_selected_to_clean">Нет файлов, выбранных для очистки.</string>
     <string name="failed_to_update_trash_size">Не удалось обновить размер мусора: %1$s</string>
-    <string name="no_cleaning_options_selected">Пожалуйста, выберите свои предпочтения в уборке в настройках, чтобы продолжить.</string></resources>
+    <string name="no_cleaning_options_selected">Пожалуйста, выберите свои предпочтения в уборке в настройках, чтобы продолжить.</string>
+    <string name="cleaning_in_progress">Идет очистка</string></resources>

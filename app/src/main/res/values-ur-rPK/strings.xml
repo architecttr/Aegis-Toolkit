@@ -398,4 +398,5 @@
     <string name="no_files_selected_to_clean">صاف کرنے کے لئے کوئی فائلیں منتخب نہیں کی گئیں۔</string>
     <string name="failed_to_update_trash_size">کوڑے دان کے سائز کو اپ ڈیٹ کرنے میں ناکام: %1$s</string>
     <string name="no_cleaning_options_selected">براہ کرم آگے بڑھنے کے لئے ترتیبات میں اپنی صفائی کی ترجیحات کا انتخاب کریں۔</string>
+    <string name="cleaning_in_progress">صفائی جاری ہے</string>
 </resources>
