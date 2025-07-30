@@ -20,8 +20,8 @@ data class UiAnalyzeModel(
     var scannedFileList: List<FileEntry> = emptyList(),
     var emptyFolderList: List<FileEntry> = emptyList(),
     var areAllFilesSelected: Boolean = false,
-    /** Map of file paths to selection state */
-    var fileSelectionMap: Map<String, Boolean> = emptyMap(),
+    /** Paths of selected files */
+    var selectedFiles: MutableSet<String> = mutableSetOf(),
     var selectedFilesCount: Int = 0,
     var groupedFiles: Map<String, List<FileEntry>> = emptyMap(),
     /** Set of original files when duplicates are detected */
