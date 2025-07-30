@@ -117,6 +117,7 @@ class ScannerViewModel(
         dispatchers = dispatchers,
         dataStore = dataStore,
         analyzeFilesUseCase = analyzeFilesUseCase,
+        getEmptyFoldersUseCase = getEmptyFoldersUseCase,
         cleaningManager = cleaningManager,
         fileAnalyzer = fileAnalyzer,
         uiState = _uiState,
@@ -708,13 +709,19 @@ class ScannerViewModel(
 
     private fun loadEmptyFoldersPreview() {
         launch(dispatchers.io) {
-            getEmptyFoldersUseCase().collectLatest { result ->
-                if (result is DataState.Success) {
-                    if (_emptyFoldersHideUntil.value <= System.currentTimeMillis()) {
-                        _emptyFolders.value = result.data
-                    } else {
-                        _emptyFolders.value = emptyList()
+            val folders = mutableListOf<File>()
+            getEmptyFoldersUseCase().collect { result ->
+                when (result) {
+                    is DataState.Loading -> folders.clear()
+                    is DataState.Success -> {
+                        if (_emptyFoldersHideUntil.value <= System.currentTimeMillis()) {
+                            folders.add(result.data)
+                            _emptyFolders.value = folders.toList()
+                        } else {
+                            _emptyFolders.value = emptyList()
+                        }
                     }
+                    else -> {}
                 }
             }
         }

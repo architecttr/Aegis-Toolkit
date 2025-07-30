@@ -19,6 +19,7 @@ import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstant
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +38,7 @@ class CleanOperationHandler(
     private val dispatchers: DispatcherProvider,
     private val dataStore: DataStore,
     private val analyzeFilesUseCase: AnalyzeFilesUseCase,
+    private val getEmptyFoldersUseCase: GetEmptyFoldersUseCase,
     private val cleaningManager: CleaningManager,
     private val fileAnalyzer: FileAnalyzer,
     private val uiState: MutableStateFlow<UiStateScreen<UiScannerModel>>,
@@ -54,7 +56,10 @@ class CleanOperationHandler(
             return
         }
         scope.launch(dispatchers.io) {
-            analyzeFilesUseCase().collectLatest { result: DataState<Pair<List<File>, List<File>>, Errors> ->
+            val scannedFiles = mutableListOf<File>()
+            val emptyFolders = mutableListOf<File>()
+
+            analyzeFilesUseCase().collect { result ->
                 uiState.update { currentState ->
                     val currentData: UiScannerModel = currentState.data ?: UiScannerModel()
                     when (result) {
@@ -67,63 +72,10 @@ class CleanOperationHandler(
                                 )
                             )
                         )
-
                         is DataState.Success -> {
-                            val fileTypesData = currentData.analyzeState.fileTypesData
-                            val preferences = mapOf(
-                                ExtensionsConstants.GENERIC_EXTENSIONS to dataStore.genericFilter.first(),
-                                ExtensionsConstants.IMAGE_EXTENSIONS to dataStore.deleteImageFiles.first(),
-                                ExtensionsConstants.VIDEO_EXTENSIONS to dataStore.deleteVideoFiles.first(),
-                                ExtensionsConstants.AUDIO_EXTENSIONS to dataStore.deleteAudioFiles.first(),
-                                ExtensionsConstants.OFFICE_EXTENSIONS to dataStore.deleteOfficeFiles.first(),
-                                ExtensionsConstants.ARCHIVE_EXTENSIONS to dataStore.deleteArchives.first(),
-                                ExtensionsConstants.APK_EXTENSIONS to dataStore.deleteApkFiles.first(),
-                                ExtensionsConstants.FONT_EXTENSIONS to dataStore.deleteFontFiles.first(),
-                                ExtensionsConstants.WINDOWS_EXTENSIONS to dataStore.deleteWindowsFiles.first(),
-                                ExtensionsConstants.EMPTY_FOLDERS to dataStore.deleteEmptyFolders.first(),
-                                ExtensionsConstants.OTHER_EXTENSIONS to dataStore.deleteOtherFiles.first()
-                            )
-
-                            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                                    dataStore.duplicateScanEnabled.first()
-                            val (groupedFiles, duplicateOriginals, duplicateGroups) =
-                                withContext(dispatchers.io) {
-                                    fileAnalyzer.computeGroupedFiles(
-                                        scannedFiles = result.data.first,
-                                        emptyFolders = result.data.second,
-                                        fileTypesData = fileTypesData,
-                                        preferences = preferences,
-                                        includeDuplicates = includeDuplicates
-                                    )
-                                }
-                            currentState.copy(
-                                screenState = ScreenState.Success(),
-                                data = currentData.copy(
-                                    analyzeState = currentData.analyzeState.copy(
-                                        scannedFileList = result.data.first.map {
-                                            FileEntry(
-                                                it.absolutePath,
-                                                it.length(),
-                                                it.lastModified()
-                                            )
-                                        },
-                                        emptyFolderList = result.data.second.map {
-                                            FileEntry(
-                                                it.absolutePath,
-                                                0,
-                                                it.lastModified()
-                                            )
-                                        },
-                                        groupedFiles = groupedFiles,
-                                        duplicateOriginals = duplicateOriginals,
-                                        duplicateGroups = duplicateGroups,
-                                        state = CleaningState.ReadyToClean,
-                                        cleaningType = CleaningType.NONE
-                                    )
-                                )
-                            )
+                            scannedFiles.add(result.data)
+                            currentState
                         }
-
                         is DataState.Error -> currentState.copy(
                             screenState = ScreenState.Error(),
                             data = currentData.copy(
@@ -139,6 +91,63 @@ class CleanOperationHandler(
                         )
                     }
                 }
+            }
+
+            getEmptyFoldersUseCase().collect { result: DataState<File, Errors> ->
+                if (result is DataState.Success) {
+                    emptyFolders.add(result.data)
+                }
+            }
+
+            val currentData = uiState.value.data ?: UiScannerModel()
+            val fileTypesData = currentData.analyzeState.fileTypesData
+            val preferences = mapOf(
+                ExtensionsConstants.GENERIC_EXTENSIONS to dataStore.genericFilter.first(),
+                ExtensionsConstants.IMAGE_EXTENSIONS to dataStore.deleteImageFiles.first(),
+                ExtensionsConstants.VIDEO_EXTENSIONS to dataStore.deleteVideoFiles.first(),
+                ExtensionsConstants.AUDIO_EXTENSIONS to dataStore.deleteAudioFiles.first(),
+                ExtensionsConstants.OFFICE_EXTENSIONS to dataStore.deleteOfficeFiles.first(),
+                ExtensionsConstants.ARCHIVE_EXTENSIONS to dataStore.deleteArchives.first(),
+                ExtensionsConstants.APK_EXTENSIONS to dataStore.deleteApkFiles.first(),
+                ExtensionsConstants.FONT_EXTENSIONS to dataStore.deleteFontFiles.first(),
+                ExtensionsConstants.WINDOWS_EXTENSIONS to dataStore.deleteWindowsFiles.first(),
+                ExtensionsConstants.EMPTY_FOLDERS to dataStore.deleteEmptyFolders.first(),
+                ExtensionsConstants.OTHER_EXTENSIONS to dataStore.deleteOtherFiles.first()
+            )
+
+            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
+                    dataStore.duplicateScanEnabled.first()
+            val (groupedFiles, duplicateOriginals, duplicateGroups) =
+                withContext(dispatchers.io) {
+                    fileAnalyzer.computeGroupedFiles(
+                        scannedFiles = scannedFiles,
+                        emptyFolders = emptyFolders,
+                        fileTypesData = fileTypesData,
+                        preferences = preferences,
+                        includeDuplicates = includeDuplicates
+                    )
+                }
+
+            uiState.update { state ->
+                val data = state.data ?: UiScannerModel()
+                state.copy(
+                    screenState = ScreenState.Success(),
+                    data = data.copy(
+                        analyzeState = data.analyzeState.copy(
+                            scannedFileList = scannedFiles.map {
+                                FileEntry(it.absolutePath, it.length(), it.lastModified())
+                            },
+                            emptyFolderList = emptyFolders.map {
+                                FileEntry(it.absolutePath, 0, it.lastModified())
+                            },
+                            groupedFiles = groupedFiles,
+                            duplicateOriginals = duplicateOriginals,
+                            duplicateGroups = duplicateGroups,
+                            state = CleaningState.ReadyToClean,
+                            cleaningType = CleaningType.NONE
+                        )
+                    )
+                )
             }
         }
     }

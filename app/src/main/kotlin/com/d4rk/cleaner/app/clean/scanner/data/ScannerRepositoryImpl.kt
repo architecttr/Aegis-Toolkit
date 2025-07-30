@@ -17,6 +17,8 @@ import com.d4rk.cleaner.core.utils.extensions.clearClipboardCompat
 import com.d4rk.cleaner.core.utils.extensions.partialMd5
 import com.d4rk.cleaner.core.utils.helpers.DirectoryScanner
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -107,12 +109,10 @@ class ScannerRepositoryImpl(
         }
     }
 
-    override suspend fun getAllFiles(): Pair<List<File>, List<File>> {
-        val files: MutableList<File> = mutableListOf()
-        val emptyFolders: MutableList<File> = mutableListOf()
+    override fun getAllFiles(): Flow<File> = flow {
         val stack: ArrayDeque<File> = ArrayDeque()
         val root: File = Environment.getExternalStorageDirectory()
-        stack.addFirst(element = root)
+        stack.addFirst(root)
 
         val trashDir =
             File(application.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "Trash")
@@ -121,25 +121,18 @@ class ScannerRepositoryImpl(
             val currentFile: File = stack.removeFirst()
             if (currentFile.isDirectory) {
                 if (!currentFile.absolutePath.startsWith(trashDir.absolutePath)) {
-                    currentFile.listFiles()?.let { children ->
-                        if (children.isEmpty()) {
-                            emptyFolders.add(currentFile)
+                    currentFile.listFiles()?.forEach { child ->
+                        if (child.isDirectory) {
+                            stack.addLast(child)
                         } else {
-                            children.forEach { child ->
-                                if (child.isDirectory) {
-                                    stack.addLast(child)
-                                } else {
-                                    files.add(child)
-                                }
-                            }
+                            emit(child)
                         }
                     }
                 }
             } else {
-                files.add(currentFile)
+                emit(currentFile)
             }
         }
-        return Pair(files, emptyFolders)
     }
 
     override suspend fun getTrashFiles(): List<File> {
@@ -320,24 +313,20 @@ class ScannerRepositoryImpl(
         }
     }
 
-    override suspend fun getEmptyFolders(): List<File> {
-        return withContext(Dispatchers.IO) {
-            val emptyFolders = mutableListOf<File>()
-            val stack: ArrayDeque<File> = ArrayDeque()
-            val root = Environment.getExternalStorageDirectory()
-            stack.addFirst(root)
-            while (stack.isNotEmpty()) {
-                val dir = stack.removeFirst()
-                if (dir.isDirectory && !dir.absolutePath.startsWith(trashDir.absolutePath)) {
-                    val children = dir.listFiles()
-                    if (children == null || children.isEmpty()) {
-                        emptyFolders.add(dir)
-                    } else {
-                        children.filter { it.isDirectory }.forEach { stack.addLast(it) }
-                    }
+    override fun getEmptyFolders(): Flow<File> = flow {
+        val stack: ArrayDeque<File> = ArrayDeque()
+        val root = Environment.getExternalStorageDirectory()
+        stack.addFirst(root)
+        while (stack.isNotEmpty()) {
+            val dir = stack.removeFirst()
+            if (dir.isDirectory && !dir.absolutePath.startsWith(trashDir.absolutePath)) {
+                val children = dir.listFiles()
+                if (children == null || children.isEmpty()) {
+                    emit(dir)
+                } else {
+                    children.filter { it.isDirectory }.forEach { stack.addLast(it) }
                 }
             }
-            emptyFolders
         }
     }
 }
