@@ -279,15 +279,16 @@ class ScannerViewModel(
 
 
     private fun deleteFiles(files: Set<FileEntry>, fromApkCleaner: Boolean = false) {
+        if (files.isEmpty()) {
+            postSnackbar(
+                message = UiTextHelper.StringResource(R.string.no_files_selected_to_delete),
+                isError = false
+            )
+            return
+        }
+        if (fromApkCleaner) _cleaningApks.value = true
+
         launch(context = dispatchers.io) {
-            if (files.isEmpty()) {
-                postSnackbar(
-                    message = UiTextHelper.StringResource(R.string.no_files_selected_to_delete),
-                    isError = false
-                )
-                return@launch
-            }
-            if (fromApkCleaner) _cleaningApks.value = true
             _uiState.update { state: UiStateScreen<UiScannerModel> ->
                 val currentData: UiScannerModel = state.data ?: UiScannerModel()
                 state.copy(
