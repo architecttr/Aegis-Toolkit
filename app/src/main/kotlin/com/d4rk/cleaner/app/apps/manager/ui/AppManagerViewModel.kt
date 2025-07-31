@@ -326,10 +326,6 @@ class AppManagerViewModel(
         }
     }
 
-    fun getLastUsedTime(packageName: String): Long? {
-        return _uiState.value.data?.appUsageStats?.get(packageName)
-    }
-
     private fun postSnackbar(message: UiTextHelper, isError: Boolean) {
         screenState.showSnackbar(
             snackbar = UiSnackbar(

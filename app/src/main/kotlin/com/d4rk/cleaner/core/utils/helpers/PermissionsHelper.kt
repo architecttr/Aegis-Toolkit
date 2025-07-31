@@ -139,7 +139,7 @@ object PermissionsHelper {
         return readGranted && writeGranted
     }
 
-    fun requestContactsPermissions(activity: Activity) {
+    fun requestContactsPermissions(activity: Activity) { // FIXME: Function "requestContactsPermissions" is never used
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(

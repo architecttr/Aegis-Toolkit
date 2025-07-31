@@ -189,7 +189,7 @@ class ContactsCleanerViewModel(
             val groups = _uiState.value.data?.duplicates ?: emptyList()
             val selectedGroups = groups.mapNotNull { group ->
                 val contacts = group.contacts.filter { it.isSelected }
-                if (contacts.isNotEmpty()) contacts else null
+                contacts.ifEmpty { null }
             }
             if (selectedGroups.isEmpty()) return@launch
             val totalSelected = selectedGroups.sumOf { it.size }

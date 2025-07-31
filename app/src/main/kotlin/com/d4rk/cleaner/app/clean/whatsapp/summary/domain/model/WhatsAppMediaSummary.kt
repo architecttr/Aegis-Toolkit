@@ -14,20 +14,6 @@ data class WhatsAppMediaSummary(
     val profilePhotos: DirectorySummary = DirectorySummary(),
     val formattedTotalSize: String = "0 B",
 ) {
-    val hasData: Boolean
-        get() = listOf(
-            images,
-            videos,
-            documents,
-            audios,
-            statuses,
-            voiceNotes,
-            videoNotes,
-            gifs,
-            wallpapers,
-            stickers,
-            profilePhotos,
-        ).any { it.count > 0 }
 
     val totalBytes: Long
         get() = listOf(

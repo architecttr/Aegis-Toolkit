@@ -95,7 +95,7 @@ class WhatsAppCleanerRepositoryImpl(private val application: Application) :
             val dirName =
                 WhatsAppMediaConstants.DIRECTORIES[type] ?: return@withContext emptyList<File>()
             val dir = File(base, dirName)
-            if (!dir.exists()) return@withContext emptyList<File>()
+            if (!dir.exists()) return@withContext emptyList()
             dir.walkTopDown()
                 .filter { it.isFile && it.name != ".nomedia" }
                 .drop(offset)

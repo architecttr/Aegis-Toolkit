@@ -14,9 +14,9 @@ object AutoCleanScheduler {
     private const val WORK_NAME = "auto_clean_work"
 
     fun schedule(context: Context, dataStore: DataStore) {
-        val frequency = runBlocking { dataStore.autoCleanFrequencyDays.first() }
+        val frequency = runBlocking { dataStore.autoCleanFrequencyDays.first() } // FIXME: RunBlocking builder called from coroutine
         val constraints = Constraints.Builder()
-            .setRequiresCharging(true)
+            .setRequiresCharging(true) // FIXME: Constraints may not be met for some devices
             .setRequiresDeviceIdle(true)
             .build()
         val request = PeriodicWorkRequestBuilder<AutoCleanWorker>(frequency.toLong(), TimeUnit.DAYS)

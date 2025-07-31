@@ -218,10 +218,4 @@ class ImageOptimizerViewModel(
         }
         return presets
     }
-
-    fun updateShowSaveSnackbar(show: Boolean) {
-        viewModelScope.launch {
-            _uiState.emit(_uiState.value.copy(showSaveSnackbar = show))
-        }
-    }
 }

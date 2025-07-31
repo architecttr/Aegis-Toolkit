@@ -29,8 +29,6 @@ import com.d4rk.cleaner.R
  * This composable displays a filter chip labeled "Select All". When tapped, it toggles the
  * selection state and invokes the `onCheckedChange` callback.
  *
- * @param checked A boolean value indicating whether all items are currently selected.
- * @param onCheckedChange A callback function that is invoked when the user taps the chip to change the selection state.
  */
 @Composable
 fun SelectAllComposable(

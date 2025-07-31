@@ -42,8 +42,6 @@ import com.d4rk.cleaner.app.clean.memory.domain.data.model.StorageInfo
  * It also shows storage usage information (used/total) in gigabytes (GB).
  *
  * @param progress The progress value as a float, representing the completion percentage of the progress indicator.
- * @param storageUsed The amount of storage used, formatted as a string (e.g., "2.5 GB").
- * @param storageTotal The total amount of storage, formatted as a string (e.g., "10 GB").
  * @param modifier The modifier for styling and layout customization.
  */
 @Composable

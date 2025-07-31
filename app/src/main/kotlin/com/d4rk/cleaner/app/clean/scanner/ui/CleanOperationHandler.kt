@@ -18,16 +18,15 @@ import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import com.d4rk.cleaner.app.clean.scanner.services.FileOperationService
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
