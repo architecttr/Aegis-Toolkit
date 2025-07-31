@@ -139,7 +139,17 @@ object PermissionsHelper {
         return readGranted && writeGranted
     }
 
-    fun requestContactsPermissions(activity: Activity) { // FIXME: Function "requestContactsPermissions" is never used
+    fun shouldShowContactsPermissionRationale(activity: Activity): Boolean {
+        return ActivityCompat.shouldShowRequestPermissionRationale(
+            activity,
+            Manifest.permission.READ_CONTACTS
+        ) || ActivityCompat.shouldShowRequestPermissionRationale(
+            activity,
+            Manifest.permission.WRITE_CONTACTS
+        )
+    }
+
+    fun requestContactsPermissions(activity: Activity) {
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(
@@ -148,5 +158,13 @@ object PermissionsHelper {
             ),
             AppPermissionsConstants.REQUEST_CODE_CONTACTS_PERMISSIONS
         )
+    }
+
+    fun openAppSettings(activity: Activity) {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", activity.packageName, null)
+        )
+        activity.startActivity(intent)
     }
 }

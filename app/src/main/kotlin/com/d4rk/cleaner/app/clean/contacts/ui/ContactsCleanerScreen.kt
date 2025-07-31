@@ -2,13 +2,8 @@ package com.d4rk.cleaner.app.clean.contacts.ui
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import android.view.SoundEffectConstants
 import android.view.View
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
@@ -76,7 +71,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ads.AdsConfig
 import com.d4rk.android.libs.apptoolkit.core.ui.components.ads.AdBanner
@@ -105,13 +99,6 @@ import org.koin.core.qualifier.named
 private enum class ContactsPermissionState { CHECKING, GRANTED, RATIONALE, DENIED }
 private enum class SelectionState { SINGLE, SAME_GROUP, MULTIPLE_GROUPS }
 
-private fun openAppSettings(activity: Activity) {
-    val intent = Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", activity.packageName, null)
-    )
-    activity.startActivity(intent)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,45 +113,25 @@ fun ContactsCleanerScreen(activity: Activity) {
 
     val bottomBarAdConfig: AdsConfig = koinInject(qualifier = named(name = "full_banner"))
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { result ->
-        val granted = result.values.all { it }
-        permissionState = if (granted) {
-            ContactsPermissionState.GRANTED
-        } else {
-            val showRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.READ_CONTACTS
-            ) || ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.WRITE_CONTACTS
-            )
-            if (showRationale) ContactsPermissionState.RATIONALE else ContactsPermissionState.DENIED
+    LaunchedEffect(Unit) {
+        when {
+            PermissionsHelper.hasContactsPermissions(context) -> {
+                permissionState = ContactsPermissionState.GRANTED
+            }
+            PermissionsHelper.shouldShowContactsPermissionRationale(activity) -> {
+                permissionState = ContactsPermissionState.RATIONALE
+            }
+            else -> {
+                PermissionsHelper.requestContactsPermissions(activity)
+            }
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (PermissionsHelper.hasContactsPermissions(context)) {
-            permissionState = ContactsPermissionState.GRANTED
-        } else {
-            val showRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.READ_CONTACTS
-            ) || ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.WRITE_CONTACTS
-            )
-            if (showRationale) {
-                permissionState = ContactsPermissionState.RATIONALE
-            } else {
-                permissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.READ_CONTACTS,
-                        Manifest.permission.WRITE_CONTACTS
-                    )
-                )
-            }
+    LifecycleEventsEffect(Lifecycle.Event.ON_RESUME) {
+        permissionState = when {
+            PermissionsHelper.hasContactsPermissions(context) -> ContactsPermissionState.GRANTED
+            PermissionsHelper.shouldShowContactsPermissionRationale(activity) -> ContactsPermissionState.RATIONALE
+            else -> ContactsPermissionState.DENIED
         }
     }
 
@@ -307,19 +274,14 @@ fun ContactsCleanerScreen(activity: Activity) {
 
             ContactsPermissionState.RATIONALE -> {
                 PermissionRationaleDialog(onRequest = {
-                    permissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.WRITE_CONTACTS
-                        )
-                    )
+                    PermissionsHelper.requestContactsPermissions(activity)
                 }) {
                     permissionState = ContactsPermissionState.DENIED
                 }
             }
 
             ContactsPermissionState.DENIED -> {
-                PermissionDeniedScreen(onOpenSettings = { openAppSettings(activity) })
+                PermissionDeniedScreen(onOpenSettings = { PermissionsHelper.openAppSettings(activity) })
             }
 
             ContactsPermissionState.CHECKING -> Unit
