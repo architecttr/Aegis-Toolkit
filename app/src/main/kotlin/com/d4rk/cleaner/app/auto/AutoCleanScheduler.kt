@@ -7,17 +7,15 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
 object AutoCleanScheduler {
     private const val WORK_NAME = "auto_clean_work"
 
-    fun schedule(context: Context, dataStore: DataStore) {
-        val frequency = runBlocking { dataStore.autoCleanFrequencyDays.first() } // FIXME: RunBlocking builder called from coroutine
+    suspend fun schedule(context: Context, dataStore: DataStore) {
+        val frequency = dataStore.autoCleanFrequencyDays.first()
         val constraints = Constraints.Builder()
-            .setRequiresCharging(true) // FIXME: Constraints may not be met for some devices
-            .setRequiresDeviceIdle(true)
+            .setRequiresBatteryNotLow(true)
             .build()
         val request = PeriodicWorkRequestBuilder<AutoCleanWorker>(frequency.toLong(), TimeUnit.DAYS)
             .setConstraints(constraints)
