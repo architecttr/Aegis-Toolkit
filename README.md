@@ -69,15 +69,12 @@ give the possibility to fix that issue.
 Thank you for choosing Cleaner! We hope you enjoy using our app as much as we enjoyed creating it
 for you!
 
-## Foreground service usage
+## File cleanup jobs
 
-File deletions and trash moves run in a foreground service so Android does not
-kill them mid‑way. The service is declared with the `fileManagement` type and
-invokes `ServiceCompat.startForeground()` with
-`ServiceInfo.FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT` to satisfy Android 14+
-checks. A persistent notification is visible whenever work is active.
-Any contributions that change this behavior must comply with the latest
-[Google Play foreground service policy](https://developer.android.com/guide/components/foreground-services#types).
+Local file deletions and trash moves now run using WorkManager jobs. The app
+shows a brief snackbar while cleanup is in progress and finishes work even if
+the user leaves the app. If future Play policies require a dedicated foreground
+service type for file management, revisit this approach.
 
 # License
 
