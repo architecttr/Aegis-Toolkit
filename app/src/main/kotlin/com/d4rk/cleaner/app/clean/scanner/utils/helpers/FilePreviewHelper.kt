@@ -426,6 +426,14 @@ object FilePreviewHelper {
                 }
                 val safe = pdfBitmap?.takeUnless { it.isRecycled }
                 if (safe != null) {
+                    DisposableEffect(safe) {
+                        onDispose {
+                            if (!safe.isRecycled) {
+                                android.util.Log.d(TAG, "Recycle bitmap: ${file.path}")
+                                safe.recycle()
+                            }
+                        }
+                    }
                     android.util.Log.d(TAG, "Draw bitmap: ${file.path}")
                     Image(
                         bitmap = safe.asImageBitmap(),
@@ -457,6 +465,14 @@ object FilePreviewHelper {
                 }
                 val safe = bitmap?.takeUnless { it.isRecycled }
                 if (safe != null) {
+                    DisposableEffect(safe) {
+                        onDispose {
+                            if (!safe.isRecycled) {
+                                android.util.Log.d(TAG, "Recycle bitmap: ${file.path}")
+                                safe.recycle()
+                            }
+                        }
+                    }
                     android.util.Log.d(TAG, "Draw bitmap: ${file.path}")
                     Image(
                         bitmap = safe.asImageBitmap(),
