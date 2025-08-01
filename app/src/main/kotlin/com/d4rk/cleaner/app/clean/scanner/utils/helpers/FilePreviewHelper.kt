@@ -1,6 +1,14 @@
 package com.d4rk.cleaner.app.clean.scanner.utils.helpers
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.media.MediaExtractor
+import android.media.MediaFormat
+import android.media.MediaMetadataRetriever
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +34,8 @@ import coil3.video.VideoFrameDecoder
 import coil3.video.videoFramePercent
 import com.d4rk.cleaner.R
 import com.google.common.io.Files.getFileExtension
+import java.nio.ByteBuffer
+import kotlin.math.abs
 import java.io.File
 
 /**
@@ -36,6 +46,67 @@ import java.io.File
  * Extend [PreviewType] when supporting new file formats.
  */
 object FilePreviewHelper {
+
+    private val bitmapCache: MutableMap<String, Bitmap?> = mutableMapOf()
+
+    private fun loadAlbumArt(file: File): Bitmap? {
+        return bitmapCache.getOrPut(file.path) {
+            runCatching {
+                val retriever = MediaMetadataRetriever()
+                retriever.setDataSource(file.path)
+                val art = retriever.embeddedPicture
+                retriever.release()
+                art?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+            }.getOrNull()
+        }
+    }
+
+    private fun generateWaveform(file: File, width: Int = 64, height: Int = 32): Bitmap? {
+        return runCatching {
+            val extractor = MediaExtractor()
+            extractor.setDataSource(file.path)
+            var trackIndex = 0
+            while (trackIndex < extractor.trackCount) {
+                val format = extractor.getTrackFormat(trackIndex)
+                val mime = format.getString(MediaFormat.KEY_MIME) ?: ""
+                if (mime.startsWith("audio/")) break else trackIndex++
+            }
+            if (trackIndex >= extractor.trackCount) {
+                extractor.release()
+                return null
+            }
+            extractor.selectTrack(trackIndex)
+            val format = extractor.getTrackFormat(trackIndex)
+            val maxInput = format.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE)
+            val buffer = ByteBuffer.allocate(maxInput)
+            val data = IntArray(width)
+            var i = 0
+            while (i < width) {
+                val size = extractor.readSampleData(buffer, 0)
+                if (size < 0) break
+                var sum = 0
+                for (b in 0 until size step 2) {
+                    sum += abs(buffer.getShort(b).toInt())
+                }
+                data[i] = if (size > 0) sum / (size / 2) else 0
+                extractor.advance()
+                i++
+            }
+            extractor.release()
+            val max = data.maxOrNull() ?: 0
+            if (max == 0) return null
+            val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bmp)
+            val paint = Paint().apply { color = Color.WHITE }
+            data.forEachIndexed { idx, amp ->
+                val ratio = amp.toFloat() / max
+                val barHeight = ratio * height
+                val x = idx.toFloat()
+                canvas.drawLine(x, height - barHeight, x, height.toFloat(), paint)
+            }
+            bmp
+        }.getOrNull()
+    }
 
     /** Represents the available preview strategies for files. */
     sealed class PreviewType {
@@ -159,11 +230,23 @@ object FilePreviewHelper {
             }
 
             PreviewType.Audio -> {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_audio_file),
-                    contentDescription = null,
-                    modifier = modifier.size(24.dp)
-                )
+                val bitmap = remember(file.path) {
+                    loadAlbumArt(file) ?: generateWaveform(file)
+                }
+                if (bitmap != null) {
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = file.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = modifier.fillMaxWidth()
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_audio_file),
+                        contentDescription = null,
+                        modifier = modifier.size(24.dp)
+                    )
+                }
             }
 
             PreviewType.Archive -> {
