@@ -358,6 +358,7 @@ fun DetailsScreenContent(
     files: List<File>
 ) {
     val context: Context = LocalContext.current
+    val view: View = LocalView.current
 
     Column(
         modifier = Modifier
@@ -375,27 +376,23 @@ fun DetailsScreenContent(
                 ) {
                     items(files) { file ->
                         val checked = file in selected
-                        Box(modifier = Modifier.padding(4.dp)) {
-                            FilePreviewCard(
-                                file = file, modifier = Modifier
-                                    .fillMaxWidth()
-                                    .pointerInput(file) {
-                                        detectTapGestures(
-                                            onLongPress = {
-                                                if (checked) selected.remove(file) else selected.add(
-                                                    file
-                                                )
-                                            },
-                                            onTap = { openFile(context, file) }
-                                        )
-                                    }
-                            )
-                            TriStateCheckbox(
-                                state = if (checked) ToggleableState.On else ToggleableState.Off,
-                                onClick = {
-                                    if (checked) selected.remove(file) else selected.add(file)
+                        Box(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .pointerInput(file, checked) {
+                                    detectTapGestures(onLongPress = {
+                                        if (checked) selected.remove(file) else selected.add(file)
+                                    })
+                                }
+                        ) {
+                            FileCard(
+                                file = file,
+                                isChecked = checked,
+                                onCheckedChange = { isChecked ->
+                                    if (isChecked) selected.add(file) else selected.remove(file)
                                 },
-                                modifier = Modifier.align(Alignment.TopEnd)
+                                view = view,
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
