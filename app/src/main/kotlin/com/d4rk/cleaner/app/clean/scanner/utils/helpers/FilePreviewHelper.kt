@@ -1,5 +1,6 @@
 package com.d4rk.cleaner.app.clean.scanner.utils.helpers
 
+import android.content.ComponentCallbacks2
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -68,7 +69,6 @@ import kotlin.math.min
  */
 object FilePreviewHelper {
 
-    private const val TAG = "FilePreviewHelper"
     /**
      * Maximum bytes to allocate when generating audio waveforms. This cap
      * prevents OutOfMemory errors that can be triggered by corrupted or
@@ -84,11 +84,9 @@ object FilePreviewHelper {
 
             override fun entryRemoved(evicted: Boolean, key: String, oldValue: Bitmap, newValue: Bitmap?) {
                 if (evicted) {
-                    android.util.Log.d(TAG, "Evict bitmap: $key")
                     if (!oldValue.isRecycled) {
                         recycleHandler.postDelayed({
                             if (!oldValue.isRecycled) {
-                                android.util.Log.d(TAG, "Recycling bitmap: $key")
                                 oldValue.recycle()
                             }
                         }, 2000)
@@ -183,10 +181,10 @@ object FilePreviewHelper {
      */
     fun onTrimMemory(level: Int) {
         when {
-            level >= android.content.ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
+            level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
                 bitmapCache.evictAll()
             }
-            level >= android.content.ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> {
+            level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> {
                 val newSize = bitmapCache.maxSize() / 2
                 bitmapCache.resize(newSize)
             }
@@ -195,7 +193,6 @@ object FilePreviewHelper {
 
     private suspend fun loadAlbumArt(file: File): Bitmap? = withContext(Dispatchers.IO) {
         bitmapCache.get(file.path)?.let { cached ->
-            android.util.Log.d(TAG, "Cache hit: ${file.path}")
             return@withContext cached.config?.let { cached.copy(it, true) } ?: cached
         }
         val bmp = runCatching {
@@ -206,7 +203,6 @@ object FilePreviewHelper {
             art?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         }.getOrNull()
         bmp?.let {
-            android.util.Log.d(TAG, "Cache add: ${file.path}")
             bitmapCache.put(file.path, it)
             return@withContext it.config?.let { config -> it.copy(config, true) } ?: it
         }
@@ -235,12 +231,6 @@ object FilePreviewHelper {
                 64 * 1024
             }
             val maxInput = min(reported, MAX_WAVEFORM_BYTES)
-            if (reported > MAX_WAVEFORM_BYTES) {
-                android.util.Log.w(
-                    TAG,
-                    "Waveform buffer capped at $MAX_WAVEFORM_BYTES bytes (reported $reported)"
-                )
-            }
             val buffer = ByteBuffer.allocate(maxInput)
             val data = IntArray(width)
             var i = 0
@@ -447,12 +437,10 @@ object FilePreviewHelper {
                     DisposableEffect(safe) {
                         onDispose {
                             if (!safe.isRecycled) {
-                                android.util.Log.d(TAG, "Recycle bitmap: ${file.path}")
                                 safe.recycle()
                             }
                         }
                     }
-                    android.util.Log.d(TAG, "Draw bitmap: ${file.path}")
                     Image(
                         bitmap = safe.asImageBitmap(),
                         contentDescription = file.name,
@@ -460,7 +448,6 @@ object FilePreviewHelper {
                         modifier = modifier.fillMaxWidth()
                     )
                 } else {
-                    android.util.Log.w(TAG, "Fallback icon for recycled bitmap: ${file.path}")
                     Icon(
                         imageVector = Icons.Outlined.PictureAsPdf,
                         contentDescription = null,
@@ -486,12 +473,10 @@ object FilePreviewHelper {
                     DisposableEffect(safe) {
                         onDispose {
                             if (!safe.isRecycled) {
-                                android.util.Log.d(TAG, "Recycle bitmap: ${file.path}")
                                 safe.recycle()
                             }
                         }
                     }
-                    android.util.Log.d(TAG, "Draw bitmap: ${file.path}")
                     Image(
                         bitmap = safe.asImageBitmap(),
                         contentDescription = file.name,
@@ -499,7 +484,6 @@ object FilePreviewHelper {
                         modifier = modifier.fillMaxWidth()
                     )
                 } else {
-                    android.util.Log.w(TAG, "Fallback icon for recycled bitmap: ${file.path}")
                     Icon(
                         painter = painterResource(id = R.drawable.ic_audio_file),
                         contentDescription = null,

@@ -5,8 +5,6 @@
 - **New**: Introduced a link cleaner to remove tracking parameters from URLs before sharing.
 - **Minor**: Improved the UI of the Contacts Cleaner screen.
 - **Minor**: File previews are now faster and more reliable across all lists.
-- **Patch**: Waveform generation caps allocated buffer at 1 MB to avoid
-  crashes on malformed audio files.
 
 # Version 3.5.0:
 

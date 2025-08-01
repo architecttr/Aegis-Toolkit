@@ -33,3 +33,23 @@ bitmap that has already been recycled.
 The cache now listens for `onTrimMemory` callbacks via the `Cleaner` application
 class. When the system requests memory, cached bitmaps are either trimmed or
 fully cleared to avoid out-of-memory errors.
+
+## Bitmap ownership and caching
+
+`FilePreviewHelper` keeps one canonical copy of each preview in a bounded `LruCache`. Compose
+receives a temporary copy via Coil's `AsyncImage`. Never call `recycle()` on these bitmaps—Coil and
+the helper recycle them when evicted. Holding references after a composable leaves the screen can
+lead to drawing recycled bitmaps.
+
+### Ownership flow
+
+1. UI requests a preview.
+2. The helper loads or generates a bitmap and caches it.
+3. Coil delivers a copy to Compose for display.
+4. When the composable disposes, Coil releases the bitmap. Evicted cache entries are recycled
+   asynchronously.
+
+### Coil integration
+
+Preview decoding and memory trimming are delegated to Coil. Only when a preview cannot be decoded (
+for example, unreadable files) does the helper fall back to static icons.
