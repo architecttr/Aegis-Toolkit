@@ -371,7 +371,7 @@ object FilePreviewHelper {
                 Icon(
                     imageVector = Icons.Outlined.Folder,
                     contentDescription = null,
-                    modifier = modifier.size(48.dp)
+                    modifier = modifier.size(24.dp)
                 )
             }
 
@@ -415,7 +415,7 @@ object FilePreviewHelper {
                         }?.loadIcon(context.packageManager)
                     }
                 }
-                Box(modifier = modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                Box(modifier = modifier.size(24.dp), contentAlignment = Alignment.Center) {
                     IconLoadingPlaceholder(iconRes = R.drawable.ic_apk_document, modifier = Modifier.fillMaxSize())
                     icon?.let { loaded ->
                         AsyncImage(
@@ -451,7 +451,7 @@ object FilePreviewHelper {
                     Icon(
                         imageVector = Icons.Outlined.PictureAsPdf,
                         contentDescription = null,
-                        modifier = modifier.size(48.dp)
+                        modifier = modifier.size(24.dp)
                     )
                 }
             }
@@ -460,7 +460,7 @@ object FilePreviewHelper {
                 Icon(
                     imageVector = Icons.Outlined.Description,
                     contentDescription = null,
-                    modifier = modifier.size(48.dp)
+                    modifier = modifier.size(24.dp)
                 )
             }
 
@@ -487,7 +487,7 @@ object FilePreviewHelper {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_audio_file),
                         contentDescription = null,
-                        modifier = modifier.size(48.dp)
+                        modifier = modifier.size(24.dp)
                     )
                 }
             }
@@ -508,7 +508,7 @@ object FilePreviewHelper {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_unknown_document),
                         contentDescription = null,
-                        modifier = modifier.size(48.dp)
+                        modifier = modifier.size(24.dp)
                     )
                 }
             }
@@ -525,7 +525,7 @@ object FilePreviewHelper {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_archive_filter),
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(24.dp)
                     )
                     count?.let {
                         Text(
@@ -544,7 +544,7 @@ object FilePreviewHelper {
                 Icon(
                     painter = painterResource(id = icon),
                     contentDescription = null,
-                    modifier = modifier.size(48.dp)
+                    modifier = modifier.size(24.dp)
                 )
             }
         }
