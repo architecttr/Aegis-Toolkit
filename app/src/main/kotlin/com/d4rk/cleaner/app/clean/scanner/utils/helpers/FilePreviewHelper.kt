@@ -354,7 +354,7 @@ object FilePreviewHelper {
     @Composable
     fun Preview(file: File, modifier: Modifier = Modifier) {
         val context = LocalContext.current
-        val type = remember(file.path) { getPreviewType(file) }
+        val type = getPreviewType(file)
         val imageLoader = LocalContext.current.imageLoader
         when (type) {
             PreviewType.Directory -> {
