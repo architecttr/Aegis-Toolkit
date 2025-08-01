@@ -91,6 +91,25 @@ object FilePreviewHelper {
         }
     }
 
+    /**
+     * Respond to system memory pressure. Evicts all cached bitmaps when the
+     * process is in the background or the system is running critically low on
+     * memory. Under moderate pressure the cache size is halved.
+     */
+    fun onTrimMemory(level: Int) {
+        when {
+            level >= android.content.ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
+                android.util.Log.d(TAG, "onTrimMemory($level): evicting cache")
+                bitmapCache.evictAll()
+            }
+            level >= android.content.ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> {
+                val newSize = bitmapCache.maxSize() / 2
+                android.util.Log.d(TAG, "onTrimMemory($level): resizing cache to $newSize KB")
+                bitmapCache.resize(newSize)
+            }
+        }
+    }
+
     private suspend fun loadAlbumArt(file: File): Bitmap? = withContext(Dispatchers.IO) {
         bitmapCache.get(file.path)?.let { cached ->
             android.util.Log.d(TAG, "Cache hit: ${file.path}")
