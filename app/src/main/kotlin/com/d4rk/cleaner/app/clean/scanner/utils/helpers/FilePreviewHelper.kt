@@ -18,12 +18,15 @@ import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.PictureAsPdf
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -37,6 +40,7 @@ import com.google.common.io.Files.getFileExtension
 import java.nio.ByteBuffer
 import kotlin.math.abs
 import java.io.File
+import java.io.FileInputStream
 
 /**
  * Helper used for displaying file previews. All composables that need to render
@@ -108,6 +112,31 @@ object FilePreviewHelper {
         }.getOrNull()
     }
 
+    private fun isProbablyBinary(data: ByteArray): Boolean {
+        if (data.isEmpty()) return false
+        var nonPrintable = 0
+        for (b in data) {
+            val c = b.toInt() and 0xFF
+            if (c in 9..13 || c in 32..126) continue else nonPrintable++
+        }
+        return nonPrintable.toFloat() / data.size > 0.3f
+    }
+
+    private fun loadTextSnippet(file: File, lines: Int = 3, maxBytes: Int = 2048): String? {
+        if (file.length() > 1024 * 1024) return null
+        return runCatching {
+            FileInputStream(file).use { fis ->
+                val buffer = ByteArray(maxBytes)
+                val read = fis.read(buffer)
+                if (read <= 0) return@runCatching null
+                if (isProbablyBinary(buffer.copyOf(read))) return@runCatching null
+            }
+            file.bufferedReader().useLines { seq ->
+                seq.take(lines).joinToString("\n")
+            }
+        }.getOrNull()
+    }
+
     /** Represents the available preview strategies for files. */
     sealed class PreviewType {
         object Directory : PreviewType()
@@ -117,6 +146,7 @@ object FilePreviewHelper {
         object Pdf : PreviewType()
         object Office : PreviewType()
         object Audio : PreviewType()
+        object Text : PreviewType()
         object Archive : PreviewType()
         object Unknown : PreviewType()
     }
@@ -132,6 +162,7 @@ object FilePreviewHelper {
             ext == "pdf" -> PreviewType.Pdf
             ext in res.getStringArray(R.array.microsoft_office_extensions) -> PreviewType.Office
             ext in res.getStringArray(R.array.audio_extensions) -> PreviewType.Audio
+            ext in res.getStringArray(R.array.text_extensions) -> PreviewType.Text
             ext in res.getStringArray(R.array.archive_extensions) -> PreviewType.Archive
             else -> PreviewType.Unknown
         }
@@ -243,6 +274,25 @@ object FilePreviewHelper {
                 } else {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_audio_file),
+                        contentDescription = null,
+                        modifier = modifier.size(24.dp)
+                    )
+                }
+            }
+
+            PreviewType.Text -> {
+                val snippet = remember(file.path) { loadTextSnippet(file) }
+                if (snippet != null) {
+                    Text(
+                        text = snippet,
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = modifier
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_unknown_document),
                         contentDescription = null,
                         modifier = modifier.size(24.dp)
                     )
