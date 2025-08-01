@@ -4,10 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import androidx.core.graphics.createBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
-fun loadPdfThumbnail(file: File): Bitmap? {
-    return runCatching {
+suspend fun loadPdfThumbnail(file: File): Bitmap? = withContext(Dispatchers.IO) {
+    runCatching {
         val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
         val renderer = PdfRenderer(descriptor)
         val page = renderer.openPage(0)

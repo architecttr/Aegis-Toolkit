@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Launch
+import androidx.compose.material.icons.automirrored.outlined.Launch
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +52,7 @@ fun SystemStorageManagerCard(modifier: Modifier = Modifier, onOpen: () -> Unit) 
             }
             TonalIconButtonWithText(
                 label = stringResource(id = R.string.open_storage_manager),
-                icon = Icons.Outlined.Launch,
+                icon = Icons.AutoMirrored.Outlined.Launch,
                 onClick = onOpen,
                 modifier = Modifier.align(Alignment.End)
             )

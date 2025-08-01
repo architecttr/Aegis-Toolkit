@@ -7,8 +7,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaExtractor
+import android.media.MediaFormat.KEY_MAX_INPUT_SIZE
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
+import android.util.LruCache
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +25,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +45,8 @@ import coil3.video.VideoFrameDecoder
 import coil3.video.videoFramePercent
 import com.d4rk.cleaner.R
 import com.google.common.io.Files.getFileExtension
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.apache.commons.compress.archivers.ArchiveEntry
 import org.apache.commons.compress.archivers.ArchiveInputStream
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
@@ -61,22 +67,31 @@ import kotlin.math.abs
  */
 object FilePreviewHelper {
 
-    private val bitmapCache: MutableMap<String, Bitmap?> = mutableMapOf()
-
-    private fun loadAlbumArt(file: File): Bitmap? {
-        return bitmapCache.getOrPut(file.path) {
-            runCatching {
-                val retriever = MediaMetadataRetriever()
-                retriever.setDataSource(file.path)
-                val art = retriever.embeddedPicture
-                retriever.release()
-                art?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
-            }.getOrNull()
+    private val bitmapCache: LruCache<String, Bitmap> by lazy {
+        val cacheSizeKb = (Runtime.getRuntime().maxMemory() / 1024 / 8).toInt()
+        object : LruCache<String, Bitmap>(cacheSizeKb) {
+            override fun sizeOf(key: String, value: Bitmap): Int = value.byteCount / 1024
+            override fun entryRemoved(evicted: Boolean, key: String, oldValue: Bitmap, newValue: Bitmap?) {
+                if (evicted && !oldValue.isRecycled) oldValue.recycle()
+            }
         }
     }
 
-    private fun generateWaveform(file: File, width: Int = 64, height: Int = 32): Bitmap? {
-        return runCatching {
+    private suspend fun loadAlbumArt(file: File): Bitmap? = withContext(Dispatchers.IO) {
+        bitmapCache.get(file.path)?.let { return@withContext it }
+        val bmp = runCatching {
+            val retriever = MediaMetadataRetriever()
+            retriever.setDataSource(file.path)
+            val art = retriever.embeddedPicture
+            retriever.release()
+            art?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
+        }.getOrNull()
+        bmp?.let { bitmapCache.put(file.path, it) }
+        bmp
+    }
+
+    private suspend fun generateWaveform(file: File, width: Int = 64, height: Int = 32): Bitmap? = withContext(Dispatchers.IO) {
+        runCatching {
             val extractor = MediaExtractor()
             extractor.setDataSource(file.path)
             var trackIndex = 0
@@ -87,11 +102,11 @@ object FilePreviewHelper {
             }
             if (trackIndex >= extractor.trackCount) {
                 extractor.release()
-                return null
+                return@runCatching null
             }
             extractor.selectTrack(trackIndex)
             val format = extractor.getTrackFormat(trackIndex)
-            val maxInput = format.getInteger(MediaFormat.KEY_MAX_INPUT_SIZE)
+            val maxInput = if (format.containsKey(KEY_MAX_INPUT_SIZE)) format.getInteger(KEY_MAX_INPUT_SIZE) else 64 * 1024
             val buffer = ByteBuffer.allocate(maxInput)
             val data = IntArray(width)
             var i = 0
@@ -108,7 +123,7 @@ object FilePreviewHelper {
             }
             extractor.release()
             val max = data.maxOrNull() ?: 0
-            if (max == 0) return null
+            if (max == 0) return@runCatching null
             val bmp = createBitmap(width, height)
             val canvas = Canvas(bmp)
             val paint = Paint().apply { color = Color.WHITE }
@@ -132,9 +147,9 @@ object FilePreviewHelper {
         return nonPrintable.toFloat() / data.size > 0.3f
     }
 
-    private fun loadTextSnippet(file: File, lines: Int = 3, maxBytes: Int = 2048): String? {
-        if (file.length() > 1024 * 1024) return null
-        return runCatching {
+    private suspend fun loadTextSnippet(file: File, lines: Int = 3, maxBytes: Int = 2048): String? = withContext(Dispatchers.IO) {
+        if (file.length() > 1024 * 1024) return@withContext null
+        runCatching {
             FileInputStream(file).use { fis ->
                 val buffer = ByteArray(maxBytes)
                 val read = fis.read(buffer)
@@ -147,9 +162,9 @@ object FilePreviewHelper {
         }.getOrNull()
     }
 
-    private fun getArchiveEntryCount(file: File, maxEntries: Int = 10_000): Int? {
+    private suspend fun getArchiveEntryCount(file: File, maxEntries: Int = 10_000): Int? = withContext(Dispatchers.IO) {
         val ext = getFileExtension(file.name).lowercase()
-        return runCatching {
+        runCatching {
             when (ext) {
                 "zip" -> ZipFile(file).use { zip ->
                     var count = 0
@@ -261,14 +276,13 @@ object FilePreviewHelper {
             }
 
             PreviewType.Apk -> {
-                val icon = remember(file.path) {
-                    context.packageManager.getPackageArchiveInfo(
-                        file.path,
-                        0
-                    )?.applicationInfo?.apply {
-                        sourceDir = file.path
-                        publicSourceDir = file.path
-                    }?.loadIcon(context.packageManager)
+                val icon by produceState<android.graphics.drawable.Drawable?>(initialValue = null, file.path) {
+                    value = withContext(Dispatchers.IO) {
+                        context.packageManager.getPackageArchiveInfo(file.path, 0)?.applicationInfo?.apply {
+                            sourceDir = file.path
+                            publicSourceDir = file.path
+                        }?.loadIcon(context.packageManager)
+                    }
                 }
                 if (icon != null) {
                     AsyncImage(
@@ -286,10 +300,12 @@ object FilePreviewHelper {
             }
 
             PreviewType.Pdf -> {
-                val pdfBitmap = remember(file) { loadPdfThumbnail(file) }
+                val pdfBitmap by produceState<Bitmap?>(initialValue = null, file.path) {
+                    value = loadPdfThumbnail(file)
+                }
                 if (pdfBitmap != null) {
                     Image(
-                        bitmap = pdfBitmap.asImageBitmap(),
+                        bitmap = pdfBitmap!!.asImageBitmap(),
                         contentDescription = file.name,
                         contentScale = ContentScale.FillWidth,
                         modifier = modifier.fillMaxWidth()
@@ -312,12 +328,12 @@ object FilePreviewHelper {
             }
 
             PreviewType.Audio -> {
-                val bitmap = remember(file.path) {
-                    loadAlbumArt(file) ?: generateWaveform(file)
+                val bitmap by produceState<Bitmap?>(initialValue = null, file.path) {
+                    value = loadAlbumArt(file) ?: generateWaveform(file)
                 }
                 if (bitmap != null) {
                     Image(
-                        bitmap = bitmap.asImageBitmap(),
+                        bitmap = bitmap!!.asImageBitmap(),
                         contentDescription = file.name,
                         contentScale = ContentScale.Crop,
                         modifier = modifier.fillMaxWidth()
@@ -332,10 +348,12 @@ object FilePreviewHelper {
             }
 
             PreviewType.Text -> {
-                val snippet = remember(file.path) { loadTextSnippet(file) }
+                val snippet by produceState<String?>(initialValue = null, file.path) {
+                    value = loadTextSnippet(file)
+                }
                 if (snippet != null) {
                     Text(
-                        text = snippet,
+                        text = snippet!!,
                         style = MaterialTheme.typography.labelSmall,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
@@ -351,7 +369,9 @@ object FilePreviewHelper {
             }
 
             PreviewType.Archive -> {
-                val count = remember(file.path) { getArchiveEntryCount(file) }
+                val count by produceState<Int?>(initialValue = null, file.path) {
+                    value = getArchiveEntryCount(file)
+                }
                 val extLabel = remember(file.name) { getFileExtension(file.name).uppercase() }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
