@@ -24,10 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.IconButton
 import com.d4rk.android.libs.apptoolkit.core.ui.components.dropdown.CommonDropdownMenuItem
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
@@ -35,6 +33,7 @@ import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.apps.manager.domain.actions.AppManagerEvent
 import com.d4rk.cleaner.app.apps.manager.domain.data.model.AppManagerItem
 import com.d4rk.cleaner.app.apps.manager.ui.AppManagerViewModel
+import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
 import java.io.File
 
@@ -43,13 +42,6 @@ fun ApkItem(apkPath: String, viewModel: AppManagerViewModel, modifier: Modifier)
     val context: Context = LocalContext.current
     val apkFile = File(apkPath)
     var showMenu: Boolean by remember { mutableStateOf(value = false) }
-
-    val model = remember(apkPath) {
-        context.packageManager.getPackageArchiveInfo(
-            apkPath,
-            0
-        )?.applicationInfo?.loadIcon(context.packageManager)
-    }
 
     OutlinedCard(modifier = modifier) {
 
@@ -60,11 +52,9 @@ fun ApkItem(apkPath: String, viewModel: AppManagerViewModel, modifier: Modifier)
                 .clip(RoundedCornerShape(SizeConstants.LargeSize)),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = model,
-                contentDescription = null,
-                modifier = Modifier.size(48.dp),
-                contentScale = ContentScale.Fit
+            FilePreviewHelper.Preview(
+                file = apkFile,
+                modifier = Modifier.size(48.dp)
             )
             Column(
                 modifier = Modifier
