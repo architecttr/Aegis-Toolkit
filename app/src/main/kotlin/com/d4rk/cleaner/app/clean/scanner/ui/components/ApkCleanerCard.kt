@@ -31,12 +31,12 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.TonalIconButtonWithText
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.SmallVerticalSpacer
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.apps.manager.domain.data.model.ApkInfo
+import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
 import java.io.File
 
@@ -90,23 +90,11 @@ fun ApkCleanerCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     preview.forEach { apk ->
-                        val appInfo = remember(apk.path) {
-                            context.packageManager.getPackageArchiveInfo(
-                                apk.path,
-                                0
-                            )?.applicationInfo?.apply {
-                                sourceDir = apk.path
-                                publicSourceDir = apk.path
-                            }
-                        }
-                        val appName = appInfo?.loadLabel(context.packageManager)?.toString()
-                            ?: File(apk.path).name
-                        val icon = appInfo?.loadIcon(context.packageManager)
-
+                        val apkFile = File(apk.path)
                         ApkPreviewItem(
-                            name = appName,
-                            size = FileSizeFormatter.format(apk.size),
-                            icon = icon
+                            file = apkFile,
+                            name = apkFile.name,
+                            size = FileSizeFormatter.format(apk.size)
                         )
                     }
                     if (apkFiles.size > preview.size) {
@@ -146,14 +134,13 @@ fun ApkCleanerCard(
 }
 
 @Composable
-private fun ApkPreviewItem(name: String, size: String, icon: Any?) {
+private fun ApkPreviewItem(file: File, name: String, size: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(64.dp)
     ) {
-        AsyncImage(
-            model = icon,
-            contentDescription = null,
+        FilePreviewHelper.Preview(
+            file = file,
             modifier = Modifier.size(48.dp)
         )
         Text(
