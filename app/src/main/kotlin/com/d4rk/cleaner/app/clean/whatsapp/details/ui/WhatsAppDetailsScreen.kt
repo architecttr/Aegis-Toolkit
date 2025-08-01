@@ -405,7 +405,7 @@ fun DetailsScreenContent(
                     items(files) { file ->
                         val checked = file in selected
                         val previewType = remember(file.path) {
-                            FilePreviewHelper.getPreviewType(file, context)
+                            FilePreviewHelper.getPreviewType(file)
                         }
                         val isMedia = remember(previewType) {
                             previewType is FilePreviewHelper.PreviewType.Image ||

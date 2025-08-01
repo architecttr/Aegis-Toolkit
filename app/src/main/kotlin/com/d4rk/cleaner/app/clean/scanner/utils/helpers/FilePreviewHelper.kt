@@ -91,6 +91,84 @@ object FilePreviewHelper {
         }
     }
 
+    private var imageExtCache: Set<String>? = null
+    private var videoExtCache: Set<String>? = null
+    private var apkExtCache: Set<String>? = null
+    private var officeExtCache: Set<String>? = null
+    private var audioExtCache: Set<String>? = null
+    private var textExtCache: Set<String>? = null
+    private var archiveExtCache: Set<String>? = null
+
+    private val imageExtensions: Set<String>
+        @Composable get() {
+            val cached = imageExtCache
+            if (cached != null) return cached
+            val res = LocalContext.current.resources
+            val set = res.getStringArray(R.array.image_extensions).toSet()
+            imageExtCache = set
+            return set
+        }
+
+    private val videoExtensions: Set<String>
+        @Composable get() {
+            val cached = videoExtCache
+            if (cached != null) return cached
+            val res = LocalContext.current.resources
+            val set = res.getStringArray(R.array.video_extensions).toSet()
+            videoExtCache = set
+            return set
+        }
+
+    private val apkExtensions: Set<String>
+        @Composable get() {
+            val cached = apkExtCache
+            if (cached != null) return cached
+            val res = LocalContext.current.resources
+            val set = res.getStringArray(R.array.apk_extensions).toSet()
+            apkExtCache = set
+            return set
+        }
+
+    private val officeExtensions: Set<String>
+        @Composable get() {
+            val cached = officeExtCache
+            if (cached != null) return cached
+            val res = LocalContext.current.resources
+            val set = res.getStringArray(R.array.microsoft_office_extensions).toSet()
+            officeExtCache = set
+            return set
+        }
+
+    private val audioExtensions: Set<String>
+        @Composable get() {
+            val cached = audioExtCache
+            if (cached != null) return cached
+            val res = LocalContext.current.resources
+            val set = res.getStringArray(R.array.audio_extensions).toSet()
+            audioExtCache = set
+            return set
+        }
+
+    private val textExtensions: Set<String>
+        @Composable get() {
+            val cached = textExtCache
+            if (cached != null) return cached
+            val res = LocalContext.current.resources
+            val set = res.getStringArray(R.array.text_extensions).toSet()
+            textExtCache = set
+            return set
+        }
+
+    private val archiveExtensions: Set<String>
+        @Composable get() {
+            val cached = archiveExtCache
+            if (cached != null) return cached
+            val res = LocalContext.current.resources
+            val set = res.getStringArray(R.array.archive_extensions).toSet()
+            archiveExtCache = set
+            return set
+        }
+
     /**
      * Respond to system memory pressure. Evicts all cached bitmaps when the
      * process is in the background or the system is running critically low on
@@ -252,19 +330,19 @@ object FilePreviewHelper {
         object Unknown : PreviewType()
     }
 
-    fun getPreviewType(file: File, context: Context): PreviewType {
+    @Composable
+    fun getPreviewType(file: File): PreviewType {
         if (file.isDirectory) return PreviewType.Directory
         val ext = getFileExtension(file.name).lowercase()
-        val res = context.resources
         return when (ext) {
-            in res.getStringArray(R.array.image_extensions) -> PreviewType.Image
-            in res.getStringArray(R.array.video_extensions) -> PreviewType.Video
-            in res.getStringArray(R.array.apk_extensions) -> PreviewType.Apk
+            in imageExtensions -> PreviewType.Image
+            in videoExtensions -> PreviewType.Video
+            in apkExtensions -> PreviewType.Apk
             "pdf" -> PreviewType.Pdf
-            in res.getStringArray(R.array.microsoft_office_extensions) -> PreviewType.Office
-            in res.getStringArray(R.array.audio_extensions) -> PreviewType.Audio
-            in res.getStringArray(R.array.text_extensions) -> PreviewType.Text
-            in res.getStringArray(R.array.archive_extensions) -> PreviewType.Archive
+            in officeExtensions -> PreviewType.Office
+            in audioExtensions -> PreviewType.Audio
+            in textExtensions -> PreviewType.Text
+            in archiveExtensions -> PreviewType.Archive
             else -> PreviewType.Unknown
         }
     }
@@ -276,7 +354,7 @@ object FilePreviewHelper {
     @Composable
     fun Preview(file: File, modifier: Modifier = Modifier) {
         val context = LocalContext.current
-        val type = remember(file.path) { getPreviewType(file, context) }
+        val type = remember(file.path) { getPreviewType(file) }
         val imageLoader = LocalContext.current.imageLoader
         when (type) {
             PreviewType.Directory -> {
