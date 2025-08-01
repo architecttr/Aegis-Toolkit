@@ -7,7 +7,7 @@ google-firebase-crashlytics = "3.0.5"
 coilVideoVersion = "3.3.0"
 compressor = "3.0.1"
 constraintlayoutCompose = "1.1.1"
-commonsCompress = "1.26.0"
+commonsCompress = "1.28.0"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }

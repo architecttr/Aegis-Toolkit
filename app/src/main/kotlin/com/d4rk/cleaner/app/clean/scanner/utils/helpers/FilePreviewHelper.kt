@@ -11,11 +11,10 @@ import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Folder
@@ -25,13 +24,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.createBitmap
 import coil3.compose.AsyncImage
 import coil3.imageLoader
 import coil3.request.ImageRequest
@@ -39,19 +40,21 @@ import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
 import coil3.video.videoFramePercent
 import com.d4rk.cleaner.R
+import com.google.common.io.Files.getFileExtension
+import org.apache.commons.compress.archivers.ArchiveEntry
+import org.apache.commons.compress.archivers.ArchiveInputStream
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.apache.commons.compress.archivers.sevenz.SevenZFile
-import java.util.zip.ZipFile
-import com.google.common.io.Files.getFileExtension
-import java.nio.ByteBuffer
-import kotlin.math.abs
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
-import java.io.BufferedInputStream
+import java.nio.ByteBuffer
+import java.util.zip.ZipFile
+import kotlin.math.abs
 
 /**
  * Helper used for displaying file previews. All composables that need to render
- * a file preview should delegate to [FilePreviewHelper.preview] so that the
+ * a file preview should delegate to [FilePreviewHelper.Preview] so that the
  * logic for determining how a file should be presented lives in a single place.
  *
  * Extend [PreviewType] when supporting new file formats.
@@ -106,7 +109,7 @@ object FilePreviewHelper {
             extractor.release()
             val max = data.maxOrNull() ?: 0
             if (max == 0) return null
-            val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val bmp = createBitmap(width, height)
             val canvas = Canvas(bmp)
             val paint = Paint().apply { color = Color.WHITE }
             data.forEachIndexed { idx, amp ->
@@ -158,17 +161,18 @@ object FilePreviewHelper {
                     if (count > maxEntries) null else count
                 }
 
-                "rar" -> FileInputStream(file).use { fis ->
-                    ArchiveStreamFactory().createArchiveInputStream("rar", BufferedInputStream(fis)).use { ais ->
-                        var count = 0
-                        while (ais.nextEntry != null && count <= maxEntries) {
-                            count++
+                "rar" -> FileInputStream(file).use { fis: FileInputStream ->
+                    ArchiveStreamFactory().createArchiveInputStream<ArchiveInputStream<out ArchiveEntry>>("rar", BufferedInputStream(fis))
+                        .use { ais ->
+                            var count = 0
+                            while (ais.nextEntry != null && count <= maxEntries) {
+                                count++
+                            }
+                            if (count > maxEntries) null else count
                         }
-                        if (count > maxEntries) null else count
-                    }
                 }
 
-                "7z", "7zip" -> SevenZFile(file).use { sevenZ ->
+                "7z", "7zip" -> SevenZFile.Builder().setFile(file).get().use { sevenZ ->
                     var count = 0
                     while (sevenZ.nextEntry != null && count <= maxEntries) {
                         count++
@@ -199,15 +203,15 @@ object FilePreviewHelper {
         if (file.isDirectory) return PreviewType.Directory
         val ext = getFileExtension(file.name).lowercase()
         val res = context.resources
-        return when {
-            ext in res.getStringArray(R.array.image_extensions) -> PreviewType.Image
-            ext in res.getStringArray(R.array.video_extensions) -> PreviewType.Video
-            ext in res.getStringArray(R.array.apk_extensions) -> PreviewType.Apk
-            ext == "pdf" -> PreviewType.Pdf
-            ext in res.getStringArray(R.array.microsoft_office_extensions) -> PreviewType.Office
-            ext in res.getStringArray(R.array.audio_extensions) -> PreviewType.Audio
-            ext in res.getStringArray(R.array.text_extensions) -> PreviewType.Text
-            ext in res.getStringArray(R.array.archive_extensions) -> PreviewType.Archive
+        return when (ext) {
+            in res.getStringArray(R.array.image_extensions) -> PreviewType.Image
+            in res.getStringArray(R.array.video_extensions) -> PreviewType.Video
+            in res.getStringArray(R.array.apk_extensions) -> PreviewType.Apk
+            "pdf" -> PreviewType.Pdf
+            in res.getStringArray(R.array.microsoft_office_extensions) -> PreviewType.Office
+            in res.getStringArray(R.array.audio_extensions) -> PreviewType.Audio
+            in res.getStringArray(R.array.text_extensions) -> PreviewType.Text
+            in res.getStringArray(R.array.archive_extensions) -> PreviewType.Archive
             else -> PreviewType.Unknown
         }
     }
@@ -258,7 +262,10 @@ object FilePreviewHelper {
 
             PreviewType.Apk -> {
                 val icon = remember(file.path) {
-                    context.packageManager.getPackageArchiveInfo(file.path, 0)?.applicationInfo?.apply {
+                    context.packageManager.getPackageArchiveInfo(
+                        file.path,
+                        0
+                    )?.applicationInfo?.apply {
                         sourceDir = file.path
                         publicSourceDir = file.path
                     }?.loadIcon(context.packageManager)

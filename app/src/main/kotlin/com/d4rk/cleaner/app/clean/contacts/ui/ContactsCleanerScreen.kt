@@ -1,12 +1,10 @@
 package com.d4rk.cleaner.app.clean.contacts.ui
 
-import android.Manifest
 import android.app.Activity
 import android.view.SoundEffectConstants
 import android.view.View
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -15,31 +13,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowLeft
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.SimCard
-import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Contacts
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
@@ -70,15 +55,12 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ads.AdsConfig
 import com.d4rk.android.libs.apptoolkit.core.ui.components.ads.AdBanner
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.AnimatedIconButtonDirection
-import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.IconButton
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.IconButtonWithText
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.TonalIconButtonWithText
-import com.d4rk.android.libs.apptoolkit.core.ui.components.dialogs.BasicAlertDialog
 import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.LoadingScreen
 import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.ScreenStateHandler
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.SmallHorizontalSpacer
@@ -86,9 +68,9 @@ import com.d4rk.android.libs.apptoolkit.core.ui.effects.LifecycleEventsEffect
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.contacts.domain.actions.ContactsCleanerEvent
-import com.d4rk.cleaner.app.clean.contacts.domain.data.model.DuplicateContactGroup
-import com.d4rk.cleaner.app.clean.contacts.domain.data.model.RawContactInfo
 import com.d4rk.cleaner.app.clean.contacts.domain.data.model.UiContactsCleanerModel
+import com.d4rk.cleaner.app.clean.contacts.ui.components.ContactGroupItem
+import com.d4rk.cleaner.app.clean.contacts.ui.components.dialogs.PermissionRationaleDialog
 import com.d4rk.cleaner.app.clean.contacts.ui.components.states.ContactsEmptyState
 import com.d4rk.cleaner.app.clean.contacts.ui.components.states.ContactsErrorState
 import com.d4rk.cleaner.core.utils.helpers.PermissionsHelper
@@ -351,170 +333,6 @@ private fun ContactsCleanerContent(
             ContactGroupItem(group = group, viewModel = viewModel)
         }
     }
-}
-
-@Composable
-private fun ContactGroupItem(
-    group: DuplicateContactGroup,
-    viewModel: ContactsCleanerViewModel
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-    val view : View = LocalView.current
-    val haptic = LocalHapticFeedback.current
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = SizeConstants.LargeSize)
-            .animateContentSize(
-                animationSpec = tween(durationMillis = 300)
-            ),
-        colors = CardDefaults.cardColors()
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        view.playSoundEffect(SoundEffectConstants.CLICK)
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        viewModel.onEvent(
-                            ContactsCleanerEvent.ToggleGroupSelection(group.contacts)
-                        )
-                    }
-                    .padding(SizeConstants.MediumSize),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val allSelected = group.contacts.all { it.isSelected }
-                val noneSelected = group.contacts.none { it.isSelected }
-                val toggleState = when {
-                    allSelected -> ToggleableState.On
-                    noneSelected -> ToggleableState.Off
-                    else -> ToggleableState.Indeterminate
-                }
-                TriStateCheckbox(
-                    state = toggleState,
-                    onClick = {
-                        view.playSoundEffect(SoundEffectConstants.CLICK)
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                        viewModel.onEvent(
-                            ContactsCleanerEvent.ToggleGroupSelection(group.contacts)
-                        )
-                    }
-                )
-                Column(modifier = Modifier.padding(start = SizeConstants.MediumSize)) {
-                    Text(text = group.contacts.firstOrNull()?.displayName ?: "")
-                    AssistChip(
-                        onClick = {},
-                        label = { Text(text = "${group.contacts.size} ${stringResource(id = R.string.duplicates)}") })
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    icon = if (isExpanded) Icons.Outlined.ArrowDropDown else Icons.AutoMirrored.Filled.ArrowLeft,
-                    onClick = {
-                        isExpanded = !isExpanded
-                    })
-            }
-
-            AnimatedVisibility(visible = isExpanded) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = SizeConstants.MediumSize),
-                    verticalArrangement = Arrangement.spacedBy(SizeConstants.SmallSize)
-                ) {
-                    group.contacts.forEach { contact ->
-                        ContactDetailRow(contact = contact, viewModel = viewModel)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun ContactDetailRow(contact: RawContactInfo, viewModel: ContactsCleanerViewModel) {
-    val haptic = LocalHapticFeedback.current
-    val view : View = LocalView.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                view.playSoundEffect(SoundEffectConstants.CLICK)
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                viewModel.onEvent(
-                    ContactsCleanerEvent.ToggleContactSelection(contact)
-                )
-            }
-            .padding(horizontal = SizeConstants.LargeSize),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = contact.isSelected,
-            onCheckedChange = {
-                view.playSoundEffect(SoundEffectConstants.CLICK)
-                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                viewModel.onEvent(
-                    ContactsCleanerEvent.ToggleContactSelection(contact)
-                )
-            }
-        )
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = SizeConstants.MediumSize)
-        ) {
-            Text(text = contact.displayName)
-            contact.phones.firstOrNull()?.let {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Phone,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    SmallHorizontalSpacer()
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            contact.emails.firstOrNull()?.let {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    SmallHorizontalSpacer()
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-        val icon = when {
-            contact.accountType?.contains("sim", true) == true -> Icons.Default.SimCard
-            contact.accountType?.contains("google", true) == true -> Icons.Default.AccountCircle
-            else -> Icons.Default.Person
-        }
-        Icon(imageVector = icon, contentDescription = null)
-    }
-}
-
-@Composable
-private fun PermissionRationaleDialog(onRequest: () -> Unit, onDismiss: () -> Unit) {
-    BasicAlertDialog(
-        onDismiss = onDismiss,
-        onConfirm = onRequest,
-        onCancel = onDismiss,
-        icon = Icons.Outlined.Contacts,
-        title = stringResource(id = R.string.contacts_cleaner_title),
-        confirmButtonText = stringResource(id = R.string.button_grant_permission),
-        content = { Text(text = stringResource(id = R.string.contacts_permission_rationale)) },
-    )
 }
 
 @Composable
