@@ -15,7 +15,8 @@ thumbnail when possible (images, videos, PDFs, APKs) or falls back to an icon. E
 Preview generation happens off the UI thread using Kotlin coroutines. Heavy work
 like parsing archives or decoding album art runs on a background dispatcher and
 updates Compose state once finished. While a preview is loading, a fallback icon
-is shown.
+is shown. Icons loaded through `FilePreviewHelper` must never appear blank – a
+loading placeholder is always displayed until the real icon is ready.
 
 Plain text files (`.txt`, `.log`, `.csv`, etc.) display the first three lines of
 content when readable. Large or binary files automatically fall back to the

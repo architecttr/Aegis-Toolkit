@@ -13,6 +13,7 @@ import android.media.MediaMetadataRetriever
 import android.util.LruCache
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,6 +46,7 @@ import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
 import coil3.video.videoFramePercent
 import com.d4rk.cleaner.R
+import com.d4rk.cleaner.app.apps.manager.ui.components.IconLoadingPlaceholder
 import com.google.common.io.Files.getFileExtension
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -413,18 +415,16 @@ object FilePreviewHelper {
                         }?.loadIcon(context.packageManager)
                     }
                 }
-                if (icon != null) {
-                    AsyncImage(
-                        model = icon,
-                        contentDescription = file.name,
-                        modifier = modifier.size(48.dp)
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_apk_document),
-                        contentDescription = null,
-                        modifier = modifier.size(48.dp)
-                    )
+                Box(modifier = modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                    IconLoadingPlaceholder(iconRes = R.drawable.ic_apk_document, modifier = Modifier.fillMaxSize())
+                    icon?.let { loaded ->
+                        AsyncImage(
+                            model = ImageRequest.Builder(context).data(loaded).crossfade(true).build(),
+                            contentDescription = file.name,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
                 }
             }
 
