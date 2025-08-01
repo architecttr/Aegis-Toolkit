@@ -75,3 +75,4 @@ __Privacy Policy__ [here](https://mihaicristiancondrea.github.io/profile/#privac
 __Terms of Service__ [here](https://mihaicristiancondrea.github.io/profile/#terms-of-service-end-user-software).
 
 ![license](https://imgur.com/QQlcEVT.png)
+See `docs/file_preview_helper.md` for information on the file preview API.
