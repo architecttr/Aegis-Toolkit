@@ -1,14 +1,13 @@
 package com.d4rk.cleaner.app.clean.scanner.utils.helpers
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.media.MediaExtractor
-import android.media.MediaFormat.KEY_MAX_INPUT_SIZE
 import android.media.MediaFormat
+import android.media.MediaFormat.KEY_MAX_INPUT_SIZE
 import android.media.MediaMetadataRetriever
 import android.util.LruCache
 import androidx.compose.foundation.Image
@@ -25,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
