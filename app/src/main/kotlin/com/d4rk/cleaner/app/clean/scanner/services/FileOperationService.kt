@@ -11,6 +11,19 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.d4rk.cleaner.R
 
+/**
+ * Foreground service used for long running file deletion and move operations.
+ *
+ * Google Play requires declaring the `fileManagement` foreground service type
+ * and the `FOREGROUND_SERVICE_FILE_MANAGEMENT` permission when manipulating
+ * local files. See
+ * https://developer.android.com/guide/components/foreground-services
+ * for policy details.
+ *
+ * A persistent notification is shown while work is active. If the policy ever
+ * changes to disallow foreground services for local-only file operations,
+ * migrate this logic to WorkManager.
+ */
 class FileOperationService : Service() {
 
     override fun onCreate() {
@@ -45,5 +58,8 @@ class FileOperationService : Service() {
     companion object {
         private const val CHANNEL_ID = "file_ops"
         private const val NOTIFICATION_ID = 2001
+        // TODO: Review Google Play FGS policy periodically to confirm that
+        // `fileManagement` remains an allowed foreground service type for
+        // local cleanup tasks. Migrate to WorkManager if requirements change.
     }
 }

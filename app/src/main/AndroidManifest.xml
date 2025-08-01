@@ -9,7 +9,8 @@
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- Required for foreground service that deletes or moves files -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_FILE_MANAGEMENT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
@@ -168,7 +169,7 @@
         <service
             android:name=".app.clean.scanner.services.FileOperationService"
             android:exported="false"
-            android:foregroundServiceType="dataSync"/>
+            android:foregroundServiceType="fileManagement"/>
 
 
         <service

@@ -69,6 +69,14 @@ give the possibility to fix that issue.
 Thank you for choosing Cleaner! We hope you enjoy using our app as much as we enjoyed creating it
 for you!
 
+## Foreground service usage
+
+File deletions and trash moves run in a foreground service so Android does not
+kill them mid‑way. The service is declared with the `fileManagement` type and
+shows a persistent notification whenever active. Any contributions that change
+this behavior must comply with the latest [Google Play
+foreground service policy](https://developer.android.com/guide/components/foreground-services#types).
+
 # License
 
 __Privacy Policy__ [here](https://mihaicristiancondrea.github.io/profile/#privacy-policy-end-user-software).
