@@ -69,6 +69,7 @@ import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraSmallHor
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FileListItem
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FilePreviewCard
+import com.d4rk.cleaner.app.clean.analyze.ui.components.FileCard
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.actions.WhatsAppDetailsEvent
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.model.UiWhatsAppDetailsModel
 import com.d4rk.cleaner.app.clean.whatsapp.details.ui.components.CustomTabLayout
