@@ -73,9 +73,11 @@ for you!
 
 File deletions and trash moves run in a foreground service so Android does not
 kill them mid‑way. The service is declared with the `fileManagement` type and
-shows a persistent notification whenever active. Any contributions that change
-this behavior must comply with the latest [Google Play
-foreground service policy](https://developer.android.com/guide/components/foreground-services#types).
+invokes `ServiceCompat.startForeground()` with
+`ServiceInfo.FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT` to satisfy Android 14+
+checks. A persistent notification is visible whenever work is active.
+Any contributions that change this behavior must comply with the latest
+[Google Play foreground service policy](https://developer.android.com/guide/components/foreground-services#types).
 
 # License
 

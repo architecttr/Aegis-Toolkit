@@ -5,10 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import com.d4rk.cleaner.R
 
 /**
@@ -35,7 +37,13 @@ class FileOperationService : Service() {
             .setContentText(getString(R.string.cleaning_in_progress))
             .setOngoing(true)
             .build()
-        startForeground(NOTIFICATION_ID, notification)
+        // Pass the file management type at runtime to satisfy Android 14+ checks
+        ServiceCompat.startForeground(
+            this,
+            NOTIFICATION_ID,
+            notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT
+        )
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
