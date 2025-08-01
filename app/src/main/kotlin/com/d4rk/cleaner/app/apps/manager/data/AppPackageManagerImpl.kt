@@ -2,6 +2,7 @@ package com.d4rk.cleaner.app.apps.manager.data
 
 import android.app.Application
 import android.content.Intent
+import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.content.FileProvider
@@ -32,7 +33,12 @@ class AppPackageManagerImpl(private val application: Application) : ApkInstaller
             )
             installIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            application.startActivity(installIntent)
+            val pm = application.packageManager
+            if (installIntent.resolveActivity(pm) != null) {
+                application.startActivity(installIntent)
+            } else {
+                throw ActivityNotFoundException()
+            }
         }.onSuccess {
             emit(value = DataState.Success(data = Unit))
         }.onFailure { throwable: Throwable ->
@@ -88,7 +94,12 @@ class AppPackageManagerImpl(private val application: Application) : ApkInstaller
             val packageUri: Uri = Uri.fromParts("package", packageName, null)
             appInfoIntent.data = packageUri
             appInfoIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            application.startActivity(appInfoIntent)
+            val pm = application.packageManager
+            if (appInfoIntent.resolveActivity(pm) != null) {
+                application.startActivity(appInfoIntent)
+            } else {
+                throw ActivityNotFoundException()
+            }
         }.onSuccess {
             emit(value = DataState.Success(data = Unit))
         }.onFailure { throwable: Throwable ->
@@ -101,7 +112,12 @@ class AppPackageManagerImpl(private val application: Application) : ApkInstaller
             val uri: Uri = Uri.fromParts("package", packageName, null)
             val intent = Intent(Intent.ACTION_DELETE, uri)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            application.startActivity(intent)
+            val pm = application.packageManager
+            if (intent.resolveActivity(pm) != null) {
+                application.startActivity(intent)
+            } else {
+                throw ActivityNotFoundException()
+            }
         }.onSuccess {
             emit(value = DataState.Success(Unit))
         }.onFailure { throwable: Throwable ->

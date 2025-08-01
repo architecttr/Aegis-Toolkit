@@ -19,7 +19,12 @@ class LinkCleanerActivity : AppCompatActivity() {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, cleaned)
             }
-            startActivity(Intent.createChooser(share, getString(R.string.share_via)))
+            val chooser = Intent.createChooser(share, getString(R.string.share_via))
+            if (share.resolveActivity(packageManager) != null) {
+                startActivity(chooser)
+            } else {
+                Toast.makeText(this, R.string.no_application_found, Toast.LENGTH_SHORT).show()
+            }
         } ?: run {
             Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
         }

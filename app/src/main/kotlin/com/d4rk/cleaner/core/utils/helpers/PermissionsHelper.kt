@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.widget.Toast
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -104,7 +105,11 @@ object PermissionsHelper {
             if (!isAccessGranted(activity)) {
                 val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                activity.startActivity(intent)
+                if (intent.resolveActivity(activity.packageManager) != null) {
+                    activity.startActivity(intent)
+                } else {
+                    Toast.makeText(activity, R.string.no_application_found, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -165,6 +170,10 @@ object PermissionsHelper {
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", activity.packageName, null)
         )
-        activity.startActivity(intent)
+        if (intent.resolveActivity(activity.packageManager) != null) {
+            activity.startActivity(intent)
+        } else {
+            Toast.makeText(activity, R.string.no_application_found, Toast.LENGTH_SHORT).show()
+        }
     }
 }
