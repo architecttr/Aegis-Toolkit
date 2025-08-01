@@ -19,6 +19,6 @@ suspend fun loadPdfThumbnail(file: File): Bitmap? = withContext(Dispatchers.IO) 
         page.close()
         renderer.close()
         descriptor.close()
-        bitmap
+        bitmap.copy(bitmap.config, true)
     }.getOrNull()
 }
