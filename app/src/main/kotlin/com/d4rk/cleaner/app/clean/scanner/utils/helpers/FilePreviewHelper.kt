@@ -67,18 +67,35 @@ import kotlin.math.abs
  */
 object FilePreviewHelper {
 
+    private const val TAG = "FilePreviewHelper"
+    private val recycleHandler by lazy { android.os.Handler(android.os.Looper.getMainLooper()) }
+
     private val bitmapCache: LruCache<String, Bitmap> by lazy {
         val cacheSizeKb = (Runtime.getRuntime().maxMemory() / 1024 / 8).toInt()
         object : LruCache<String, Bitmap>(cacheSizeKb) {
             override fun sizeOf(key: String, value: Bitmap): Int = value.byteCount / 1024
+
             override fun entryRemoved(evicted: Boolean, key: String, oldValue: Bitmap, newValue: Bitmap?) {
-                if (evicted && !oldValue.isRecycled) oldValue.recycle()
+                if (evicted) {
+                    android.util.Log.d(TAG, "Evict bitmap: $key")
+                    if (!oldValue.isRecycled) {
+                        recycleHandler.postDelayed({
+                            if (!oldValue.isRecycled) {
+                                android.util.Log.d(TAG, "Recycling bitmap: $key")
+                                oldValue.recycle()
+                            }
+                        }, 2000)
+                    }
+                }
             }
         }
     }
 
     private suspend fun loadAlbumArt(file: File): Bitmap? = withContext(Dispatchers.IO) {
-        bitmapCache.get(file.path)?.let { return@withContext it }
+        bitmapCache.get(file.path)?.let { cached ->
+            android.util.Log.d(TAG, "Cache hit: ${file.path}")
+            return@withContext cached.copy(cached.config, true)
+        }
         val bmp = runCatching {
             val retriever = MediaMetadataRetriever()
             retriever.setDataSource(file.path)
@@ -86,7 +103,11 @@ object FilePreviewHelper {
             retriever.release()
             art?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
         }.getOrNull()
-        bmp?.let { bitmapCache.put(file.path, it) }
+        bmp?.let {
+            android.util.Log.d(TAG, "Cache add: ${file.path}")
+            bitmapCache.put(file.path, it)
+            return@withContext it.copy(it.config, true)
+        }
         bmp
     }
 
@@ -134,7 +155,7 @@ object FilePreviewHelper {
                 canvas.drawLine(x, height - barHeight, x, height.toFloat(), paint)
             }
             bmp
-        }.getOrNull()
+        }.getOrNull()?.let { it.copy(it.config, true) }
     }
 
     private fun isProbablyBinary(data: ByteArray): Boolean {
@@ -303,14 +324,17 @@ object FilePreviewHelper {
                 val pdfBitmap by produceState<Bitmap?>(initialValue = null, file.path) {
                     value = loadPdfThumbnail(file)
                 }
-                if (pdfBitmap != null) {
+                val safe = pdfBitmap?.takeUnless { it.isRecycled }
+                if (safe != null) {
+                    android.util.Log.d(TAG, "Draw bitmap: ${file.path}")
                     Image(
-                        bitmap = pdfBitmap!!.asImageBitmap(),
+                        bitmap = safe.asImageBitmap(),
                         contentDescription = file.name,
                         contentScale = ContentScale.FillWidth,
                         modifier = modifier.fillMaxWidth()
                     )
                 } else {
+                    android.util.Log.w(TAG, "Fallback icon for recycled bitmap: ${file.path}")
                     Icon(
                         imageVector = Icons.Outlined.PictureAsPdf,
                         contentDescription = null,
@@ -331,14 +355,17 @@ object FilePreviewHelper {
                 val bitmap by produceState<Bitmap?>(initialValue = null, file.path) {
                     value = loadAlbumArt(file) ?: generateWaveform(file)
                 }
-                if (bitmap != null) {
+                val safe = bitmap?.takeUnless { it.isRecycled }
+                if (safe != null) {
+                    android.util.Log.d(TAG, "Draw bitmap: ${file.path}")
                     Image(
-                        bitmap = bitmap!!.asImageBitmap(),
+                        bitmap = safe.asImageBitmap(),
                         contentDescription = file.name,
                         contentScale = ContentScale.Crop,
                         modifier = modifier.fillMaxWidth()
                     )
                 } else {
+                    android.util.Log.w(TAG, "Fallback icon for recycled bitmap: ${file.path}")
                     Icon(
                         painter = painterResource(id = R.drawable.ic_audio_file),
                         contentDescription = null,
