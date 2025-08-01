@@ -14,6 +14,7 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.d4rk.cleaner.R
 import com.d4rk.cleaner.core.utils.constants.permissions.AppPermissionsConstants
 
 /**

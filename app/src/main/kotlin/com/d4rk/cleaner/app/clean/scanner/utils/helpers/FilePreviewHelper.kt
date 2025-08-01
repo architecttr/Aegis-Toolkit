@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.matchParentSize
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -417,12 +416,12 @@ object FilePreviewHelper {
                     }
                 }
                 Box(modifier = modifier.size(48.dp), contentAlignment = Alignment.Center) {
-                    IconLoadingPlaceholder(iconRes = R.drawable.ic_apk_document, modifier = Modifier.matchParentSize())
+                    IconLoadingPlaceholder(iconRes = R.drawable.ic_apk_document, modifier = Modifier.fillMaxSize())
                     icon?.let { loaded ->
                         AsyncImage(
                             model = ImageRequest.Builder(context).data(loaded).crossfade(true).build(),
                             contentDescription = file.name,
-                            modifier = Modifier.matchParentSize(),
+                            modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Fit
                         )
                     }
