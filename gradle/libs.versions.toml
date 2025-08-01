@@ -7,11 +7,13 @@ google-firebase-crashlytics = "3.0.5"
 coilVideoVersion = "3.3.0"
 compressor = "3.0.1"
 constraintlayoutCompose = "1.1.1"
+commonsCompress = "1.26.0"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 coil3-coil-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coilVideoVersion" }
 compressor = { module = "id.zelory:compressor", version.ref = "compressor" }
+apache-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

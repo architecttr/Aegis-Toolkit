@@ -10,9 +10,12 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Folder
@@ -36,11 +39,15 @@ import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
 import coil3.video.videoFramePercent
 import com.d4rk.cleaner.R
+import org.apache.commons.compress.archivers.ArchiveStreamFactory
+import org.apache.commons.compress.archivers.sevenz.SevenZFile
+import java.util.zip.ZipFile
 import com.google.common.io.Files.getFileExtension
 import java.nio.ByteBuffer
 import kotlin.math.abs
 import java.io.File
 import java.io.FileInputStream
+import java.io.BufferedInputStream
 
 /**
  * Helper used for displaying file previews. All composables that need to render
@@ -133,6 +140,43 @@ object FilePreviewHelper {
             }
             file.bufferedReader().useLines { seq ->
                 seq.take(lines).joinToString("\n")
+            }
+        }.getOrNull()
+    }
+
+    private fun getArchiveEntryCount(file: File, maxEntries: Int = 10_000): Int? {
+        val ext = getFileExtension(file.name).lowercase()
+        return runCatching {
+            when (ext) {
+                "zip" -> ZipFile(file).use { zip ->
+                    var count = 0
+                    val entries = zip.entries()
+                    while (entries.hasMoreElements() && count <= maxEntries) {
+                        entries.nextElement()
+                        count++
+                    }
+                    if (count > maxEntries) null else count
+                }
+
+                "rar" -> FileInputStream(file).use { fis ->
+                    ArchiveStreamFactory().createArchiveInputStream("rar", BufferedInputStream(fis)).use { ais ->
+                        var count = 0
+                        while (ais.nextEntry != null && count <= maxEntries) {
+                            count++
+                        }
+                        if (count > maxEntries) null else count
+                    }
+                }
+
+                "7z", "7zip" -> SevenZFile(file).use { sevenZ ->
+                    var count = 0
+                    while (sevenZ.nextEntry != null && count <= maxEntries) {
+                        count++
+                    }
+                    if (count > maxEntries) null else count
+                }
+
+                else -> null
             }
         }.getOrNull()
     }
@@ -300,11 +344,25 @@ object FilePreviewHelper {
             }
 
             PreviewType.Archive -> {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_archive_filter),
-                    contentDescription = null,
-                    modifier = modifier.size(24.dp)
-                )
+                val count = remember(file.path) { getArchiveEntryCount(file) }
+                val extLabel = remember(file.name) { getFileExtension(file.name).uppercase() }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = modifier
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_archive_filter),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    count?.let {
+                        Text(
+                            text = "$extLabel (${it} files)",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
             }
 
             PreviewType.Unknown -> {
