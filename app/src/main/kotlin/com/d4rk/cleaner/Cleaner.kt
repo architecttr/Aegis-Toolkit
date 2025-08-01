@@ -83,4 +83,10 @@ class Cleaner : BaseCoreManager(), SingletonImageLoader.Factory, DefaultLifecycl
             }
             .build()
     }
+
+    override fun onTrimMemory(level: Int) {
+        FilePreviewHelper.onTrimMemory(level)
+        SingletonImageLoader.getSafe(this)?.trimMemory(level)
+        super.onTrimMemory(level)
+    }
 }
