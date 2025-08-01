@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
@@ -38,7 +37,6 @@ fun FileCard(
     isOriginal: Boolean = false,
     view: View,
 ) {
-    val isFolder: Boolean = file.isDirectory
     val context: Context = LocalContext.current
 
     Card(
@@ -52,11 +50,7 @@ fun FileCard(
             },
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            if (isFolder) {
-                FilePreviewHelper.Preview(file = file, modifier = Modifier.align(Alignment.Center))
-            } else {
-                FilePreviewHelper.Preview(file = file, modifier = Modifier.fillMaxSize())
-            }
+            FilePreviewHelper.Preview(file = file, modifier = Modifier.align(Alignment.Center))
 
             Checkbox(checked = isChecked, onCheckedChange = { checked ->
                 view.playSoundEffect(SoundEffectConstants.CLICK)
