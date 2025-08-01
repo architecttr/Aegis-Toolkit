@@ -1,9 +1,10 @@
 # Version 3.5.1:
 
 - **New**: Added quick empty folder cleaner on the dashboard.
-- **New**: Added a shortcut to the System Storage Manager.
+- **New**: Added a shortcut to the System Storage Manager when is possible.
 - **New**: Introduced a link cleaner to remove tracking parameters from URLs before sharing.
 - **Minor**: Improved the UI of the Contacts Cleaner screen.
+- **Minor**: File previews are now faster and more reliable across all lists.
 
 # Version 3.5.0:
 

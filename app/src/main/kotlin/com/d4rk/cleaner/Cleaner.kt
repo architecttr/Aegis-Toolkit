@@ -15,6 +15,7 @@ import coil3.memory.MemoryCache
 import com.d4rk.android.libs.apptoolkit.data.core.BaseCoreManager
 import com.d4rk.android.libs.apptoolkit.data.core.ads.AdsCoreManager
 import com.d4rk.cleaner.app.auto.AutoCleanScheduler
+import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
 import com.d4rk.cleaner.app.notifications.work.CleanupReminderScheduler
 import com.d4rk.cleaner.app.notifications.work.StreakReminderScheduler
 import com.d4rk.cleaner.core.data.datastore.DataStore
@@ -86,7 +87,6 @@ class Cleaner : BaseCoreManager(), SingletonImageLoader.Factory, DefaultLifecycl
 
     override fun onTrimMemory(level: Int) {
         FilePreviewHelper.onTrimMemory(level)
-        SingletonImageLoader.getSafe(this)?.trimMemory(level)
         super.onTrimMemory(level)
     }
 }

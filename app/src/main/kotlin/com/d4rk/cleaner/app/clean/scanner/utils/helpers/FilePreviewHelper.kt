@@ -99,12 +99,10 @@ object FilePreviewHelper {
     fun onTrimMemory(level: Int) {
         when {
             level >= android.content.ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
-                android.util.Log.d(TAG, "onTrimMemory($level): evicting cache")
                 bitmapCache.evictAll()
             }
             level >= android.content.ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> {
                 val newSize = bitmapCache.maxSize() / 2
-                android.util.Log.d(TAG, "onTrimMemory($level): resizing cache to $newSize KB")
                 bitmapCache.resize(newSize)
             }
         }
@@ -113,7 +111,7 @@ object FilePreviewHelper {
     private suspend fun loadAlbumArt(file: File): Bitmap? = withContext(Dispatchers.IO) {
         bitmapCache.get(file.path)?.let { cached ->
             android.util.Log.d(TAG, "Cache hit: ${file.path}")
-            return@withContext cached.copy(cached.config, true)
+            return@withContext cached.config?.let { cached.copy(it, true) } ?: cached
         }
         val bmp = runCatching {
             val retriever = MediaMetadataRetriever()
@@ -125,9 +123,9 @@ object FilePreviewHelper {
         bmp?.let {
             android.util.Log.d(TAG, "Cache add: ${file.path}")
             bitmapCache.put(file.path, it)
-            return@withContext it.copy(it.config, true)
+            return@withContext it.config?.let { config -> it.copy(config, true) } ?: it
         }
-        bmp
+        null
     }
 
     private suspend fun generateWaveform(file: File, width: Int = 64, height: Int = 32): Bitmap? = withContext(Dispatchers.IO) {
@@ -174,7 +172,7 @@ object FilePreviewHelper {
                 canvas.drawLine(x, height - barHeight, x, height.toFloat(), paint)
             }
             bmp
-        }.getOrNull()?.let { it.copy(it.config, true) }
+        }.getOrNull()?.let { it.config?.let { config -> it.copy(config, true) } ?: it }
     }
 
     private fun isProbablyBinary(data: ByteArray): Boolean {
