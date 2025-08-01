@@ -302,10 +302,15 @@ object FilePreviewHelper {
             PreviewType.Video -> {
                 AsyncImage(
                     model = remember(file) {
-                        ImageRequest.Builder(context).data(file)
+                        ImageRequest.Builder(context)
+                            .data(file)
+                            .size(64)
                             .decoderFactory { result, options, _ ->
                                 VideoFrameDecoder(result.source, options)
-                            }.videoFramePercent(0.5).crossfade(true).build()
+                            }
+                            .videoFramePercent(0.5)
+                            .crossfade(true)
+                            .build()
                     },
                     contentDescription = file.name,
                     contentScale = ContentScale.Crop,
