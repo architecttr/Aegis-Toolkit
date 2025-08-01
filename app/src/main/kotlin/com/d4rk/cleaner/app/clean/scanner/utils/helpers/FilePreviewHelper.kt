@@ -57,6 +57,7 @@ import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.util.zip.ZipFile
 import kotlin.math.abs
+import kotlin.math.min
 
 /**
  * Helper used for displaying file previews. All composables that need to render
@@ -68,6 +69,12 @@ import kotlin.math.abs
 object FilePreviewHelper {
 
     private const val TAG = "FilePreviewHelper"
+    /**
+     * Maximum bytes to allocate when generating audio waveforms. This cap
+     * prevents OutOfMemory errors that can be triggered by corrupted or
+     * malicious files reporting extremely large input sizes.
+     */
+    private const val MAX_WAVEFORM_BYTES = 1 * 1024 * 1024 // 1 MB
     private val recycleHandler by lazy { android.os.Handler(android.os.Looper.getMainLooper()) }
 
     private val bitmapCache: LruCache<String, Bitmap> by lazy {
@@ -222,7 +229,18 @@ object FilePreviewHelper {
             }
             extractor.selectTrack(trackIndex)
             val format = extractor.getTrackFormat(trackIndex)
-            val maxInput = if (format.containsKey(KEY_MAX_INPUT_SIZE)) format.getInteger(KEY_MAX_INPUT_SIZE) else 64 * 1024
+            val reported = if (format.containsKey(KEY_MAX_INPUT_SIZE)) {
+                format.getInteger(KEY_MAX_INPUT_SIZE)
+            } else {
+                64 * 1024
+            }
+            val maxInput = min(reported, MAX_WAVEFORM_BYTES)
+            if (reported > MAX_WAVEFORM_BYTES) {
+                android.util.Log.w(
+                    TAG,
+                    "Waveform buffer capped at $MAX_WAVEFORM_BYTES bytes (reported $reported)"
+                )
+            }
             val buffer = ByteBuffer.allocate(maxInput)
             val data = IntArray(width)
             var i = 0
