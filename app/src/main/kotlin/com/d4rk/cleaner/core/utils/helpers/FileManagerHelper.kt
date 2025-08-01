@@ -1,6 +1,5 @@
 package com.d4rk.cleaner.core.utils.helpers
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -36,15 +35,17 @@ object FileManagerHelper {
             val mime = context.contentResolver.getType(uri) ?: "*/*"
             val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, mime)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            context.startActivity(intent)
-        }.onFailure { exception ->
-            when (exception) {
-                is ActivityNotFoundException -> Toast.makeText(
+            if (intent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(
                     context,
                     context.getString(R.string.no_application_found),
                     Toast.LENGTH_SHORT
                 ).show()
-
+            }
+        }.onFailure { exception ->
+            when (exception) {
                 is IllegalArgumentException -> Toast.makeText(
                     context,
                     context.getString(R.string.something_went_wrong),

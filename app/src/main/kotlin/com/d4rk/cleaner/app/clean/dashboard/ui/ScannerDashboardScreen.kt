@@ -2,6 +2,7 @@ package com.d4rk.cleaner.app.clean.dashboard.ui
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
@@ -528,7 +529,13 @@ fun ScannerDashboardScreen(
                             index = storageManagerIndex
                         )
                         .animateContentSize(),
-                    onOpen = { context.startActivity(storageManagerIntent) }
+                    onOpen = {
+                        if (storageManagerIntent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(storageManagerIntent)
+                        } else {
+                            Toast.makeText(context, R.string.no_application_found, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 )
             }
         }
