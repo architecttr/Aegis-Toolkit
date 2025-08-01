@@ -34,7 +34,6 @@ suspend fun loadPdfThumbnail(file: File): Bitmap? = withContext(Dispatchers.IO) 
             bitmap.recycle()
             resized
         } else bitmap
-
-        scaled.copy(scaled.config, true)
+        scaled.copy(scaled.config ?: Bitmap.Config.ARGB_8888, true)
     }.getOrNull()
 }
