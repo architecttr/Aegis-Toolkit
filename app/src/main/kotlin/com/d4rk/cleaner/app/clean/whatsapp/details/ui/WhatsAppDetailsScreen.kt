@@ -79,7 +79,7 @@ import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.UiWhatsAppCleane
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.WhatsappCleanerSummaryViewModel
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
 import com.d4rk.cleaner.app.clean.whatsapp.utils.helpers.openFile
-import com.google.common.io.Files.getFileExtension
+import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.qualifier.named
@@ -404,16 +404,12 @@ fun DetailsScreenContent(
                 LazyColumn(modifier = Modifier.weight(1f)) {
                     items(files) { file ->
                         val checked = file in selected
-                        val fileExtension = remember(file.name) { getFileExtension(file.name) }
-                        val imageExt = remember {
-                            context.resources.getStringArray(R.array.image_extensions).toList()
+                        val previewType = remember(file.path) {
+                            FilePreviewHelper.getPreviewType(file, context)
                         }
-                        val videoExt = remember {
-                            context.resources.getStringArray(R.array.video_extensions).toList()
-                        }
-                        val isMedia = remember(fileExtension) {
-                            imageExt.any { it.equals(fileExtension, ignoreCase = true) } ||
-                                    videoExt.any { it.equals(fileExtension, ignoreCase = true) }
+                        val isMedia = remember(previewType) {
+                            previewType is FilePreviewHelper.PreviewType.Image ||
+                                    previewType is FilePreviewHelper.PreviewType.Video
                         }
                         Row(
                             modifier = Modifier
