@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.d4rk.android.libs.apptoolkit.data.datastore.CommonDataStore
 import com.d4rk.cleaner.core.utils.constants.datastore.AppDataStoreConstants
 import kotlinx.coroutines.flow.Flow
@@ -81,6 +82,42 @@ class DataStore(val context: Context) : CommonDataStore(context = context) {
         intPreferencesKey(name = AppDataStoreConstants.DATA_STORE_CLEANUP_REMINDER_FREQUENCY_DAYS)
     val cleanupReminderFrequencyDays: Flow<Int> = dataStore.data.map { prefs ->
         prefs[reminderFrequencyKey] ?: 7
+    }
+
+    private val scannerCleanWorkIdKey =
+        stringPreferencesKey(AppDataStoreConstants.DATA_STORE_SCANNER_CLEAN_WORK_ID)
+    val scannerCleanWorkId: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[scannerCleanWorkIdKey]
+    }
+
+    suspend fun saveScannerCleanWorkId(id: String) {
+        dataStore.edit { prefs ->
+            prefs[scannerCleanWorkIdKey] = id
+        }
+    }
+
+    suspend fun clearScannerCleanWorkId() {
+        dataStore.edit { prefs ->
+            prefs.remove(scannerCleanWorkIdKey)
+        }
+    }
+
+    private val largeFilesCleanWorkIdKey =
+        stringPreferencesKey(AppDataStoreConstants.DATA_STORE_LARGE_FILES_CLEAN_WORK_ID)
+    val largeFilesCleanWorkId: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[largeFilesCleanWorkIdKey]
+    }
+
+    suspend fun saveLargeFilesCleanWorkId(id: String) {
+        dataStore.edit { prefs ->
+            prefs[largeFilesCleanWorkIdKey] = id
+        }
+    }
+
+    suspend fun clearLargeFilesCleanWorkId() {
+        dataStore.edit { prefs ->
+            prefs.remove(largeFilesCleanWorkIdKey)
+        }
     }
 
 

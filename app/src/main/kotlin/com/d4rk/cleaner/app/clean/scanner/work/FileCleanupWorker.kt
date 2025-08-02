@@ -101,6 +101,7 @@ class FileCleanupWorker(
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
                 }
                 notificationManager.cancel(NOTIFICATION_ID)
+                // In-process hint; UI should observe WorkInfo for reliable state.
                 CleaningEventBus.notifyCleaned(success = false)
                 Result.failure(
                     Data.Builder().putString(KEY_ERROR, result.error.toString()).build(),
@@ -113,6 +114,7 @@ class FileCleanupWorker(
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
                 }
                 notificationManager.cancel(NOTIFICATION_ID)
+                // In-process hint; UI should observe WorkInfo for reliable state.
                 Result.success()
             }
         }

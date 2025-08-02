@@ -38,4 +38,6 @@ object AppDataStoreConstants : DataStoreNamesConstants() {
     const val DATA_STORE_EMPTY_FOLDERS_HIDE_UNTIL = "empty_folders_hide_until"
     const val DATA_STORE_AUTO_CLEAN_ENABLED = "auto_clean_enabled"
     const val DATA_STORE_AUTO_CLEAN_FREQUENCY_DAYS = "auto_clean_frequency_days"
+    const val DATA_STORE_SCANNER_CLEAN_WORK_ID = "scanner_clean_work_id"
+    const val DATA_STORE_LARGE_FILES_CLEAN_WORK_ID = "large_files_clean_work_id"
 }
