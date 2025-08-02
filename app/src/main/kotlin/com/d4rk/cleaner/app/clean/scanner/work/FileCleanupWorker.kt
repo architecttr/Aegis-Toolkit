@@ -35,7 +35,9 @@ class FileCleanupWorker(
                 CleaningEventBus.notifyCleaned()
                 Result.success()
             }
-            is DataState.Error -> Result.failure(Data.Builder().putString(KEY_ERROR, result.error.message).build())
+            is DataState.Error -> Result.failure(
+                Data.Builder().putString(KEY_ERROR, result.error.toString()).build()
+            )
             else -> Result.success()
         }
     }
@@ -46,7 +48,9 @@ class FileCleanupWorker(
                 CleaningEventBus.notifyCleaned()
                 Result.success()
             }
-            is DataState.Error -> Result.failure(Data.Builder().putString(KEY_ERROR, result.error.message).build())
+            is DataState.Error -> Result.failure(
+                Data.Builder().putString(KEY_ERROR, result.error.toString()).build()
+            )
             else -> Result.success()
         }
     }
