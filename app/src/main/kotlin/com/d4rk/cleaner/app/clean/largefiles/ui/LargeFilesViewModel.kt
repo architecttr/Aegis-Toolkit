@@ -46,7 +46,15 @@ class LargeFilesViewModel(
         onEvent(LargeFilesEvent.LoadLargeFiles)
         launch(dispatchers.io) {
             dataStore.largeFilesCleanWorkId.first()?.let { id ->
-                observeWork(UUID.fromString(id))
+                val uuid = UUID.fromString(id)
+                val info = WorkManager.getInstance(application)
+                    .getWorkInfoByIdFlow(uuid)
+                    .first()
+                if (info == null || info.state.isFinished) {
+                    dataStore.clearLargeFilesCleanWorkId()
+                } else {
+                    observeWork(uuid)
+                }
             }
         }
     }
@@ -118,6 +126,24 @@ class LargeFilesViewModel(
                 )
                 return@launch
             }
+
+            val activeId = dataStore.largeFilesCleanWorkId.first()
+            if (activeId != null) {
+                val info = WorkManager.getInstance(application)
+                    .getWorkInfoByIdFlow(UUID.fromString(activeId))
+                    .first()
+                if (info != null && !info.state.isFinished) {
+                    sendAction(
+                        LargeFilesAction.ShowSnackbar(
+                            UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
+                        )
+                    )
+                    return@launch
+                } else {
+                    dataStore.clearLargeFilesCleanWorkId()
+                }
+            }
+
             val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
                 .setInputData(
                     workDataOf(
@@ -125,14 +151,27 @@ class LargeFilesViewModel(
                         FileCleanupWorker.KEY_PATHS to filePaths.toTypedArray()
                     )
                 ).build()
-            WorkManager.getInstance(application).enqueue(request)
-            dataStore.saveLargeFilesCleanWorkId(request.id.toString())
-            observeWork(request.id)
-            sendAction(
-                LargeFilesAction.ShowSnackbar(
-                    UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
+
+            try {
+                WorkManager.getInstance(application).enqueue(request)
+                dataStore.saveLargeFilesCleanWorkId(request.id.toString())
+                observeWork(request.id)
+                sendAction(
+                    LargeFilesAction.ShowSnackbar(
+                        UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                WorkManager.getInstance(application).cancelWorkById(request.id)
+                sendAction(
+                    LargeFilesAction.ShowSnackbar(
+                        UiSnackbar(
+                            message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
+                            isError = true
+                        )
+                    )
+                )
+            }
         }
     }
     private fun observeWork(id: UUID) {
@@ -169,7 +208,10 @@ class LargeFilesViewModel(
                         dataStore.clearLargeFilesCleanWorkId()
                         _uiState.update { it.copy(screenState = ScreenState.Success()) }
                     }
-                    null -> Unit
+                    null -> {
+                        dataStore.clearLargeFilesCleanWorkId()
+                        _uiState.update { it.copy(screenState = ScreenState.Success()) }
+                    }
                 }
             }
         }

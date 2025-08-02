@@ -51,6 +51,7 @@ class CleanOperationHandler(
     private val loadEmptyFoldersPreview: () -> Unit, // FIXME: Property "loadEmptyFoldersPreview" is never used
     private val postSnackbar: (UiTextHelper, Boolean) -> Unit,
     private val updateTrashSize: (Long) -> Unit,
+    private val onWorkEnqueued: (UUID) -> Unit,
 ) {
     private val resultDelayMs = 3600L // FIXME: Property "resultDelayMs" is never used
 
@@ -155,21 +156,21 @@ class CleanOperationHandler(
         }
     }
 
-    fun cleanFiles(screenData: UiScannerModel?): UUID? {
+    fun cleanFiles(screenData: UiScannerModel?) {
         if (uiState.value.data?.analyzeState?.state != CleaningState.ReadyToClean) {
-            return null
+            return
         }
 
         val currentScreenData: UiScannerModel = screenData ?: run {
             postSnackbar(UiTextHelper.StringResource(R.string.data_not_available), true)
-            return null
+            return
         }
 
         val selectedPaths: Set<String> = currentScreenData.analyzeState.selectedFiles
         val filesToDelete: Set<File> = selectedPaths.map { File(it) }.toSet()
         if (filesToDelete.isEmpty()) {
             postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_to_clean), false)
-            return null
+            return
         }
 
         val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
@@ -181,6 +182,19 @@ class CleanOperationHandler(
             ).build()
 
         scope.launch(dispatchers.io) {
+            val activeId = dataStore.scannerCleanWorkId.first()
+            if (activeId != null) {
+                val info = WorkManager.getInstance(application)
+                    .getWorkInfoByIdFlow(UUID.fromString(activeId))
+                    .first()
+                if (info != null && !info.state.isFinished) {
+                    postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+                    return@launch
+                } else {
+                    dataStore.clearScannerCleanWorkId()
+                }
+            }
+
             uiState.update { state ->
                 val currentData = state.data ?: UiScannerModel()
                 state.copy(
@@ -192,18 +206,22 @@ class CleanOperationHandler(
                     )
                 )
             }
-            WorkManager.getInstance(application).enqueue(request)
-            dataStore.saveScannerCleanWorkId(request.id.toString())
-            postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+            try {
+                WorkManager.getInstance(application).enqueue(request)
+                dataStore.saveScannerCleanWorkId(request.id.toString())
+                onWorkEnqueued(request.id)
+                postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+            } catch (e: Exception) {
+                WorkManager.getInstance(application).cancelWorkById(request.id)
+                postSnackbar(UiTextHelper.StringResource(R.string.failed_to_delete_files), true)
+            }
         }
-
-        return request.id
     }
 
-    fun moveToTrash(files: List<FileEntry>): UUID? {
+    fun moveToTrash(files: List<FileEntry>) {
         if (files.isEmpty()) {
             postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash), false)
-            return null
+            return
         }
 
         val paths = files.map { it.path }
@@ -217,6 +235,19 @@ class CleanOperationHandler(
             ).build()
 
         scope.launch(dispatchers.io) {
+            val activeId = dataStore.scannerCleanWorkId.first()
+            if (activeId != null) {
+                val info = WorkManager.getInstance(application)
+                    .getWorkInfoByIdFlow(UUID.fromString(activeId))
+                    .first()
+                if (info != null && !info.state.isFinished) {
+                    postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+                    return@launch
+                } else {
+                    dataStore.clearScannerCleanWorkId()
+                }
+            }
+
             uiState.update { state: UiStateScreen<UiScannerModel> ->
                 val currentData: UiScannerModel = state.data ?: UiScannerModel()
                 state.copy(
@@ -229,12 +260,16 @@ class CleanOperationHandler(
                 )
             }
 
-            WorkManager.getInstance(application).enqueue(request)
-            dataStore.saveScannerCleanWorkId(request.id.toString())
-            postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
-            updateTrashSize(totalFileSizeToMove)
+            try {
+                WorkManager.getInstance(application).enqueue(request)
+                dataStore.saveScannerCleanWorkId(request.id.toString())
+                onWorkEnqueued(request.id)
+                postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+                updateTrashSize(totalFileSizeToMove)
+            } catch (e: Exception) {
+                WorkManager.getInstance(application).cancelWorkById(request.id)
+                postSnackbar(UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash), true)
+            }
         }
-
-        return request.id
     }
 }

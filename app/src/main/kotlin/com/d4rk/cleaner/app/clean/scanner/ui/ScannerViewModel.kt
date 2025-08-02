@@ -132,7 +132,8 @@ class ScannerViewModel(
         loadClipboardData = { clipboardHandler.refresh() },
         loadEmptyFoldersPreview = ::loadEmptyFoldersPreview,
         postSnackbar = ::postSnackbar,
-        updateTrashSize = ::updateTrashSize
+        updateTrashSize = ::updateTrashSize,
+        onWorkEnqueued = ::observeCleaningWork
     )
 
     private var activeCleanWorkObserver: Job? = null
@@ -149,7 +150,15 @@ class ScannerViewModel(
         loadEmptyFoldersHideUntil()
         launch(dispatchers.io) {
             dataStore.scannerCleanWorkId.first()?.let { id ->
-                observeCleaningWork(UUID.fromString(id))
+                val uuid = UUID.fromString(id)
+                val info = WorkManager.getInstance(application)
+                    .getWorkInfoByIdFlow(uuid)
+                    .first()
+                if (info == null || info.state.isFinished) {
+                    dataStore.clearScannerCleanWorkId()
+                } else {
+                    observeCleaningWork(uuid)
+                }
             }
         }
         launch(dispatchers.io) {
@@ -167,8 +176,7 @@ class ScannerViewModel(
             is ScannerEvent.RefreshData -> refreshData()
             is ScannerEvent.DeleteFiles -> deleteFiles(files = event.files)
             is ScannerEvent.MoveToTrash -> {
-                val id = cleanOperationHandler.moveToTrash(files = event.files)
-                id?.let { observeCleaningWork(it) }
+                cleanOperationHandler.moveToTrash(files = event.files)
             }
             is ScannerEvent.ToggleAnalyzeScreen -> toggleAnalyzeScreen(visible = event.visible)
             is ScannerEvent.OnFileSelectionChange -> onFileSelectionChange(
@@ -184,8 +192,7 @@ class ScannerViewModel(
             )
 
             is ScannerEvent.CleanFiles -> {
-                val id = cleanOperationHandler.cleanFiles(screenData)
-                id?.let { observeCleaningWork(it) }
+                cleanOperationHandler.cleanFiles(screenData)
             }
             is ScannerEvent.CleanWhatsAppFiles -> onCleanWhatsAppFiles()
             is ScannerEvent.CleanCache -> onCleanCache()
@@ -609,7 +616,19 @@ class ScannerViewModel(
                             )
                         }
                     }
-                    null -> Unit // Handle null case if necessary
+                    null -> {
+                        dataStore.clearScannerCleanWorkId()
+                        _uiState.update { state ->
+                            val current = state.data ?: UiScannerModel()
+                            state.copy(
+                                data = current.copy(
+                                    analyzeState = current.analyzeState.copy(
+                                        state = CleaningState.Idle
+                                    )
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -628,8 +647,7 @@ class ScannerViewModel(
         val selectedEntries = currentScreenData.analyzeState.scannedFileList.filter {
             it.path in currentScreenData.analyzeState.selectedFiles
         }
-        val id = cleanOperationHandler.moveToTrash(selectedEntries)
-        id?.let { observeCleaningWork(it) }
+        cleanOperationHandler.moveToTrash(selectedEntries)
     }
 
     private fun updateTrashSize(sizeChange: Long) {
