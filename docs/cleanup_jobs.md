@@ -1,5 +1,7 @@
 # Cleanup Job System: Technical and UX Documentation
 
+Smart Cleaner performs cleanup tasks only when the user explicitly initiates them. Each job runs in the foreground with determinate progress notifications, and its state is preserved so progress can resume after crashes or restarts.
+
 ## Overview
 Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. Every job begins with explicit user action and presents real-time progress in the UI and notification bar.
 
