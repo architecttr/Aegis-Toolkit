@@ -36,7 +36,7 @@ class ClipboardHandler(
     fun onClipboardClear() {
         runCatching { clipboardHelper.clearClipboard() }
         _clipboardPreview.value = null
-        CleaningEventBus.notifyCleaned()
+        CleaningEventBus.notifyCleaned(success = true)
     }
 
     private fun loadClipboardData() {

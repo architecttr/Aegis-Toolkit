@@ -1,6 +1,7 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -55,6 +56,7 @@ class CleanOperationHandler(
     private val updateTrashSize: (Long) -> Unit,
 ) {
     private val resultDelayMs = 3600L
+    private val tag = "CleanOperationHandler"
 
     fun analyzeFiles() {
         if (uiState.value.data?.analyzeState?.state != CleaningState.Idle) {
@@ -182,6 +184,7 @@ class CleanOperationHandler(
 
             val selectedPaths: Set<String> = currentScreenData.analyzeState.selectedFiles
             val filesToDelete: Set<File> = selectedPaths.map { File(it) }.toSet()
+            Log.d(tag, "Starting clean job with ${filesToDelete.size} files")
             if (filesToDelete.isEmpty()) {
                 postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_to_clean), false)
                 return@launch

@@ -3,6 +3,7 @@ package com.d4rk.cleaner.app.clean.scanner.ui
 import android.app.Application
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
+import android.util.Log
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -56,6 +57,7 @@ import java.io.File
 // Delay to allow storage operations to settle before refreshing UI.
 // Making this configurable clarifies the wait after cleaning tasks.
 private const val RESULT_DELAY_MS = 3600L
+private const val TAG = "ScannerViewModel"
 private const val EMPTY_FOLDERS_HIDE_DURATION_MS = 5 * 60 * 1000L
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -141,7 +143,19 @@ class ScannerViewModel(
         loadEmptyFoldersPreview()
         loadEmptyFoldersHideUntil()
         launch(dispatchers.io) {
-            CleaningEventBus.events.collectLatest {
+            CleaningEventBus.events.collectLatest { success ->
+                delay(RESULT_DELAY_MS)
+                Log.d(TAG, "Cleaning finished success=$success")
+                _uiState.update { state ->
+                    val currentData = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = currentData.copy(
+                            analyzeState = currentData.analyzeState.copy(
+                                state = if (success) CleaningState.Result else CleaningState.Error
+                            )
+                        )
+                    )
+                }
                 onEvent(ScannerEvent.RefreshData)
             }
         }
@@ -348,7 +362,7 @@ class ScannerViewModel(
                 loadWhatsAppMedia()
                 clipboardHandler.refresh()
                 loadEmptyFoldersPreview()
-                CleaningEventBus.notifyCleaned()
+                CleaningEventBus.notifyCleaned(success = true)
             }
             _cleaningApks.value = false
         }
@@ -620,7 +634,7 @@ class ScannerViewModel(
                 loadInitialData()
                 loadWhatsAppMedia()
                 clipboardHandler.refresh()
-                CleaningEventBus.notifyCleaned()
+                CleaningEventBus.notifyCleaned(success = true)
             } else if (result is DataState.Error) {
                     _uiState.update { s ->
                         val currentErrorData = s.data ?: UiScannerModel()
@@ -841,7 +855,7 @@ class ScannerViewModel(
 
     fun onCleanWhatsAppFiles() {
         _whatsAppMediaSummary.value = WhatsAppMediaSummary()
-        CleaningEventBus.notifyCleaned()
+        CleaningEventBus.notifyCleaned(success = true)
         postSnackbar(UiTextHelper.StringResource(R.string.feature_not_available), isError = false)
     }
 

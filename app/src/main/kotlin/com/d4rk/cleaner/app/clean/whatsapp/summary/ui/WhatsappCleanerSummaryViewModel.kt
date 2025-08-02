@@ -95,7 +95,7 @@ class WhatsappCleanerSummaryViewModel(
                     )
                 }
                 onEvent(WhatsAppCleanerEvent.LoadMedia)
-                CleaningEventBus.notifyCleaned()
+                CleaningEventBus.notifyCleaned(success = true)
             }
         }
     }
@@ -117,7 +117,7 @@ class WhatsappCleanerSummaryViewModel(
                     )
                 }
                 onEvent(WhatsAppCleanerEvent.LoadMedia)
-                CleaningEventBus.notifyCleaned()
+                CleaningEventBus.notifyCleaned(success = true)
             }
         }
     }

@@ -99,7 +99,7 @@ class AutoCleanWorker(
 
         deleteFiles(filesToDelete = toDelete.toSet()).collect {}
         dataStore.saveLastScanTimestamp(now)
-        CleaningEventBus.notifyCleaned()
+        CleaningEventBus.notifyCleaned(success = true)
         return Result.success()
     }
 
