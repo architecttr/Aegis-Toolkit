@@ -18,7 +18,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 
 ### Completion & Feedback
 * When the job finishes—success, failure, or cancellation—the notification updates with a localized result message.
-* The final notification remains visible for several seconds before dismissal.
+* The final notification remains visible for several seconds before dismissal, giving users time to read the result.
 * UI state resets to "Ready" or "Error" depending on outcome.
 * The stored job ID is cleared from DataStore.
 
@@ -29,7 +29,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 ## UX & Notification Policy
 * **Single job per feature:** The app never allows overlapping cleanup jobs for the same feature.
 * **Visible progress:** Notifications always display determinate progress rather than a spinner.
-* **Result shown:** Users always see a final notification summarizing success or failure.
+* **Result shown:** Users always see a final notification summarizing success or failure, which persists briefly (a few seconds) so they don't miss the result before it's dismissed.
 * **Localization:** All user-facing strings are fully localized.
 
 ## Developer and Contributor Guidelines
