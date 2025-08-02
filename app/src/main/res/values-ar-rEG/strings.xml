@@ -431,4 +431,9 @@
     <string name="failed_to_update_trash_size">فشل في تحديث حجم القمامة: %1$s</string>
     <string name="no_cleaning_options_selected">يرجى اختيار تفضيلات التنظيف الخاصة بك في الإعدادات للمتابعة.</string>
     <string name="cleaning_in_progress">جاري التنظيف</string>
+    <string name="cleanup_progress">تم تنظيف %1$d/%2$d ملف</string>
+    <string name="cleanup_finished">اكتمل التنظيف</string>
+    <string name="cleanup_failed">فشل التنظيف</string>
+    <string name="cleanup_failed_details">تعذر حذف بعض الملفات</string>
+    <string name="cleanup_cancelled">تم إلغاء التنظيف</string>
 </resources>

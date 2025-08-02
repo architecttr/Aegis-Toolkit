@@ -399,4 +399,9 @@
     <string name="failed_to_update_trash_size">Nem sikerült frissíteni a szemét méretét: %1$s</string>
     <string name="no_cleaning_options_selected">Kérjük, válassza ki a tisztítási beállításokat a beállításokban.</string>
     <string name="cleaning_in_progress">Tisztítás folyamatban</string>
+    <string name="cleanup_progress">%1$d/%2$d fájl törölve</string>
+    <string name="cleanup_finished">Tisztítás befejezve</string>
+    <string name="cleanup_failed">Tisztítás sikertelen</string>
+    <string name="cleanup_failed_details">Néhány fájlt nem sikerült törölni</string>
+    <string name="cleanup_cancelled">Tisztítás megszakítva</string>
 </resources>

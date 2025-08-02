@@ -398,4 +398,9 @@
     <string name="failed_to_update_trash_size">আবর্জনার আকার আপডেট করতে ব্যর্থ: %1$s</string>
     <string name="no_cleaning_options_selected">এগিয়ে যেতে সেটিংসে আপনার পরিষ্কারের পছন্দগুলি চয়ন করুন।</string>
     <string name="cleaning_in_progress">পরিষ্কার চলছে</string>
+    <string name="cleanup_progress">%1$d/%2$d টি ফাইল পরিষ্কার করা হয়েছে</string>
+    <string name="cleanup_finished">পরিষ্কার সম্পন্ন</string>
+    <string name="cleanup_failed">পরিষ্কার ব্যর্থ হয়েছে</string>
+    <string name="cleanup_failed_details">কিছু ফাইল মুছে ফেলা যায়নি</string>
+    <string name="cleanup_cancelled">পরিষ্কার বাতিল করা হয়েছে</string>
 </resources>

@@ -398,4 +398,10 @@
     <string name="no_files_selected_to_clean">Temizlemek için dosya seçilmedi.</string>
     <string name="failed_to_update_trash_size">Çöp Boyutunu Güncelleme: %1$s</string>
     <string name="no_cleaning_options_selected">Lütfen devam etmek için ayarlarda temizlik tercihlerinizi seçin.</string>
-    <string name="cleaning_in_progress">Temizlik devam ediyor</string></resources>
+    <string name="cleaning_in_progress">Temizlik devam ediyor</string>
+    <string name="cleanup_progress">%1$d/%2$d dosya temizlendi</string>
+    <string name="cleanup_finished">Temizlik tamamlandı</string>
+    <string name="cleanup_failed">Temizlik başarısız</string>
+    <string name="cleanup_failed_details">Bazı dosyalar silinemedi</string>
+    <string name="cleanup_cancelled">Temizlik iptal edildi</string>
+</resources>

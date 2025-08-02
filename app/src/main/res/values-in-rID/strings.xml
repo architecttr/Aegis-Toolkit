@@ -390,4 +390,10 @@
     <string name="no_files_selected_to_clean">Tidak ada file yang dipilih untuk dibersihkan.</string>
     <string name="failed_to_update_trash_size">Gagal memperbarui ukuran sampah: %1$s</string>
     <string name="no_cleaning_options_selected">Pilih preferensi pembersihan Anda dalam pengaturan untuk melanjutkan.</string>
-    <string name="cleaning_in_progress">Pembersihan sedang berlangsung</string></resources>
+    <string name="cleaning_in_progress">Pembersihan sedang berlangsung</string>
+    <string name="cleanup_progress">%1$d/%2$d file dibersihkan</string>
+    <string name="cleanup_finished">Pembersihan selesai</string>
+    <string name="cleanup_failed">Pembersihan gagal</string>
+    <string name="cleanup_failed_details">Beberapa file tidak dapat dihapus</string>
+    <string name="cleanup_cancelled">Pembersihan dibatalkan</string>
+</resources>

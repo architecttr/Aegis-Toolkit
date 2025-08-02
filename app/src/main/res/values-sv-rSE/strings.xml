@@ -398,4 +398,10 @@
     <string name="no_files_selected_to_clean">Inga filer valda för att rengöra.</string>
     <string name="failed_to_update_trash_size">Det gick inte att uppdatera skräpstorlek: %1$s</string>
     <string name="no_cleaning_options_selected">Välj dina rengöringspreferenser i inställningar för att fortsätta.</string>
-    <string name="cleaning_in_progress">Rensning pågår</string></resources>
+    <string name="cleaning_in_progress">Rensning pågår</string>
+    <string name="cleanup_progress">%1$d/%2$d filer rensade</string>
+    <string name="cleanup_finished">Rensning klar</string>
+    <string name="cleanup_failed">Rensning misslyckades</string>
+    <string name="cleanup_failed_details">Vissa filer kunde inte tas bort</string>
+    <string name="cleanup_cancelled">Rensning avbruten</string>
+</resources>

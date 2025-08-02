@@ -391,4 +391,9 @@
     <string name="failed_to_update_trash_size">更新垃圾桶大小失敗：%1$s</string>
     <string name="no_cleaning_options_selected">請在設定中選擇您的清理偏好以繼續。</string>
     <string name="cleaning_in_progress">正在清理中</string>
+    <string name="cleanup_progress">已清理 %1$d/%2$d 個檔案</string>
+    <string name="cleanup_finished">清理完成</string>
+    <string name="cleanup_failed">清理失敗</string>
+    <string name="cleanup_failed_details">部分檔案無法刪除</string>
+    <string name="cleanup_cancelled">清理已取消</string>
 </resources>

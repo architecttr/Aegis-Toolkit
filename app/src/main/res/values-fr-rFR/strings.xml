@@ -408,4 +408,9 @@
     <string name="failed_to_update_trash_size">Échec de la mise à jour de la taille des poubelles: %1$s</string>
     <string name="no_cleaning_options_selected">Veuillez choisir vos préférences de nettoyage dans les paramètres pour continuer.</string>
     <string name="cleaning_in_progress">Nettoyage en cours</string>
+    <string name="cleanup_progress">%1$d/%2$d fichiers nettoyés</string>
+    <string name="cleanup_finished">Nettoyage terminé</string>
+    <string name="cleanup_failed">Échec du nettoyage</string>
+    <string name="cleanup_failed_details">Certains fichiers n\'ont pas pu être supprimés</string>
+    <string name="cleanup_cancelled">Nettoyage annulé</string>
 </resources>
