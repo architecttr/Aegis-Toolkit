@@ -5,6 +5,13 @@ Smart Cleaner performs cleanup tasks only when the user explicitly initiates the
 ## Overview
 Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. Every job begins with explicit user action and presents real-time progress in the UI and notification bar.
 
+## Requirements for New Cleaning Features
+* Start via explicit user action
+* Persist WorkRequest ID immediately
+* Observe WorkInfo for state
+* Show determinate progress notification
+* Clear ID and reset UI on completion
+
 ## Job Lifecycle
 ### Start
 1. User taps a cleanup action (e.g., "Clean", "Delete large files").
