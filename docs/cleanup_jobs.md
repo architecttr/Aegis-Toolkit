@@ -7,6 +7,14 @@ if the process was killed or the work was deferred. An in-process
 `CleaningEventBus` can dispatch fast updates, but `WorkInfo` remains the source
 of truth and must always be observed when launching cleanup work.
 
+## Notifications
+
+Each cleanup job runs in the foreground and surfaces a determinate notification
+showing exact progress (for example `27/184 files cleaned`). The notification is
+updated as files are processed and, once finished, displays a success, failure or
+cancelled message. The final state remains visible for a few seconds before the
+notification is dismissed.
+
 ## Job Lifecycle and UI Sync
 
 Cleanup work IDs are persisted to `DataStore` immediately after enqueuing to

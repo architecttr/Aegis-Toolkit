@@ -399,4 +399,9 @@
     <string name="failed_to_update_trash_size">Failed to update trash size: %1$s</string>
     <string name="no_cleaning_options_selected">Please choose your cleaning preferences in settings to proceed.</string>
     <string name="cleaning_in_progress">Cleaning in progress</string>
+    <string name="cleanup_progress">%1$d/%2$d files cleaned</string>
+    <string name="cleanup_finished">Cleanup finished</string>
+    <string name="cleanup_failed">Cleanup failed</string>
+    <string name="cleanup_failed_details">Some files could not be deleted</string>
+    <string name="cleanup_cancelled">Cleanup cancelled</string>
 </resources>
