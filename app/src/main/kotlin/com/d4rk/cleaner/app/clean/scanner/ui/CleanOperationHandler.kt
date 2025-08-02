@@ -1,7 +1,6 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
-import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -43,18 +42,17 @@ class CleanOperationHandler(
     private val dataStore: DataStore,
     private val analyzeFilesUseCase: AnalyzeFilesUseCase,
     private val getEmptyFoldersUseCase: GetEmptyFoldersUseCase,
-    private val cleaningManager: CleaningManager,
+    private val cleaningManager: CleaningManager, // FIXME: Property "loadInitialData" is never used
     private val fileAnalyzer: FileAnalyzer,
     private val uiState: MutableStateFlow<UiStateScreen<UiScannerModel>>,
-    private val loadInitialData: () -> Unit,
-    private val loadWhatsAppMedia: () -> Unit,
-    private val loadClipboardData: () -> Unit,
-    private val loadEmptyFoldersPreview: () -> Unit,
+    private val loadInitialData: () -> Unit, // FIXME: Property "loadInitialData" is never used
+    private val loadWhatsAppMedia: () -> Unit, // FIXME: Property "loadWhatsAppMedia" is never used
+    private val loadClipboardData: () -> Unit, // FIXME: Property "loadClipboardData" is never used
+    private val loadEmptyFoldersPreview: () -> Unit, // FIXME: Property "loadEmptyFoldersPreview" is never used
     private val postSnackbar: (UiTextHelper, Boolean) -> Unit,
     private val updateTrashSize: (Long) -> Unit,
 ) {
-    private val resultDelayMs = 3600L
-    private val tag = "CleanOperationHandler"
+    private val resultDelayMs = 3600L // FIXME: Property "resultDelayMs" is never used
 
     fun analyzeFiles() {
         if (uiState.value.data?.analyzeState?.state != CleaningState.Idle) {

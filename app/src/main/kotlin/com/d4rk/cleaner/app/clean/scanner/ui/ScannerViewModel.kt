@@ -1,7 +1,6 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
@@ -44,6 +43,7 @@ import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,7 +54,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import kotlinx.coroutines.Job
 import java.io.File
 import java.util.UUID
 
@@ -554,8 +553,8 @@ class ScannerViewModel(
     private fun observeCleaningWork(id: UUID) {
         activeCleanWorkObserver?.cancel()
         activeCleanWorkObserver = launch(dispatchers.io) {
-            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info ->
-                when (info.state) {
+            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info: WorkInfo? ->
+                when (info?.state) {
                     WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
                         _uiState.update { state ->
                             val current = state.data ?: UiScannerModel()
@@ -610,6 +609,7 @@ class ScannerViewModel(
                             )
                         }
                     }
+                    null -> Unit // Handle null case if necessary
                 }
             }
         }

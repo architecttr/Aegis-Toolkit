@@ -139,7 +139,7 @@ class LargeFilesViewModel(
         activeWorkObserver?.cancel()
         activeWorkObserver = launch(dispatchers.io) {
             WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info ->
-                when (info.state) {
+                when (info?.state) {
                     WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
                         _uiState.update { it.copy(screenState = ScreenState.IsLoading()) }
                     }
@@ -169,6 +169,7 @@ class LargeFilesViewModel(
                         dataStore.clearLargeFilesCleanWorkId()
                         _uiState.update { it.copy(screenState = ScreenState.Success()) }
                     }
+                    null -> Unit
                 }
             }
         }
