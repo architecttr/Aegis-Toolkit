@@ -67,9 +67,10 @@ import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.ScreenStateHa
 import com.d4rk.android.libs.apptoolkit.core.ui.components.navigation.LargeTopAppBarWithScaffold
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraSmallHorizontalSpacer
 import com.d4rk.cleaner.R
+import com.d4rk.cleaner.app.clean.analyze.ui.components.FileCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FileListItem
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FilePreviewCard
-import com.d4rk.cleaner.app.clean.analyze.ui.components.FileCard
+import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.actions.WhatsAppDetailsEvent
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.model.UiWhatsAppDetailsModel
 import com.d4rk.cleaner.app.clean.whatsapp.details.ui.components.CustomTabLayout
@@ -80,7 +81,6 @@ import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.UiWhatsAppCleane
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.WhatsappCleanerSummaryViewModel
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
 import com.d4rk.cleaner.app.clean.whatsapp.utils.helpers.openFile
-import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.qualifier.named

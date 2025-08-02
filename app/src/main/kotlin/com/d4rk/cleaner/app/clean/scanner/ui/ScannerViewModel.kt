@@ -1,9 +1,9 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
-import android.util.Log
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState

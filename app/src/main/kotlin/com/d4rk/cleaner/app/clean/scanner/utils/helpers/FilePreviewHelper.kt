@@ -12,8 +12,8 @@ import android.media.MediaFormat.KEY_MAX_INPUT_SIZE
 import android.media.MediaMetadataRetriever
 import android.util.LruCache
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

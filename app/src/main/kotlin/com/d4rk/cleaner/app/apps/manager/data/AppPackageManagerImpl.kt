@@ -1,8 +1,8 @@
 package com.d4rk.cleaner.app.apps.manager.data
 
 import android.app.Application
-import android.content.Intent
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.content.FileProvider

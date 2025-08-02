@@ -2,8 +2,8 @@ package com.d4rk.cleaner.app.clean.scanner.domain.`interface`
 
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileTypesData
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
-import java.io.File
 import kotlinx.coroutines.flow.Flow
+import java.io.File
 
 interface ScannerRepositoryInterface {
     suspend fun getStorageInfo(): UiScannerModel

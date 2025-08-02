@@ -1,5 +1,6 @@
 package com.d4rk.cleaner.app.clean.scanner.work
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -18,7 +19,6 @@ import com.google.android.material.color.MaterialColors
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.io.File
-import android.Manifest
 
 /**
  * Worker responsible for deleting files or moving them to the trash.
