@@ -1,31 +1,55 @@
-# Cleanup job observation
+# Cleanup Job System: Technical and UX Documentation
 
-File deletions and trash moves are executed with `WorkManager`.
-UI components must observe the `WorkInfo` for the returned work ID and update
-state based on `WorkInfo.state`. This ensures that the result is reflected even
-if the process was killed or the work was deferred. An in-process
-`CleaningEventBus` can dispatch fast updates, but `WorkInfo` remains the source
-of truth and must always be observed when launching cleanup work.
+## Overview
+Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. Every job begins with explicit user action and presents real-time progress in the UI and notification bar.
 
-## Notifications
+## Job Lifecycle
+### Start
+1. User taps a cleanup action (e.g., "Clean", "Delete large files").
+2. App checks DataStore for an active job ID. If a job is running, the action is blocked and the user is notified.
+3. If no job is active, a new WorkManager job is enqueued and its ID saved to DataStore (e.g., `scannerCleanWorkId`, `largeFilesCleanWorkId`).
+4. A foreground notification immediately appears with determinate progress such as `0/184 files cleaned`.
 
-Each cleanup job runs in the foreground and surfaces a determinate notification
-showing exact progress (for example `27/184 files cleaned`). The notification is
-updated as files are processed and, once finished, displays a success, failure or
-cancelled message. The final state remains visible for a few seconds before the
-notification is dismissed.
+### Progress
+* The Worker updates the notification after each file is processed (`n/N files cleaned`).
+* UI components observe WorkManager's `WorkInfo` for state, ensuring the UI stays in sync without polling or relying solely on in-process events.
 
-## Job Lifecycle and UI Sync
+### Completion & Feedback
+* When the job finishes—success, failure, or cancellation—the notification updates with a localized result message.
+* The final notification remains visible for several seconds before dismissal.
+* UI state resets to "Ready" or "Error" depending on outcome.
+* The stored job ID is cleared from DataStore.
 
-Cleanup work IDs are persisted to `DataStore` immediately after enqueuing to
-survive process death. A single-job policy is enforced per cleanup feature: if
-an active ID is found in `DataStore` and the corresponding `WorkInfo` is still
-running, the UI blocks additional launches and surfaces a "Cleaning in progress"
-message. When the observed `WorkInfo` reaches a terminal state or disappears
-entirely, the stored ID is cleared so `DataStore` never accumulates stale
-entries.
+### Process Death & Recovery
+* On restart, any persisted job IDs are used to reattach observers to the running WorkManager jobs so progress continues seamlessly.
+* If an ID does not match any existing `WorkInfo`, it is cleared automatically.
 
-On startup, any ID whose `WorkInfo` no longer exists is treated as orphaned and
-removed. This best-effort approach covers most cases, though a crash between
-enqueueing and ID persistence may still leave an untracked job until the next
-launch cleans it up. Multi-job support remains undefined.
+## UX & Notification Policy
+* **Single job per feature:** The app never allows overlapping cleanup jobs for the same feature.
+* **Visible progress:** Notifications always display determinate progress rather than a spinner.
+* **Result shown:** Users always see a final notification summarizing success or failure.
+* **Localization:** All user-facing strings are fully localized.
+
+## Developer and Contributor Guidelines
+* Persist job IDs to DataStore immediately after enqueuing.
+* Drive all UI state from observed `WorkInfo` to handle backgrounding and process death.
+* Clear stored IDs once work finishes or when `WorkInfo` disappears.
+* Block new cleanups while a job for that feature is running and inform the user.
+* Do not bypass notification progress logic.
+* Localize every notification and error message.
+* Update this documentation if the design changes.
+
+## Testing Requirements
+* Test success, failure, cancellation, and restart flows.
+* Try datasets of varying sizes (1–10, hundreds, thousands of files).
+* Verify notifications and UI remain consistent throughout.
+
+## Why This Design?
+* **Compliance:** Meets Google Play's requirement for user-initiated, foreground work.
+* **Robustness:** Survives process death, backgrounding, and notification interruptions.
+* **User trust:** Clearly communicates progress and results to avoid silent file loss or confusion.
+
+## TODO / Future Work
+* Support multiple concurrent jobs if features ever require it.
+* Allow user-configurable notification duration.
+* Add integration tests for process death, race conditions, and orphaned jobs.
