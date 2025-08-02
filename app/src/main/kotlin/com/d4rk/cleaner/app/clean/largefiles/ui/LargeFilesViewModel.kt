@@ -152,16 +152,17 @@ class LargeFilesViewModel(
                     )
                 ).build()
 
-            try {
-                WorkManager.getInstance(application).enqueue(request)
-                dataStore.saveLargeFilesCleanWorkId(request.id.toString())
-                observeWork(request.id)
-                sendAction(
-                    LargeFilesAction.ShowSnackbar(
-                        UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
+            runCatching {
+                WorkManager.getInstance(application).enqueue(request).also {
+                    dataStore.saveLargeFilesCleanWorkId(request.id.toString())
+                    observeWork(request.id)
+                    sendAction(
+                        LargeFilesAction.ShowSnackbar(
+                            UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
+                        )
                     )
-                )
-            } catch (e: Exception) {
+                }
+            }.onFailure {
                 WorkManager.getInstance(application).cancelWorkById(request.id)
                 sendAction(
                     LargeFilesAction.ShowSnackbar(

@@ -206,15 +206,16 @@ class CleanOperationHandler(
                     )
                 )
             }
-            try {
+            runCatching {
                 WorkManager.getInstance(application).enqueue(request)
                 dataStore.saveScannerCleanWorkId(request.id.toString())
                 onWorkEnqueued(request.id)
                 postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
-            } catch (e: Exception) {
+            }.onFailure {
                 WorkManager.getInstance(application).cancelWorkById(request.id)
                 postSnackbar(UiTextHelper.StringResource(R.string.failed_to_delete_files), true)
             }
+
         }
     }
 
@@ -260,13 +261,13 @@ class CleanOperationHandler(
                 )
             }
 
-            try {
+            runCatching {
                 WorkManager.getInstance(application).enqueue(request)
                 dataStore.saveScannerCleanWorkId(request.id.toString())
                 onWorkEnqueued(request.id)
                 postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
                 updateTrashSize(totalFileSizeToMove)
-            } catch (e: Exception) {
+            }.onFailure {
                 WorkManager.getInstance(application).cancelWorkById(request.id)
                 postSnackbar(UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash), true)
             }
