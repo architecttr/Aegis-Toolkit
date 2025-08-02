@@ -10,7 +10,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.Data
+import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.delay
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
@@ -23,12 +25,10 @@ import java.io.File
 /**
  * Worker responsible for deleting files or moving them to the trash.
  *
- * A notification is posted for the entire duration of the work:
- * - For small jobs (<500 files) an indeterminate progress bar is shown.
- * - For larger jobs a determinate progress notification is shown and updated as
- *   each batch of files is processed.
- * The notification is dismissed or updated once the operation finishes or an
- * error occurs.
+ * A foreground notification with a determinate progress bar is shown for the
+ * entire duration of the work and is updated as files are processed. Once the
+ * operation finishes, the notification is updated with the final result and
+ * dismissed after a short delay.
  */
 class FileCleanupWorker(
     appContext: Context,
@@ -59,64 +59,100 @@ class FileCleanupWorker(
             .setOngoing(true)
 
         val total = files.size
-        val result: DataState<Unit, *> = if (total < PROGRESS_THRESHOLD) {
-            builder.setContentText(applicationContext.getString(R.string.cleaning_in_progress))
-                .setProgress(0, 0, true)
-            if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                notificationManager.notify(NOTIFICATION_ID, builder.build())
-            }
-            performAction(action, files)
-        } else {
-            // Determinate progress with batching
-            var processed = 0
-            builder.setProgress(total, processed, false)
-                .setContentText(applicationContext.getString(R.string.cleaning_in_progress))
-            if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                notificationManager.notify(NOTIFICATION_ID, builder.build())
-            }
+        var processed = 0
+        builder.setProgress(total, processed, false)
+            .setContentText(
+                applicationContext.getString(
+                    R.string.cleanup_progress,
+                    processed,
+                    total,
+                ),
+            )
 
-            var error: DataState.Error<Unit, *>? = null
-            for (batch in files.chunked(BATCH_SIZE)) {
-                val res = performAction(action, batch)
-                if (res is DataState.Error) {
-                    error = res
-                    break
-                }
-                processed += batch.size
-                builder.setProgress(total, processed, false)
-                if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                    notificationManager.notify(NOTIFICATION_ID, builder.build())
-                }
-            }
-            error ?: DataState.Success(Unit)
+        val hasPermission =
+            ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            setForeground(ForegroundInfo(NOTIFICATION_ID, builder.build()))
         }
 
-        builder.setOngoing(false).setAutoCancel(true).setProgress(0, 0, false)
-        return when (result) {
-            is DataState.Error -> {
-                if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                    builder.setContentText(
-                        applicationContext.getString(R.string.something_went_wrong),
-                    )
+        val chunkSize = if (total <= BATCH_SIZE) 1 else BATCH_SIZE
+        var error: DataState.Error<Unit, *>? = null
+        for (batch in files.chunked(chunkSize)) {
+            if (isStopped) {
+                if (hasPermission) {
+                    builder.setOngoing(false)
+                        .setProgress(0, 0, false)
+                        .setContentTitle(applicationContext.getString(R.string.cleanup_cancelled))
+                        .setContentText(applicationContext.getString(R.string.cleanup_cancelled))
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
+                    delay(FINISH_DELAY_MS)
+                    notificationManager.cancel(NOTIFICATION_ID)
                 }
-                notificationManager.cancel(NOTIFICATION_ID)
-                // In-process hint; UI should observe WorkInfo for reliable state.
                 CleaningEventBus.notifyCleaned(success = false)
-                Result.failure(
-                    Data.Builder().putString(KEY_ERROR, result.error.toString()).build(),
+                return Result.failure()
+            }
+
+            val res = performAction(action, batch)
+            if (res is DataState.Error) {
+                error = res
+                break
+            }
+            processed += batch.size
+            builder.setProgress(total, processed, false)
+                .setContentText(
+                    applicationContext.getString(
+                        R.string.cleanup_progress,
+                        processed,
+                        total,
+                    ),
                 )
+            if (hasPermission) {
+                notificationManager.notify(NOTIFICATION_ID, builder.build())
             }
-            else -> {
-                CleaningEventBus.notifyCleaned(success = true)
-                if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                    builder.setContentText(applicationContext.getString(R.string.all_clean))
-                    notificationManager.notify(NOTIFICATION_ID, builder.build())
-                }
+        }
+
+        if (isStopped) {
+            if (hasPermission) {
+                builder.setOngoing(false)
+                    .setProgress(0, 0, false)
+                    .setContentTitle(applicationContext.getString(R.string.cleanup_cancelled))
+                    .setContentText(applicationContext.getString(R.string.cleanup_cancelled))
+                notificationManager.notify(NOTIFICATION_ID, builder.build())
+                delay(FINISH_DELAY_MS)
                 notificationManager.cancel(NOTIFICATION_ID)
-                // In-process hint; UI should observe WorkInfo for reliable state.
-                Result.success()
             }
+            CleaningEventBus.notifyCleaned(success = false)
+            return Result.failure()
+        }
+
+        builder.setOngoing(false).setProgress(0, 0, false)
+
+        return if (error != null) {
+            if (hasPermission) {
+                builder.setContentTitle(applicationContext.getString(R.string.cleanup_failed))
+                    .setContentText(applicationContext.getString(R.string.cleanup_failed_details))
+                notificationManager.notify(NOTIFICATION_ID, builder.build())
+                delay(FINISH_DELAY_MS)
+                notificationManager.cancel(NOTIFICATION_ID)
+            }
+            CleaningEventBus.notifyCleaned(success = false)
+            Result.failure(
+                Data.Builder().putString(KEY_ERROR, error.error.toString()).build(),
+            )
+        } else {
+            CleaningEventBus.notifyCleaned(success = true)
+            if (hasPermission) {
+                builder.setContentTitle(applicationContext.getString(R.string.cleanup_finished))
+                    .setContentText(applicationContext.getString(R.string.all_clean))
+                notificationManager.notify(NOTIFICATION_ID, builder.build())
+                delay(FINISH_DELAY_MS)
+                notificationManager.cancel(NOTIFICATION_ID)
+            }
+            Result.success()
         }
     }
 
@@ -151,9 +187,9 @@ class FileCleanupWorker(
         const val ACTION_DELETE = "delete"
         const val ACTION_TRASH = "trash"
 
-        private const val PROGRESS_THRESHOLD = 500
         private const val BATCH_SIZE = 100
         private const val NOTIFICATION_ID = 2001
         private const val NOTIFICATION_CHANNEL = "file_cleanup"
+        private const val FINISH_DELAY_MS = 4000L
     }
 }

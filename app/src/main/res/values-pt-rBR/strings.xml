@@ -406,4 +406,10 @@
     <string name="no_files_selected_to_clean">Nenhum arquivo selecionado para limpar.</string>
     <string name="failed_to_update_trash_size">Falha ao atualizar o tamanho do lixo: %1$s</string>
     <string name="no_cleaning_options_selected">Escolha suas preferências de limpeza nas configurações para prosseguir.</string>
-    <string name="cleaning_in_progress">Limpeza em andamento</string></resources>
+    <string name="cleaning_in_progress">Limpeza em andamento</string>
+    <string name="cleanup_progress">%1$d/%2$d arquivos limpos</string>
+    <string name="cleanup_finished">Limpeza concluída</string>
+    <string name="cleanup_failed">Falha na limpeza</string>
+    <string name="cleanup_failed_details">Alguns arquivos não puderam ser excluídos</string>
+    <string name="cleanup_cancelled">Limpeza cancelada</string>
+</resources>

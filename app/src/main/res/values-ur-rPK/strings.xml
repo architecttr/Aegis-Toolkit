@@ -399,4 +399,9 @@
     <string name="failed_to_update_trash_size">کوڑے دان کے سائز کو اپ ڈیٹ کرنے میں ناکام: %1$s</string>
     <string name="no_cleaning_options_selected">براہ کرم آگے بڑھنے کے لئے ترتیبات میں اپنی صفائی کی ترجیحات کا انتخاب کریں۔</string>
     <string name="cleaning_in_progress">صفائی جاری ہے</string>
+    <string name="cleanup_progress">%1$d/%2$d فائلیں صاف ہوئیں</string>
+    <string name="cleanup_finished">صفائی مکمل</string>
+    <string name="cleanup_failed">صفائی ناکام</string>
+    <string name="cleanup_failed_details">کچھ فائلیں حذف نہیں ہو سکیں</string>
+    <string name="cleanup_cancelled">صفائی منسوخ کی گئی</string>
 </resources>

@@ -399,4 +399,9 @@
     <string name="failed_to_update_trash_size">कचरा आकार अपडेट करने में विफल: %1$s</string>
     <string name="no_cleaning_options_selected">कृपया आगे बढ़ने के लिए सेटिंग्स में अपनी सफाई वरीयताएँ चुनें।</string>
     <string name="cleaning_in_progress">सफाई जारी है</string>
+    <string name="cleanup_progress">%1$d/%2$d फ़ाइलें साफ़ की गईं</string>
+    <string name="cleanup_finished">सफाई पूरी हुई</string>
+    <string name="cleanup_failed">सफाई असफल रही</string>
+    <string name="cleanup_failed_details">कुछ फ़ाइलें हटाई नहीं जा सकीं</string>
+    <string name="cleanup_cancelled">सफाई रद्द की गई</string>
 </resources>

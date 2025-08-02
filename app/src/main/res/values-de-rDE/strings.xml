@@ -398,4 +398,10 @@
     <string name="no_files_selected_to_clean">Keine zum Reinigen ausgewählten Dateien.</string>
     <string name="failed_to_update_trash_size">Die Müllgröße nicht aktualisieren: %1$s</string>
     <string name="no_cleaning_options_selected">Bitte wählen Sie Ihre Reinigungseinstellungen in Einstellungen, um fortzufahren.</string>
-    <string name="cleaning_in_progress">Reinigung läuft</string></resources>
+    <string name="cleaning_in_progress">Reinigung läuft</string>
+    <string name="cleanup_progress">%1$d/%2$d Dateien bereinigt</string>
+    <string name="cleanup_finished">Bereinigung abgeschlossen</string>
+    <string name="cleanup_failed">Bereinigung fehlgeschlagen</string>
+    <string name="cleanup_failed_details">Einige Dateien konnten nicht gelöscht werden</string>
+    <string name="cleanup_cancelled">Bereinigung abgebrochen</string>
+</resources>
