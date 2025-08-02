@@ -37,7 +37,7 @@ fun AnalyzeScreen(
     data: UiScannerModel,
 ) {
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    val hasSelectedFiles: Boolean = data.analyzeState.selectedFilesCount > 0
+    val hasSelectedFiles: Boolean = data.analyzeState.selectedFilesCount > 0 || data.analyzeState.state == CleaningState.Cleaning
     val groupedFiles: Map<String, List<FileEntry>> = data.analyzeState.groupedFiles
 
     Column(
@@ -91,7 +91,7 @@ fun AnalyzeScreen(
         if (groupedFiles.isNotEmpty()) {
             StatusRowSelectAll(data = data, view = view, onClickSelectAll = {
                 viewModel.toggleSelectAllFiles()
-            })
+            }, enabled = hasSelectedFiles)
         }
 
         TwoRowButtons(

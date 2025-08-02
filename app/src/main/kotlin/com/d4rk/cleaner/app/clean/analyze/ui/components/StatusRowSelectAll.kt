@@ -20,7 +20,12 @@ import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 
 @Composable
-fun StatusRowSelectAll(data: UiScannerModel, view: View, onClickSelectAll: () -> Unit) {
+fun StatusRowSelectAll(
+    data: UiScannerModel,
+    view: View,
+    enabled: Boolean,
+    onClickSelectAll: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
