@@ -26,6 +26,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 * On restart, any persisted job IDs are used to reattach observers to the running WorkManager jobs so progress continues seamlessly.
 * If the OS removes the progress notification, the app reattaches to the job on restart and shows the current state.
 * If an ID does not match any existing `WorkInfo`, it is cleared automatically.
+* Scan results and file selections exist only in RAM. If the process dies before a job starts, these lists reset and require a fresh scan and selection.
 
 ## UX & Notification Policy
 * **Single job per feature:** The app never allows overlapping cleanup jobs for the same feature.

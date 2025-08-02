@@ -24,6 +24,7 @@
 - Results streamed via `MutableStateFlow` to the UI.
 - File metadata is cached in RAM for the session only.
 - File selections are transient and not persisted.
+- Both scan results and selections live only in memory; if the process dies they are cleared and require a new scan.
 
 ## 3. File Discovery, Storage, and Cleaning Flow
 **File discovery**
