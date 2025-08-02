@@ -73,8 +73,11 @@ for you!
 
 Local file deletions and trash moves now run using WorkManager jobs. The app
 shows a brief snackbar while cleanup is in progress and finishes work even if
-the user leaves the app. If future Play policies require a dedicated foreground
-service type for file management, revisit this approach.
+the user leaves the app. UI state listens to each job's `WorkInfo` by ID so
+results are delivered even after the process restarts. An in‑process event bus
+may emit quick updates, but `WorkInfo` is the source of truth. If future Play
+policies require a dedicated foreground service type for file management,
+revisit this approach.
 
 # License
 

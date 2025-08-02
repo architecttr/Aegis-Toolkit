@@ -233,6 +233,7 @@ val appModule: Module = module {
         LargeFilesViewModel(
             application = get(),
             getLargestFilesUseCase = get(),
+            dataStore = get(),
             dispatchers = get()
         )
     }

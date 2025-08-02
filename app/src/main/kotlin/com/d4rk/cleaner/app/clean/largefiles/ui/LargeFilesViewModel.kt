@@ -2,6 +2,7 @@ package com.d4rk.cleaner.app.clean.largefiles.ui
 
 import android.app.Application
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
@@ -18,13 +19,19 @@ import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesEvent
 import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesModel
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
+import com.d4rk.cleaner.core.data.datastore.DataStore
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import java.io.File
+import java.util.UUID
 
 class LargeFilesViewModel(
     private val application: Application,
     private val getLargestFilesUseCase: GetLargestFilesUseCase,
+    private val dataStore: DataStore,
     private val dispatchers: DispatcherProvider
 ) : ScreenViewModel<UiLargeFilesModel, LargeFilesEvent, LargeFilesAction>(
     initialState = UiStateScreen(data = UiLargeFilesModel())
@@ -32,8 +39,16 @@ class LargeFilesViewModel(
 
     private val limit = 20
 
+    private var activeWorkObserver: Job? = null
+    private val resultDelayMs = 3600L
+
     init {
         onEvent(LargeFilesEvent.LoadLargeFiles)
+        launch(dispatchers.io) {
+            dataStore.largeFilesCleanWorkId.first()?.let { id ->
+                observeWork(UUID.fromString(id))
+            }
+        }
     }
 
     override fun onEvent(event: LargeFilesEvent) {
@@ -103,21 +118,59 @@ class LargeFilesViewModel(
                 )
                 return@launch
             }
-            WorkManager.getInstance(application).enqueue(
-                OneTimeWorkRequestBuilder<FileCleanupWorker>()
-                    .setInputData(
-                        workDataOf(
-                            FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
-                            FileCleanupWorker.KEY_PATHS to filePaths.toTypedArray()
-                        )
-                    ).build()
-            )
+            val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                .setInputData(
+                    workDataOf(
+                        FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
+                        FileCleanupWorker.KEY_PATHS to filePaths.toTypedArray()
+                    )
+                ).build()
+            WorkManager.getInstance(application).enqueue(request)
+            dataStore.saveLargeFilesCleanWorkId(request.id.toString())
+            observeWork(request.id)
             sendAction(
                 LargeFilesAction.ShowSnackbar(
                     UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
                 )
             )
-            onEvent(LargeFilesEvent.LoadLargeFiles)
+        }
+    }
+    private fun observeWork(id: UUID) {
+        activeWorkObserver?.cancel()
+        activeWorkObserver = launch(dispatchers.io) {
+            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info ->
+                when (info.state) {
+                    WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
+                        _uiState.update { it.copy(screenState = ScreenState.IsLoading()) }
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        dataStore.clearLargeFilesCleanWorkId()
+                        delay(resultDelayMs)
+                        onEvent(LargeFilesEvent.LoadLargeFiles)
+                        sendAction(
+                            LargeFilesAction.ShowSnackbar(
+                                UiSnackbar(message = UiTextHelper.StringResource(R.string.all_clean))
+                            )
+                        )
+                    }
+                    WorkInfo.State.FAILED -> {
+                        dataStore.clearLargeFilesCleanWorkId()
+                        _uiState.update {
+                            it.copy(
+                                screenState = ScreenState.Error(),
+                                errors = it.errors + UiSnackbar(
+                                    message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
+                                    isError = true
+                                )
+                            )
+                        }
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        dataStore.clearLargeFilesCleanWorkId()
+                        _uiState.update { it.copy(screenState = ScreenState.Success()) }
+                    }
+                }
+            }
         }
     }
 }

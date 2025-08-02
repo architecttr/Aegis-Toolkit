@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -52,7 +54,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import kotlinx.coroutines.Job
 import java.io.File
+import java.util.UUID
 
 // Delay to allow storage operations to settle before refreshing UI.
 // Making this configurable clarifies the wait after cleaning tasks.
@@ -132,6 +136,8 @@ class ScannerViewModel(
         updateTrashSize = ::updateTrashSize
     )
 
+    private var activeCleanWorkObserver: Job? = null
+
 
     init {
         onEvent(ScannerEvent.LoadInitialData)
@@ -143,19 +149,13 @@ class ScannerViewModel(
         loadEmptyFoldersPreview()
         loadEmptyFoldersHideUntil()
         launch(dispatchers.io) {
-            CleaningEventBus.events.collectLatest { success ->
+            dataStore.scannerCleanWorkId.first()?.let { id ->
+                observeCleaningWork(UUID.fromString(id))
+            }
+        }
+        launch(dispatchers.io) {
+            CleaningEventBus.events.collectLatest {
                 delay(RESULT_DELAY_MS)
-                Log.d(TAG, "Cleaning finished success=$success")
-                _uiState.update { state ->
-                    val currentData = state.data ?: UiScannerModel()
-                    state.copy(
-                        data = currentData.copy(
-                            analyzeState = currentData.analyzeState.copy(
-                                state = if (success) CleaningState.Result else CleaningState.Error
-                            )
-                        )
-                    )
-                }
                 onEvent(ScannerEvent.RefreshData)
             }
         }
@@ -167,7 +167,10 @@ class ScannerViewModel(
             is ScannerEvent.AnalyzeFiles -> cleanOperationHandler.analyzeFiles()
             is ScannerEvent.RefreshData -> refreshData()
             is ScannerEvent.DeleteFiles -> deleteFiles(files = event.files)
-            is ScannerEvent.MoveToTrash -> cleanOperationHandler.moveToTrash(files = event.files)
+            is ScannerEvent.MoveToTrash -> {
+                val id = cleanOperationHandler.moveToTrash(files = event.files)
+                id?.let { observeCleaningWork(it) }
+            }
             is ScannerEvent.ToggleAnalyzeScreen -> toggleAnalyzeScreen(visible = event.visible)
             is ScannerEvent.OnFileSelectionChange -> onFileSelectionChange(
                 file = event.file,
@@ -181,7 +184,10 @@ class ScannerViewModel(
                 event.isChecked
             )
 
-            is ScannerEvent.CleanFiles -> cleanOperationHandler.cleanFiles(screenData)
+            is ScannerEvent.CleanFiles -> {
+                val id = cleanOperationHandler.cleanFiles(screenData)
+                id?.let { observeCleaningWork(it) }
+            }
             is ScannerEvent.CleanWhatsAppFiles -> onCleanWhatsAppFiles()
             is ScannerEvent.CleanCache -> onCleanCache()
             is ScannerEvent.MoveSelectedToTrash -> moveSelectedToTrash()
@@ -544,110 +550,86 @@ class ScannerViewModel(
     }
 
 
+
+    private fun observeCleaningWork(id: UUID) {
+        activeCleanWorkObserver?.cancel()
+        activeCleanWorkObserver = launch(dispatchers.io) {
+            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info ->
+                when (info.state) {
+                    WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
+                        _uiState.update { state ->
+                            val current = state.data ?: UiScannerModel()
+                            state.copy(
+                                data = current.copy(
+                                    analyzeState = current.analyzeState.copy(
+                                        state = CleaningState.Cleaning
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    WorkInfo.State.SUCCEEDED -> {
+                        dataStore.clearScannerCleanWorkId()
+                        delay(RESULT_DELAY_MS)
+                        _uiState.update { state ->
+                            val current = state.data ?: UiScannerModel()
+                            state.copy(
+                                data = current.copy(
+                                    analyzeState = current.analyzeState.copy(
+                                        state = CleaningState.Result
+                                    )
+                                )
+                            )
+                        }
+                        onEvent(ScannerEvent.RefreshData)
+                    }
+                    WorkInfo.State.FAILED -> {
+                        dataStore.clearScannerCleanWorkId()
+                        delay(RESULT_DELAY_MS)
+                        _uiState.update { state ->
+                            val current = state.data ?: UiScannerModel()
+                            state.copy(
+                                data = current.copy(
+                                    analyzeState = current.analyzeState.copy(
+                                        state = CleaningState.Error
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    WorkInfo.State.CANCELLED -> {
+                        dataStore.clearScannerCleanWorkId()
+                        _uiState.update { state ->
+                            val current = state.data ?: UiScannerModel()
+                            state.copy(
+                                data = current.copy(
+                                    analyzeState = current.analyzeState.copy(
+                                        state = CleaningState.Idle
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
     fun moveSelectedToTrash() {
         if (_uiState.value.data?.analyzeState?.state != CleaningState.ReadyToClean) {
             return
         }
-
-        launch(dispatchers.io) {
-
-            _uiState.update { state ->
-                val currentData = state.data ?: UiScannerModel()
-                state.copy(
-                    data = currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            state = CleaningState.Cleaning,
-                            cleaningType = CleaningType.MOVE_TO_TRASH
-                        )
-                    )
-                )
-            }
-
-            val currentScreenData = screenData ?: run {
-                postSnackbar(
-                    message = UiTextHelper.StringResource(R.string.data_not_available),
-                    isError = true
-                )
-                return@launch
-            }
-
-            val selectedPaths: List<String> = currentScreenData.analyzeState.selectedFiles.toList()
-            val filesToMove: List<File> = selectedPaths.map { File(it) }
-            if (filesToMove.isEmpty()) {
-                postSnackbar(
-                    message = UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash),
-                    isError = false
-                )
-                return@launch
-            }
-
-            val fileObjs = filesToMove
-            val totalFileSizeToMove: Long = fileObjs.sumOf { it.length() }
-
-            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                    dataStore.duplicateScanEnabled.first()
-            val result = cleaningManager.moveToTrash(fileObjs)
-            _uiState.applyResult(
-                result = result,
-                errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash)
-            ) { _, currentData ->
-                    val (groupedFilesUpdated3, duplicateOriginals3, duplicateGroups3) = fileAnalyzer.computeGroupedFiles(
-                        scannedFiles = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
-                            existingFile.path in selectedPaths
-                        }.map { it.toFile() },
-                        emptyFolders = currentData.analyzeState.emptyFolderList.map { it.toFile() },
-                        fileTypesData = currentData.analyzeState.fileTypesData,
-                        preferences = mapOf(),
-                        includeDuplicates = includeDuplicates
-                    )
-
-                    currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            scannedFileList = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
-                                existingFile.path in selectedPaths
-                            },
-
-                            groupedFiles = groupedFilesUpdated3,
-                            duplicateOriginals = duplicateOriginals3,
-                            duplicateGroups = duplicateGroups3,
-                            selectedFilesCount = 0,
-                            areAllFilesSelected = false,
-                            isAnalyzeScreenVisible = false,
-                            selectedFiles = mutableSetOf()
-                        )
-                    )
-            }
-
-            if (result is DataState.Success) {
-                delay(RESULT_DELAY_MS)
-                _uiState.update { state ->
-                    val current = state.data ?: UiScannerModel()
-                    state.copy(
-                        data = current.copy(
-                            analyzeState = current.analyzeState.copy(
-                                state = CleaningState.Result
-                            )
-                        )
-                    )
-                }
-                updateTrashSize(totalFileSizeToMove)
-                loadInitialData()
-                loadWhatsAppMedia()
-                clipboardHandler.refresh()
-                CleaningEventBus.notifyCleaned(success = true)
-            } else if (result is DataState.Error) {
-                    _uiState.update { s ->
-                        val currentErrorData = s.data ?: UiScannerModel()
-                        s.copy(
-                            data = currentErrorData.copy(
-                                analyzeState = currentErrorData.analyzeState.copy(
-                                    state = CleaningState.Error
-                                )
-                            )
-                        )
-                    }
-            }
+        val currentScreenData = screenData ?: run {
+            postSnackbar(
+                message = UiTextHelper.StringResource(R.string.data_not_available),
+                isError = true
+            )
+            return
         }
+        val selectedEntries = currentScreenData.analyzeState.scannedFileList.filter {
+            it.path in currentScreenData.analyzeState.selectedFiles
+        }
+        val id = cleanOperationHandler.moveToTrash(selectedEntries)
+        id?.let { observeCleaningWork(it) }
     }
 
     private fun updateTrashSize(sizeChange: Long) {
