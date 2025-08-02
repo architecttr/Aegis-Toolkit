@@ -64,3 +64,5 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 * Support multiple concurrent jobs if features ever require it.
 * Allow user-configurable notification duration.
 * Add integration tests for process death, race conditions, and orphaned jobs.
+
+For a detailed integration guide, refer to [Cleaning Screens and Flows](cleaning_screens.md).
