@@ -101,12 +101,13 @@ class FileCleanupWorker(
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
                 }
                 notificationManager.cancel(NOTIFICATION_ID)
+                CleaningEventBus.notifyCleaned(success = false)
                 Result.failure(
                     Data.Builder().putString(KEY_ERROR, result.error.toString()).build(),
                 )
             }
             else -> {
-                CleaningEventBus.notifyCleaned()
+                CleaningEventBus.notifyCleaned(success = true)
                 if (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     builder.setContentText(applicationContext.getString(R.string.all_clean))
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
