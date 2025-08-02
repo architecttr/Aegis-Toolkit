@@ -69,6 +69,13 @@ give the possibility to fix that issue.
 Thank you for choosing Cleaner! We hope you enjoy using our app as much as we enjoyed creating it
 for you!
 
+## File cleanup jobs
+
+Local file deletions and trash moves now run using WorkManager jobs. The app
+shows a brief snackbar while cleanup is in progress and finishes work even if
+the user leaves the app. If future Play policies require a dedicated foreground
+service type for file management, revisit this approach.
+
 # License
 
 __Privacy Policy__ [here](https://mihaicristiancondrea.github.io/profile/#privacy-policy-end-user-software).

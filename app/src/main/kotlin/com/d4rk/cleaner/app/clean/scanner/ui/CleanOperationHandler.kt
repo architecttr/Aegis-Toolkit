@@ -1,8 +1,9 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
-import android.content.Intent
-import androidx.core.content.ContextCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -19,7 +20,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
-import com.d4rk.cleaner.app.clean.scanner.services.FileOperationService
+import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
@@ -162,11 +163,6 @@ class CleanOperationHandler(
         }
 
         scope.launch(dispatchers.io) {
-            ContextCompat.startForegroundService(
-                application,
-                Intent(application, FileOperationService::class.java)
-            )
-            try {
             uiState.update { state ->
                 val currentData = state.data ?: UiScannerModel()
                 state.copy(
@@ -190,159 +186,53 @@ class CleanOperationHandler(
                 postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_to_clean), false)
                 return@launch
             }
-
-            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                    dataStore.duplicateScanEnabled.first()
-            val result = cleaningManager.deleteFiles(filesToDelete)
-            uiState.applyResult(
-                result = result,
-                errorMessage = UiTextHelper.StringResource(R.string.failed_to_delete_files),
-            ) { _: Unit, currentData: UiScannerModel ->
-                    val (groupedFilesUpdated, duplicateOriginals, duplicateGroups) = fileAnalyzer.computeGroupedFiles(
-                        scannedFiles = currentData.analyzeState.scannedFileList.filterNot { it.path in selectedPaths }
-                            .map { it.toFile() },
-                        emptyFolders = currentData.analyzeState.emptyFolderList.map { it.toFile() },
-                        fileTypesData = currentData.analyzeState.fileTypesData,
-                        preferences = mapOf(),
-                        includeDuplicates = includeDuplicates
-                    )
-
-                    currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            scannedFileList = currentData.analyzeState.scannedFileList.filterNot { it.path in selectedPaths },
-                            groupedFiles = groupedFilesUpdated,
-                            duplicateOriginals = duplicateOriginals,
-                            duplicateGroups = duplicateGroups,
-                            selectedFilesCount = 0,
-                            areAllFilesSelected = false,
-                            selectedFiles = mutableSetOf(),
-                            isAnalyzeScreenVisible = false
-                        ),
-                        storageInfo = currentData.storageInfo.copy(
-                            isFreeSpaceLoading = true,
-                            isCleanedSpaceLoading = true
+            WorkManager.getInstance(application).enqueue(
+                OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                    .setInputData(
+                        workDataOf(
+                            FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
+                            FileCleanupWorker.KEY_PATHS to selectedPaths.toTypedArray()
                         )
-                    )
-                }
-
-            if (result is DataState.Success) {
-                    delay(resultDelayMs)
-                    uiState.update { state ->
-                        val current = state.data ?: UiScannerModel()
-                        state.copy(
-                            data = current.copy(
-                                analyzeState = current.analyzeState.copy(
-                                    state = CleaningState.Result
-                                )
-                            )
-                        )
-                    }
-                    scope.launch { dataStore.saveLastScanTimestamp(timestamp = System.currentTimeMillis()) }
-                    loadInitialData()
-                    loadWhatsAppMedia()
-                    loadClipboardData()
-                    loadEmptyFoldersPreview()
-                    CleaningEventBus.notifyCleaned()
-            } else if (result is DataState.Error) {
-                    uiState.update { s ->
-                        val currentErrorData = s.data ?: UiScannerModel()
-                        s.copy(
-                            data = currentErrorData.copy(
-                                analyzeState = currentErrorData.analyzeState.copy(
-                                    state = CleaningState.Error
-                                )
-                            )
-                        )
-                    }
-            }
-            } finally {
-                application.stopService(Intent(application, FileOperationService::class.java))
-            }
+                    ).build()
+            )
+            postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
         }
     }
 
     fun moveToTrash(files: List<FileEntry>) {
         scope.launch(dispatchers.io) {
-            ContextCompat.startForegroundService(
-                application,
-                Intent(application, FileOperationService::class.java)
-            )
-            try {
-                if (files.isEmpty()) {
-                    postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash), false)
-                    return@launch
-                }
-
-                uiState.update { state: UiStateScreen<UiScannerModel> ->
-                    val currentData: UiScannerModel = state.data ?: UiScannerModel()
-                    state.copy(
-                        data = currentData.copy(
-                            analyzeState = currentData.analyzeState.copy(
-                                state = CleaningState.Cleaning,
-                                cleaningType = CleaningType.MOVE_TO_TRASH
-                            )
-                        )
-                    )
-                }
-
-                val fileObjs = files.map { it.toFile() }
-                val totalFileSizeToMove: Long = fileObjs.sumOf { it.length() }
-
-                val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                        dataStore.duplicateScanEnabled.first()
-                val result = cleaningManager.moveToTrash(fileObjs)
-                uiState.applyResult(
-                    result = result,
-                    errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash),
-                ) { _: Unit, currentData: UiScannerModel ->
-                    val (groupedFilesUpdated2, duplicateOriginals2, duplicateGroups2) = fileAnalyzer.computeGroupedFiles(
-                        scannedFiles = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
-                            files.any { moved -> existingFile.path == moved.path }
-                        }.map { it.toFile() },
-                        emptyFolders = currentData.analyzeState.emptyFolderList.map { it.toFile() },
-                        fileTypesData = currentData.analyzeState.fileTypesData,
-                        preferences = mapOf(),
-                        includeDuplicates = includeDuplicates
-                    )
-
-                    currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            scannedFileList = currentData.analyzeState.scannedFileList.filterNot { existingFile ->
-                                files.any { moved -> existingFile.path == moved.path }
-                            },
-                            groupedFiles = groupedFilesUpdated2,
-                            duplicateOriginals = duplicateOriginals2,
-                            duplicateGroups = duplicateGroups2,
-                            selectedFilesCount = 0,
-                            areAllFilesSelected = false,
-                            isAnalyzeScreenVisible = false,
-                            selectedFiles = mutableSetOf()
-                        )
-                    )
-                }
-
-                if (result is DataState.Success) {
-                    delay(resultDelayMs)
-                    uiState.update { state ->
-                        val current = state.data ?: UiScannerModel()
-                        state.copy(
-                            data = current.copy(
-                                analyzeState = current.analyzeState.copy(
-                                    state = CleaningState.Result
-                                )
-                            )
-                        )
-                    }
-                    updateTrashSize(totalFileSizeToMove)
-                    loadInitialData()
-                    loadWhatsAppMedia()
-                    loadClipboardData()
-                    loadEmptyFoldersPreview()
-                    CleaningEventBus.notifyCleaned()
-                }
-            } finally {
-                application.stopService(Intent(application, FileOperationService::class.java))
+            if (files.isEmpty()) {
+                postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_move_to_trash), false)
+                return@launch
             }
+
+            uiState.update { state: UiStateScreen<UiScannerModel> ->
+                val currentData: UiScannerModel = state.data ?: UiScannerModel()
+                state.copy(
+                    data = currentData.copy(
+                        analyzeState = currentData.analyzeState.copy(
+                            state = CleaningState.Cleaning,
+                            cleaningType = CleaningType.MOVE_TO_TRASH
+                        )
+                    )
+                )
+            }
+
+            val paths = files.map { it.path }
+            val totalFileSizeToMove: Long = files.sumOf { it.toFile().length() }
+
+            WorkManager.getInstance(application).enqueue(
+                OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                    .setInputData(
+                        workDataOf(
+                            FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_TRASH,
+                            FileCleanupWorker.KEY_PATHS to paths.toTypedArray()
+                        )
+                    ).build()
+            )
+
+            postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+            updateTrashSize(totalFileSizeToMove)
         }
     }
 }

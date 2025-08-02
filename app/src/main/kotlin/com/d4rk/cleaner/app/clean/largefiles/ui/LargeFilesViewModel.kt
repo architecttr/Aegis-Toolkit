@@ -1,8 +1,10 @@
 package com.d4rk.cleaner.app.clean.largefiles.ui
 
 import android.app.Application
-import android.content.Intent
-import androidx.core.content.ContextCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.d4rk.cleaner.R
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -14,9 +16,8 @@ import com.d4rk.android.libs.apptoolkit.core.utils.helpers.UiTextHelper
 import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesAction
 import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesEvent
 import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesModel
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
-import com.d4rk.cleaner.app.clean.scanner.services.FileOperationService
+import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import java.io.File
@@ -24,7 +25,6 @@ import java.io.File
 class LargeFilesViewModel(
     private val application: Application,
     private val getLargestFilesUseCase: GetLargestFilesUseCase,
-    private val deleteFilesUseCase: DeleteFilesUseCase,
     private val dispatchers: DispatcherProvider
 ) : ScreenViewModel<UiLargeFilesModel, LargeFilesEvent, LargeFilesAction>(
     initialState = UiStateScreen(data = UiLargeFilesModel())
@@ -90,43 +90,34 @@ class LargeFilesViewModel(
 
     private fun deleteSelected() {
         launch(context = dispatchers.io) {
-            ContextCompat.startForegroundService(
-                application,
-                Intent(application, FileOperationService::class.java)
-            )
-            try {
-                val filePaths =
-                    _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
-                val files = filePaths.map { File(it) }.toSet()
-                if (files.isEmpty()) {
-                    sendAction(
-                        LargeFilesAction.ShowSnackbar(
-                            UiSnackbar(
-                                message = UiTextHelper.DynamicString(
-                                    "No files selected"
-                                )
-                            )
+            val filePaths =
+                _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
+            val files = filePaths.map { File(it) }.toSet()
+            if (files.isEmpty()) {
+                sendAction(
+                    LargeFilesAction.ShowSnackbar(
+                        UiSnackbar(
+                            message = UiTextHelper.DynamicString("No files selected")
                         )
                     )
-                    return@launch
-                }
-                deleteFilesUseCase(files).collectLatest { result ->
-                    if (result is DataState.Error) {
-                        _uiState.update { current ->
-                            current.copy(
-                                errors = current.errors + UiSnackbar(
-                                    message = UiTextHelper.DynamicString(
-                                        "Failed to delete files: ${result.error}"
-                                    ), isError = true
-                                )
-                            )
-                        }
-                    }
-                    onEvent(LargeFilesEvent.LoadLargeFiles)
-                }
-            } finally {
-                application.stopService(Intent(application, FileOperationService::class.java))
+                )
+                return@launch
             }
+            WorkManager.getInstance(application).enqueue(
+                OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                    .setInputData(
+                        workDataOf(
+                            FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
+                            FileCleanupWorker.KEY_PATHS to filePaths.toTypedArray()
+                        )
+                    ).build()
+            )
+            sendAction(
+                LargeFilesAction.ShowSnackbar(
+                    UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
+                )
+            )
+            onEvent(LargeFilesEvent.LoadLargeFiles)
         }
     }
 }
