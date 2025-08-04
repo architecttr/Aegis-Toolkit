@@ -27,9 +27,6 @@ import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesEvent
 import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesModel
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,12 +57,6 @@ fun LargeFilesScreen(activity: LargeFilesActivity) {
                 ) {
                     val (list, buttons) = createRefs()
                     val enabled = data.selectedFileCount > 0
-                    val filesByDate = data.files.groupBy { file ->
-                        SimpleDateFormat(
-                            "yyyy-MM-dd",
-                            Locale.getDefault()
-                        ).format(Date(file.lastModified()))
-                    }
                     FilesByDateSection(
                         modifier = Modifier.constrainAs(list) {
                             top.linkTo(parent.top)
@@ -75,7 +66,7 @@ fun LargeFilesScreen(activity: LargeFilesActivity) {
                             width = Dimension.fillToConstraints
                             height = Dimension.fillToConstraints
                         },
-                        filesByDate = filesByDate,
+                        filesByDate = data.filesByDate,
                         fileSelectionStates = data.fileSelectionStates.mapKeys { File(it.key) },
                         onFileSelectionChange = { file, checked ->
                             viewModel.onEvent(LargeFilesEvent.OnFileSelectionChange(file, checked))

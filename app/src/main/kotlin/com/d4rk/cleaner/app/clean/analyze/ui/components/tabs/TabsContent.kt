@@ -18,7 +18,6 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,9 +35,6 @@ import com.d4rk.cleaner.app.clean.scanner.ui.ScannerViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun TabsContent(
@@ -132,32 +128,11 @@ fun TabsContent(
         modifier = Modifier.hapticPagerSwipe(pagerState),
         state = pagerState,
     ) { page ->
-        val filesForCurrentPage = groupedFiles[tabs[page]]?.map { File(it.path) } ?: emptyList()
-
-        val filesByDateRaw = remember(filesForCurrentPage) {
-            filesForCurrentPage.groupBy { file ->
-                SimpleDateFormat(
-                    "yyyy-MM-dd",
-                    Locale.getDefault()
-                ).format(Date(file.lastModified()))
-            }
-        }
-
-        if (hasDuplicatesTab && tabs[page] == duplicatesTabTitle) {
-            val duplicateGroups = data.analyzeState.duplicateGroups
-            val filesByDate = remember(duplicateGroups) {
-                duplicateGroups.map { group -> group.map { File(it.path) } }.groupBy { grp ->
-                    val firstFile = grp.first()
-                    SimpleDateFormat(
-                        "yyyy-MM-dd",
-                        Locale.getDefault()
-                    ).format(Date(firstFile.lastModified()))
-                }
-            }
-
+        val currentTab = tabs[page]
+        if (hasDuplicatesTab && currentTab == duplicatesTabTitle) {
             DuplicateGroupsSection(
                 modifier = Modifier,
-                filesByDate = filesByDate,
+                filesByDate = data.analyzeState.duplicateGroupsByDate,
                 fileSelectionStates = data.analyzeState.selectedFiles.associate { File(it) to true },
                 onFileSelectionChange = viewModel::onFileSelectionChange,
                 onDateSelectionChange = { files, checked ->
@@ -172,9 +147,10 @@ fun TabsContent(
                 view = view
             )
         } else {
+            val filesByDate = data.analyzeState.filesByDateForCategory[currentTab] ?: emptyMap()
             FilesByDateSection(
                 modifier = Modifier,
-                filesByDate = filesByDateRaw,
+                filesByDate = filesByDate,
                 fileSelectionStates = data.analyzeState.selectedFiles.associate { File(it) to true },
                 onFileSelectionChange = viewModel::onFileSelectionChange,
                 onDateSelectionChange = { files, checked ->

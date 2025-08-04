@@ -20,6 +20,7 @@ import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesMo
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
+import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -77,15 +78,19 @@ class LargeFilesViewModel(
                 _uiState.update { current ->
                     when (result) {
                         is DataState.Loading -> current.copy(screenState = ScreenState.IsLoading())
-                        is DataState.Success -> current.copy(
-                            screenState = if (result.data.isEmpty()) ScreenState.NoData() else ScreenState.Success(),
-                            data = current.data?.copy(
-                                files = result.data,
-                                fileSelectionStates = emptyMap(),
-                                selectedFileCount = 0
+                        is DataState.Success -> {
+                            val groupedByDate = FileGroupingHelper.groupFilesByDate(result.data)
+                            current.copy(
+                                screenState = if (result.data.isEmpty()) ScreenState.NoData() else ScreenState.Success(),
+                                data = current.data?.copy(
+                                    files = result.data,
+                                    filesByDate = groupedByDate,
+                                    fileSelectionStates = emptyMap(),
+                                    selectedFileCount = 0
+                                )
+                                    ?: UiLargeFilesModel(files = result.data, filesByDate = groupedByDate)
                             )
-                                ?: UiLargeFilesModel(files = result.data)
-                        )
+                        }
 
                         is DataState.Error -> current.copy(
                             screenState = ScreenState.Error(),

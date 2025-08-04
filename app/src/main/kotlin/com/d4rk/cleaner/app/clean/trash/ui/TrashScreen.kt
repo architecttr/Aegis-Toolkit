@@ -11,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -30,9 +29,6 @@ import com.d4rk.cleaner.app.clean.trash.domain.actions.TrashEvent
 import com.d4rk.cleaner.app.clean.trash.domain.data.model.ui.UiTrashModel
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +67,7 @@ fun TrashScreen(activity: TrashActivity) {
                         width = Dimension.fillToConstraints
                         height = Dimension.fillToConstraints
                     },
-                    trashFiles = trashModel.trashFiles,
+                    filesByDate = trashModel.filesByDate,
                     uiState = trashModel,
                     viewModel = viewModel,
                     view = view,
@@ -106,17 +102,11 @@ fun TrashScreen(activity: TrashActivity) {
 @Composable
 fun TrashItemsList(
     modifier: Modifier,
-    trashFiles: List<File>,
+    filesByDate: Map<String, List<File>>,
     uiState: UiTrashModel,
     viewModel: TrashViewModel,
     view: View,
 ) {
-    val filesByDate = remember(trashFiles) {
-        trashFiles.groupBy { file ->
-            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(file.lastModified()))
-        }
-    }
-
     FilesByDateSection(
         modifier = modifier,
         filesByDate = filesByDate,

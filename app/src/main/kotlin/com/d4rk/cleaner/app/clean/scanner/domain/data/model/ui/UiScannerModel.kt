@@ -3,6 +3,7 @@ package com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui
 /** State of the cleaning process. */
 
 import com.d4rk.cleaner.app.clean.memory.domain.data.model.StorageInfo
+import java.io.File
 
 data class UiScannerModel(
     val storageInfo: StorageInfo = StorageInfo(),
@@ -24,10 +25,12 @@ data class UiAnalyzeModel(
     var selectedFiles: MutableSet<String> = mutableSetOf(),
     var selectedFilesCount: Int = 0,
     var groupedFiles: Map<String, List<FileEntry>> = emptyMap(),
+    var filesByDateForCategory: Map<String, Map<String, List<File>>> = emptyMap(),
     /** Set of original files when duplicates are detected */
     var duplicateOriginals: Set<FileEntry> = emptySet(),
     /** Groups of duplicate files starting with the original */
     var duplicateGroups: List<List<FileEntry>> = emptyList(),
+    var duplicateGroupsByDate: Map<String, List<List<File>>> = emptyMap(),
     var fileTypesData: FileTypesData = FileTypesData(),
     var isDeleteForeverConfirmationDialogVisible: Boolean = false,
     var isMoveToTrashConfirmationDialogVisible: Boolean = false,
