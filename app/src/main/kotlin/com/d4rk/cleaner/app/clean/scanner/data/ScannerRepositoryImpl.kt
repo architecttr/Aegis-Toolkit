@@ -151,40 +151,41 @@ class ScannerRepositoryImpl(
 
     override suspend fun deleteFiles(filesToDelete: Set<File>) {
         var totalSize = 0L
-        if (Environment.isExternalStorageManager()) {
-            filesToDelete.forEach { file ->
-                if (file.exists()) {
-                    totalSize += file.length()
-                    file.deleteRecursively()
-                }
-            }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val uris = mutableListOf<android.net.Uri>()
-            filesToDelete.forEach { file ->
-                if (!file.exists()) return@forEach
-                val path = file.absolutePath
-                if (path.startsWith(Environment.getExternalStorageDirectory().absolutePath + "/Android")) {
-                    val size = file.length()
-                    deleteWithSaf(file)
-                    totalSize += size
+        val androidDir = Environment.getExternalStorageDirectory().absolutePath + "/Android"
+        filesToDelete.forEach { file ->
+            if (!file.exists()) return@forEach
+
+            val size = file.length()
+            val hasManage =
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()
+            var usingSaf = !hasManage ||
+                file.absolutePath.startsWith(androidDir) || !file.canWrite()
+            var deleted = false
+
+            if (!usingSaf) {
+                val success = file.deleteRecursively()
+                if (success) {
+                    println("Deletion method: Native → path: ${file.path}")
+                    deleted = true
                 } else {
-                    totalSize += file.length()
-                    uris += FileProvider.getUriForFile(
-                        application,
-                        "${application.packageName}.fileprovider",
-                        file
-                    )
+                    println("deleteRecursively failed for ${file.path}")
+                    usingSaf = true
+                    println("Fallback to SAF for ${file.path}")
                 }
             }
-            if (uris.isNotEmpty()) {
-                MediaStore.createDeleteRequest(application.contentResolver, uris).send()
-            }
-        } else {
-            filesToDelete.forEach { file ->
-                if (file.exists()) {
-                    totalSize += file.length()
-                    file.deleteRecursively()
+
+            if (usingSaf && !deleted) {
+                val safResult = deleteWithSaf(file)
+                println("Deletion method: SAF → path: ${file.path}")
+                println("DocumentFile.delete() success: $safResult for ${file.path}")
+                deleted = safResult
+                if (!deleted) {
+                    throw RuntimeException("SAF_DELETE_FAILED")
                 }
+            }
+
+            if (deleted) {
+                totalSize += size
             }
         }
         if (totalSize > 0) {
@@ -193,12 +194,12 @@ class ScannerRepositoryImpl(
         clearClipboardImplementation()
     }
 
-    private fun deleteWithSaf(target: File) {
+    private fun deleteWithSaf(target: File): Boolean {
         val absPath = target.absolutePath
         val base = Environment.getExternalStorageDirectory().absolutePath
         val resolver = application.contentResolver
-        var hasPermission = false
         var document: DocumentFile? = null
+        var hasPermission = false
         for (perm in resolver.persistedUriPermissions) {
             val docId = DocumentsContract.getTreeDocumentId(perm.uri)
             val rootPath = base + "/" + docId.substringAfter(':')
@@ -218,11 +219,7 @@ class ScannerRepositoryImpl(
         }
         println("FileCleanupWorker ---> SAF delete attempt for path: $absPath")
         println("FileCleanupWorker ---> Found document: ${document != null} | hasPermission: $hasPermission")
-        when {
-            !hasPermission -> throw RuntimeException("NO_PERMISSION")
-            document == null -> throw RuntimeException("SAF_FILE_NOT_FOUND")
-            !document.delete() -> throw RuntimeException("SAF_DELETE_FAILED")
-        }
+        return hasPermission && document?.delete() == true
     }
 
     private fun clearClipboardImplementation() {
