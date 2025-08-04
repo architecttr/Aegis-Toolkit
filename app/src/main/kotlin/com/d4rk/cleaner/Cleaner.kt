@@ -4,6 +4,7 @@ package com.d4rk.cleaner
 
 import android.app.Activity
 import android.os.Bundle
+import android.content.ComponentCallbacks2
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -88,5 +89,10 @@ class Cleaner : BaseCoreManager(), SingletonImageLoader.Factory, DefaultLifecycl
     override fun onTrimMemory(level: Int) {
         FilePreviewHelper.onTrimMemory(level)
         super.onTrimMemory(level)
+    }
+
+    override fun onLowMemory() {
+        FilePreviewHelper.onTrimMemory(ComponentCallbacks2.TRIM_MEMORY_MODERATE)
+        super.onLowMemory()
     }
 }
