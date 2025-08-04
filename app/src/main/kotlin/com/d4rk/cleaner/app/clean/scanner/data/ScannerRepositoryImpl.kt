@@ -7,9 +7,7 @@ import android.content.Context
 import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Environment
-import android.provider.DocumentsContract
 import android.provider.MediaStore
-import androidx.documentfile.provider.DocumentFile
 import androidx.core.content.FileProvider
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.memory.domain.data.model.StorageInfo
@@ -21,6 +19,7 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.extensions.clearClipboardCompat
 import com.d4rk.cleaner.core.utils.extensions.partialMd5
 import com.d4rk.cleaner.core.utils.helpers.DirectoryScanner
+import com.d4rk.cleaner.core.utils.helpers.FileDeletionHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -150,76 +149,15 @@ class ScannerRepositoryImpl(
     }
 
     override suspend fun deleteFiles(filesToDelete: Set<File>) {
-        var totalSize = 0L
-        val androidDir = Environment.getExternalStorageDirectory().absolutePath + "/Android"
-        filesToDelete.forEach { file ->
-            if (!file.exists()) return@forEach
-
-            val size = file.length()
-            val hasManage =
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()
-            var usingSaf = !hasManage ||
-                file.absolutePath.startsWith(androidDir) || !file.canWrite()
-            var deleted = false
-
-            if (!usingSaf) {
-                val success = file.deleteRecursively()
-                if (success) {
-                    println("Deletion method: Native → path: ${file.path}")
-                    deleted = true
-                } else {
-                    println("deleteRecursively failed for ${file.path}")
-                    usingSaf = true
-                    println("Fallback to SAF for ${file.path}")
-                }
-            }
-
-            if (usingSaf && !deleted) {
-                val safResult = deleteWithSaf(file)
-                println("Deletion method: SAF → path: ${file.path}")
-                println("DocumentFile.delete() success: $safResult for ${file.path}")
-                deleted = safResult
-                if (!deleted) {
-                    throw RuntimeException("SAF_DELETE_FAILED")
-                }
-            }
-
-            if (deleted) {
-                totalSize += size
-            }
+        val results = FileDeletionHelper.deleteFiles(application, filesToDelete)
+        val totalSize = results.filter { it.success }.sumOf { it.file.length() }
+        if (results.any { !it.success }) {
+            throw RuntimeException("SAF_DELETE_FAILED")
         }
         if (totalSize > 0) {
             dataStore.addCleanedSpace(space = totalSize)
         }
         clearClipboardImplementation()
-    }
-
-    private fun deleteWithSaf(target: File): Boolean {
-        val absPath = target.absolutePath
-        val base = Environment.getExternalStorageDirectory().absolutePath
-        val resolver = application.contentResolver
-        var document: DocumentFile? = null
-        var hasPermission = false
-        for (perm in resolver.persistedUriPermissions) {
-            val docId = DocumentsContract.getTreeDocumentId(perm.uri)
-            val rootPath = base + "/" + docId.substringAfter(':')
-            if (absPath.startsWith(rootPath)) {
-                hasPermission = true
-                var current = DocumentFile.fromTreeUri(application, perm.uri)
-                val relative = absPath.removePrefix(rootPath).trimStart('/')
-                if (relative.isNotEmpty()) {
-                    for (part in relative.split('/')) {
-                        current = current?.listFiles()?.firstOrNull { it.name == part }
-                        if (current == null) break
-                    }
-                }
-                document = current
-                break
-            }
-        }
-        println("FileCleanupWorker ---> SAF delete attempt for path: $absPath")
-        println("FileCleanupWorker ---> Found document: ${document != null} | hasPermission: $hasPermission")
-        return hasPermission && document?.delete() == true
     }
 
     private fun clearClipboardImplementation() {
