@@ -41,11 +41,10 @@ import com.d4rk.cleaner.app.clean.scanner.utils.helpers.getWhatsAppMediaSummary
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
-import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
+import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -58,10 +57,7 @@ import kotlinx.coroutines.yield
 import java.io.File
 import java.util.UUID
 
-// Delay to allow storage operations to settle before refreshing UI.
 // Making this configurable clarifies the wait after cleaning tasks.
-private const val RESULT_DELAY_MS = 3600L
-private const val TAG = "ScannerViewModel"
 private const val EMPTY_FOLDERS_HIDE_DURATION_MS = 5 * 60 * 1000L
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -164,7 +160,6 @@ class ScannerViewModel(
         }
         launch(dispatchers.io) {
             CleaningEventBus.events.collectLatest {
-                delay(RESULT_DELAY_MS)
                 onEvent(ScannerEvent.RefreshData)
             }
         }
@@ -586,7 +581,6 @@ class ScannerViewModel(
                     }
                     WorkInfo.State.SUCCEEDED -> {
                         dataStore.clearScannerCleanWorkId()
-                        delay(RESULT_DELAY_MS)
                         _uiState.update { state ->
                             val current = state.data ?: UiScannerModel()
                             state.copy(
