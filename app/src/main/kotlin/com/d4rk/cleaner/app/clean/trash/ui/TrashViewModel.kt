@@ -16,6 +16,7 @@ import com.d4rk.cleaner.app.clean.trash.domain.data.model.ui.UiTrashModel
 import com.d4rk.cleaner.app.clean.trash.domain.usecases.GetTrashFilesUseCase
 import com.d4rk.cleaner.app.clean.trash.domain.usecases.RestoreFromTrashUseCase
 import com.d4rk.cleaner.core.data.datastore.DataStore
+import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -83,18 +84,21 @@ class TrashViewModel(
                                     screenState = ScreenState.NoData(),
                                     data = currentState.data?.copy(
                                         trashFiles = emptyList(),
+                                        filesByDate = emptyMap(),
                                         fileSelectionStates = emptyMap(),
                                         selectedFileCount = 0,
-                                    ) ?: UiTrashModel(trashFiles = emptyList())
+                                    ) ?: UiTrashModel(trashFiles = emptyList(), filesByDate = emptyMap())
                                 )
                             } else {
+                                val groupedByDate = FileGroupingHelper.groupFilesByDate(result.data)
                                 currentState.copy(
                                     screenState = ScreenState.Success(),
                                     data = currentState.data?.copy(
                                         trashFiles = result.data,
+                                        filesByDate = groupedByDate,
                                         fileSelectionStates = emptyMap(),
                                         selectedFileCount = 0,
-                                    ) ?: UiTrashModel(trashFiles = result.data)
+                                    ) ?: UiTrashModel(trashFiles = result.data, filesByDate = groupedByDate)
                                 )
                             }
                         }

@@ -23,6 +23,7 @@ import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
+import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -132,6 +133,11 @@ class CleanOperationHandler(
                     )
                 }
 
+            val filesByDateForCategory = groupedFiles.mapValues { (_, entries) ->
+                FileGroupingHelper.groupFileEntriesByDate(entries)
+            }
+            val duplicateGroupsByDate = FileGroupingHelper.groupDuplicateGroupsByDate(duplicateGroups)
+
             uiState.update { state ->
                 val data = state.data ?: UiScannerModel()
                 state.copy(
@@ -145,8 +151,10 @@ class CleanOperationHandler(
                                 FileEntry(it.absolutePath, 0, it.lastModified())
                             },
                             groupedFiles = groupedFiles,
+                            filesByDateForCategory = filesByDateForCategory,
                             duplicateOriginals = duplicateOriginals,
                             duplicateGroups = duplicateGroups,
+                            duplicateGroupsByDate = duplicateGroupsByDate,
                             state = CleaningState.ReadyToClean,
                             cleaningType = CleaningType.NONE
                         )

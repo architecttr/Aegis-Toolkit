@@ -42,6 +42,7 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
+import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -348,14 +349,21 @@ class ScannerViewModel(
                         includeDuplicates = includeDuplicates
                     )
 
+                    val filesByDateForCategory = groupedFilesUpdated.mapValues { (_, entries) ->
+                        FileGroupingHelper.groupFileEntriesByDate(entries)
+                    }
+                    val duplicateGroupsByDate = FileGroupingHelper.groupDuplicateGroupsByDate(duplicateGroups)
+
                     currentData.copy(
                         analyzeState = currentData.analyzeState.copy(
                             scannedFileList = currentData.analyzeState.scannedFileList.filterNot {
                                 files.contains(it)
                             },
                             groupedFiles = groupedFilesUpdated,
+                            filesByDateForCategory = filesByDateForCategory,
                             duplicateOriginals = duplicateOriginals,
                             duplicateGroups = duplicateGroups,
+                            duplicateGroupsByDate = duplicateGroupsByDate,
                             selectedFilesCount = 0,
                             areAllFilesSelected = false,
                             selectedFiles = mutableSetOf(),
@@ -391,7 +399,9 @@ class ScannerViewModel(
                         scannedFileList = emptyList(),
                         emptyFolderList = emptyList(),
                         groupedFiles = emptyMap(),
+                        filesByDateForCategory = emptyMap(),
                         duplicateGroups = emptyList(),
+                        duplicateGroupsByDate = emptyMap(),
                         selectedFiles = mutableSetOf(),
                         selectedFilesCount = 0,
                         areAllFilesSelected = false,
@@ -787,7 +797,9 @@ class ScannerViewModel(
                                 scannedFileList = emptyList(),
                                 emptyFolderList = emptyList(),
                                 groupedFiles = emptyMap(),
+                                filesByDateForCategory = emptyMap(),
                                 duplicateGroups = emptyList(),
+                                duplicateGroupsByDate = emptyMap(),
                                 selectedFiles = mutableSetOf(),
                                 selectedFilesCount = 0,
                                 areAllFilesSelected = false,
@@ -807,6 +819,7 @@ class ScannerViewModel(
                         selectedFilesCount = 0,
                         areAllFilesSelected = false,
                         duplicateGroups = emptyList(),
+                        duplicateGroupsByDate = emptyMap(),
                         isAnalyzeScreenVisible = false,
                         state = CleaningState.Idle,
                         cleaningType = CleaningType.NONE

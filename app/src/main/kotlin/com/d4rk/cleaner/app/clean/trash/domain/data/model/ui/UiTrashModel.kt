@@ -4,6 +4,7 @@ import java.io.File
 
 data class UiTrashModel(
     val trashFiles: List<File> = emptyList(),
+    val filesByDate: Map<String, List<File>> = emptyMap(),
     /** Map of file paths to selection state */
     val fileSelectionStates: Map<String, Boolean> = emptyMap(),
     val selectedFileCount: Int = 0,
