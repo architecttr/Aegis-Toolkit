@@ -2,7 +2,6 @@ package com.d4rk.cleaner.app.clean.scanner.ui
 
 import android.app.Application
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
@@ -202,7 +201,6 @@ class CleanOperationHandler(
             var lastRequest: androidx.work.OneTimeWorkRequest? = null
             for (chunk in chunks) {
                 val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
-                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                     .setInputData(
                         workDataOf(
                             FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
@@ -274,7 +272,6 @@ class CleanOperationHandler(
             var lastRequest: androidx.work.OneTimeWorkRequest? = null
             for (chunk in chunks) {
                 val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
-                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                     .setInputData(
                         workDataOf(
                             FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_TRASH,
