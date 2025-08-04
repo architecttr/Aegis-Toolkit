@@ -113,7 +113,8 @@ val appModule: Module = module {
     single<DeleteFilesUseCase> { DeleteFilesUseCase(homeRepository = get()) }
     single<MoveToTrashUseCase> { MoveToTrashUseCase(homeRepository = get()) }
     single<UpdateTrashSizeUseCase> { UpdateTrashSizeUseCase(homeRepository = get()) }
-    single { com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer() }
+    single { com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetDuplicatesUseCase(dispatchers = get()) }
+    single { com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer(get()) }
     single {
         com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager(
             deleteFilesUseCase = get(),
