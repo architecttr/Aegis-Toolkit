@@ -182,15 +182,6 @@ class CleanOperationHandler(
             return
         }
 
-        val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setInputData(
-                workDataOf(
-                    FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
-                    FileCleanupWorker.KEY_PATHS to selectedPaths.toTypedArray()
-                )
-            ).build()
-
         scope.launch(dispatchers.io) {
             val activeId = dataStore.scannerCleanWorkId.first()
             if (activeId != null) {
@@ -205,6 +196,29 @@ class CleanOperationHandler(
                 }
             }
 
+            val workManager = WorkManager.getInstance(application)
+            val chunks = selectedPaths.toList().chunked(FileCleanupWorker.MAX_PATHS_PER_WORKER)
+            var continuation: androidx.work.WorkContinuation? = null
+            var lastRequest: androidx.work.OneTimeWorkRequest? = null
+            for (chunk in chunks) {
+                val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    .setInputData(
+                        workDataOf(
+                            FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
+                            FileCleanupWorker.KEY_PATHS to chunk.toTypedArray()
+                        )
+                    ).build()
+                lastRequest = request
+                continuation = if (continuation == null) {
+                    workManager.beginWith(request)
+                } else {
+                    continuation!!.then(request)
+                }
+            }
+
+            val finalRequest = lastRequest
+
             uiState.update { state ->
                 val currentData = state.data ?: UiScannerModel()
                 state.copy(
@@ -217,12 +231,14 @@ class CleanOperationHandler(
                 )
             }
             runCatching {
-                WorkManager.getInstance(application).enqueue(request)
-                dataStore.saveScannerCleanWorkId(request.id.toString())
-                onWorkEnqueued(request.id)
+                continuation?.enqueue()
+                finalRequest?.let { req ->
+                    dataStore.saveScannerCleanWorkId(req.id.toString())
+                    onWorkEnqueued(req.id)
+                }
                 postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
             }.onFailure {
-                WorkManager.getInstance(application).cancelWorkById(request.id)
+                finalRequest?.let { req -> workManager.cancelWorkById(req.id) }
                 postSnackbar(UiTextHelper.StringResource(R.string.failed_to_delete_files), true)
             }
 
@@ -237,14 +253,6 @@ class CleanOperationHandler(
 
         val paths = files.map { it.path }
         val totalFileSizeToMove: Long = files.sumOf { it.toFile().length() }
-        val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setInputData(
-                workDataOf(
-                    FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_TRASH,
-                    FileCleanupWorker.KEY_PATHS to paths.toTypedArray()
-                )
-            ).build()
 
         scope.launch(dispatchers.io) {
             val activeId = dataStore.scannerCleanWorkId.first()
@@ -260,6 +268,29 @@ class CleanOperationHandler(
                 }
             }
 
+            val workManager = WorkManager.getInstance(application)
+            val chunks = paths.chunked(FileCleanupWorker.MAX_PATHS_PER_WORKER)
+            var continuation: androidx.work.WorkContinuation? = null
+            var lastRequest: androidx.work.OneTimeWorkRequest? = null
+            for (chunk in chunks) {
+                val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    .setInputData(
+                        workDataOf(
+                            FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_TRASH,
+                            FileCleanupWorker.KEY_PATHS to chunk.toTypedArray()
+                        )
+                    ).build()
+                lastRequest = request
+                continuation = if (continuation == null) {
+                    workManager.beginWith(request)
+                } else {
+                    continuation!!.then(request)
+                }
+            }
+
+            val finalRequest = lastRequest
+
             uiState.update { state: UiStateScreen<UiScannerModel> ->
                 val currentData: UiScannerModel = state.data ?: UiScannerModel()
                 state.copy(
@@ -273,13 +304,15 @@ class CleanOperationHandler(
             }
 
             runCatching {
-                WorkManager.getInstance(application).enqueue(request)
-                dataStore.saveScannerCleanWorkId(request.id.toString())
-                onWorkEnqueued(request.id)
+                continuation?.enqueue()
+                finalRequest?.let { req ->
+                    dataStore.saveScannerCleanWorkId(req.id.toString())
+                    onWorkEnqueued(req.id)
+                }
                 postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
                 updateTrashSize(totalFileSizeToMove)
             }.onFailure {
-                WorkManager.getInstance(application).cancelWorkById(request.id)
+                finalRequest?.let { req -> workManager.cancelWorkById(req.id) }
                 postSnackbar(UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash), true)
             }
         }

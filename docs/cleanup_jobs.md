@@ -40,6 +40,10 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 * **Result shown:** Users always see a final notification summarizing success or failure, which persists briefly so they don't miss it.
 * **Localization:** All user-facing strings are fully localized.
 
+## Quota & Responsiveness Strategy
+* Cleanup work requests are marked as **expedited** with `OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST` so they start promptly but gracefully fall back to regular background execution when quotas are exhausted.
+* When more than 100 file paths are queued, the app splits them into sequential `FileCleanupWorker` requests. This keeps each input set below WorkManager's 10 KB limit and avoids hitting expedited quotas while still processing large batches quickly.
+
 ## Developer and Contributor Guidelines
 * Persist job IDs to DataStore immediately after enqueuing.
 * Drive all UI state from observed `WorkInfo` to handle backgrounding and process death.
