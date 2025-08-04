@@ -7,7 +7,9 @@ import android.content.Context
 import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.documentfile.provider.DocumentFile
 import androidx.core.content.FileProvider
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.memory.domain.data.model.StorageInfo
@@ -149,14 +151,30 @@ class ScannerRepositoryImpl(
 
     override suspend fun deleteFiles(filesToDelete: Set<File>) {
         var totalSize = 0L
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val uris = filesToDelete.filter { it.exists() }.map { file ->
-                totalSize += file.length()
-                FileProvider.getUriForFile(
-                    application,
-                    "${application.packageName}.fileprovider",
-                    file
-                )
+        if (Environment.isExternalStorageManager()) {
+            filesToDelete.forEach { file ->
+                if (file.exists()) {
+                    totalSize += file.length()
+                    file.deleteRecursively()
+                }
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val uris = mutableListOf<android.net.Uri>()
+            filesToDelete.forEach { file ->
+                if (!file.exists()) return@forEach
+                val path = file.absolutePath
+                if (path.startsWith(Environment.getExternalStorageDirectory().absolutePath + "/Android")) {
+                    val size = file.length()
+                    deleteWithSaf(file)
+                    totalSize += size
+                } else {
+                    totalSize += file.length()
+                    uris += FileProvider.getUriForFile(
+                        application,
+                        "${application.packageName}.fileprovider",
+                        file
+                    )
+                }
             }
             if (uris.isNotEmpty()) {
                 MediaStore.createDeleteRequest(application.contentResolver, uris).send()
@@ -173,6 +191,38 @@ class ScannerRepositoryImpl(
             dataStore.addCleanedSpace(space = totalSize)
         }
         clearClipboardImplementation()
+    }
+
+    private fun deleteWithSaf(target: File) {
+        val absPath = target.absolutePath
+        val base = Environment.getExternalStorageDirectory().absolutePath
+        val resolver = application.contentResolver
+        var hasPermission = false
+        var document: DocumentFile? = null
+        for (perm in resolver.persistedUriPermissions) {
+            val docId = DocumentsContract.getTreeDocumentId(perm.uri)
+            val rootPath = base + "/" + docId.substringAfter(':')
+            if (absPath.startsWith(rootPath)) {
+                hasPermission = true
+                var current = DocumentFile.fromTreeUri(application, perm.uri)
+                val relative = absPath.removePrefix(rootPath).trimStart('/')
+                if (relative.isNotEmpty()) {
+                    for (part in relative.split('/')) {
+                        current = current?.listFiles()?.firstOrNull { it.name == part }
+                        if (current == null) break
+                    }
+                }
+                document = current
+                break
+            }
+        }
+        println("FileCleanupWorker ---> SAF delete attempt for path: $absPath")
+        println("FileCleanupWorker ---> Found document: ${document != null} | hasPermission: $hasPermission")
+        when {
+            !hasPermission -> throw RuntimeException("NO_PERMISSION")
+            document == null -> throw RuntimeException("SAF_FILE_NOT_FOUND")
+            !document.delete() -> throw RuntimeException("SAF_DELETE_FAILED")
+        }
     }
 
     private fun clearClipboardImplementation() {
