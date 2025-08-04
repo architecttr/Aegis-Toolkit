@@ -404,5 +404,4 @@
     <string name="cleanup_failed">Cleanup failed</string>
     <string name="cleanup_failed_details">Some files could not be deleted</string>
     <string name="cleanup_cancelled">Cleanup cancelled</string>
-    <string name="retry">Retry</string>
 </resources>

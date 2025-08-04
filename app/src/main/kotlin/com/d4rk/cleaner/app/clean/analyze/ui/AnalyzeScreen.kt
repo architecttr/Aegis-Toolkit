@@ -138,7 +138,7 @@ private fun ErrorScreen(onRetry: () -> Unit) {
             Text(text = stringResource(id = R.string.cleanup_failed))
             Spacer(modifier = Modifier.size(SizeConstants.MediumSize))
             Button(onClick = onRetry) {
-                Text(text = stringResource(id = R.string.retry))
+                Text(text = stringResource(id = com.d4rk.android.libs.apptoolkit.R.string.try_again))
             }
         }
     }

@@ -69,20 +69,9 @@ give the possibility to fix that issue.
 Thank you for choosing Cleaner! We hope you enjoy using our app as much as we enjoyed creating it
 for you!
 
-## File cleanup jobs
-
-Local file deletions and trash moves now run using WorkManager jobs. The app
-shows a brief snackbar while cleanup is in progress and finishes work even if
-the user leaves the app. UI state listens to each job's `WorkInfo` by ID so
-results are delivered even after the process restarts. An in‑process event bus
-may emit quick updates, but `WorkInfo` is the source of truth. If future Play
-policies require a dedicated foreground service type for file management,
-revisit this approach.
-
 # License
 
 __Privacy Policy__ [here](https://mihaicristiancondrea.github.io/profile/#privacy-policy-end-user-software).
 __Terms of Service__ [here](https://mihaicristiancondrea.github.io/profile/#terms-of-service-end-user-software).
 
 ![license](https://imgur.com/QQlcEVT.png)
-See `docs/file_preview_helper.md` for information on the file preview API.
