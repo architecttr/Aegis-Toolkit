@@ -1,6 +1,6 @@
 # Cleanup Job System: Technical and UX Documentation
 
-Smart Cleaner performs cleanup tasks only when the user explicitly initiates them. Each job runs in the foreground with determinate progress notifications, and its state is preserved so progress can resume after crashes or restarts.
+Smart Cleaner performs cleanup tasks only when the user explicitly initiates them. Each job runs as standard background work with determinate progress notifications and chunking, and its state is preserved so progress can resume after crashes or restarts.
 
 ## Overview
 Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. Every job begins with explicit user action and presents real-time progress in the UI and notification bar.
@@ -17,7 +17,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 1. User taps a cleanup action (e.g., "Clean", "Delete large files").
 2. App checks DataStore for an active job ID. If a job is running, the action is blocked and the user is notified.
 3. If no job is active, a new WorkManager job is enqueued and its ID saved to DataStore (e.g., `scannerCleanWorkId`, `largeFilesCleanWorkId`).
-4. A foreground notification immediately appears with determinate progress such as `0/184 files cleaned`.
+4. A progress notification immediately appears with determinate progress such as `0/184 files cleaned`.
 
 ### Progress
 * The Worker updates the notification after each file is processed (`n/N files cleaned`).
@@ -41,8 +41,8 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 * **Localization:** All user-facing strings are fully localized.
 
 ## Quota & Responsiveness Strategy
-* Cleanup work requests are marked as **expedited** with `OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST` so they start promptly but gracefully fall back to regular background execution when quotas are exhausted.
-* When more than 100 file paths are queued, the app splits them into sequential `FileCleanupWorker` requests. This keeps each input set below WorkManager's 10 KB limit and avoids hitting expedited quotas while still processing large batches quickly.
+* Cleanup jobs run as standard background work with determinate progress notifications, avoiding any foreground service type.
+* When more than 100 file paths are queued, the app splits them into sequential `FileCleanupWorker` requests to stay under WorkManager's 10 KB limit while still processing large batches efficiently.
 
 ## Developer and Contributor Guidelines
 * Persist job IDs to DataStore immediately after enqueuing.
@@ -59,7 +59,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 * Verify notifications and UI remain consistent throughout.
 
 ## Why This Design?
-* **Compliance:** Meets Google Play's requirement for user-initiated, foreground work.
+* **Compliance:** Meets Google Play's requirement for user-initiated background tasks by providing clear progress notifications.
 * **Robustness:** Survives process death, backgrounding, and notification interruptions.
 * **User trust:** Clearly communicates progress and results to avoid silent file loss or confusion.
 
