@@ -15,6 +15,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningType
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileEntry
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiAnalyzeModel
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
@@ -313,5 +314,17 @@ class CleanOperationHandler(
                 postSnackbar(UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash), true)
             }
         }
+    }
+
+    fun resetAfterError() {
+        uiState.update { state ->
+            val current = state.data ?: UiScannerModel()
+            state.copy(
+                data = current.copy(
+                    analyzeState = UiAnalyzeModel()
+                )
+            )
+        }
+        postSnackbar(UiTextHelper.StringResource(R.string.cleanup_failed), true)
     }
 }

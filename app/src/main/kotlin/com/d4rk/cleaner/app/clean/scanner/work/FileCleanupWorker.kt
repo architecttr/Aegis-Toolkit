@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
@@ -70,8 +71,8 @@ class FileCleanupWorker(
 
         val hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.checkSelfPermission(
-                    applicationContext,
-                    Manifest.permission.POST_NOTIFICATIONS,
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS,
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         } else {
             true
@@ -79,6 +80,8 @@ class FileCleanupWorker(
 
         if (hasPermission) {
             notificationManager.notify(NOTIFICATION_ID, builder.build())
+        } else {
+            Log.w(TAG, "Notification permission not granted")
         }
 
         val chunkSize = if (total <= MAX_PATHS_PER_WORKER) 1 else MAX_PATHS_PER_WORKER
@@ -86,13 +89,14 @@ class FileCleanupWorker(
         for (batch in files.chunked(chunkSize)) {
             if (isStopped) {
                 if (hasPermission) {
-                    builder.setOngoing(false)
-                        .setProgress(0, 0, false)
+                    builder.setProgress(0, 0, false)
                         .setContentTitle(applicationContext.getString(R.string.cleanup_cancelled))
                         .setContentText(applicationContext.getString(R.string.cleanup_cancelled))
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
                     delay(FINISH_DELAY_MS)
                     notificationManager.cancel(NOTIFICATION_ID)
+                } else {
+                    Log.w(TAG, "Notification permission not granted")
                 }
                 CleaningEventBus.notifyCleaned(success = false)
                 return Result.failure()
@@ -119,19 +123,19 @@ class FileCleanupWorker(
 
         if (isStopped) {
             if (hasPermission) {
-                builder.setOngoing(false)
-                    .setProgress(0, 0, false)
+                builder.setProgress(0, 0, false)
                     .setContentTitle(applicationContext.getString(R.string.cleanup_cancelled))
                     .setContentText(applicationContext.getString(R.string.cleanup_cancelled))
                 notificationManager.notify(NOTIFICATION_ID, builder.build())
                 delay(FINISH_DELAY_MS)
                 notificationManager.cancel(NOTIFICATION_ID)
+            } else {
+                Log.w(TAG, "Notification permission not granted")
             }
             CleaningEventBus.notifyCleaned(success = false)
             return Result.failure()
         }
-
-        builder.setOngoing(false).setProgress(0, 0, false)
+        builder.setProgress(0, 0, false)
 
         return if (error != null) {
             if (hasPermission) {
@@ -140,6 +144,8 @@ class FileCleanupWorker(
                 notificationManager.notify(NOTIFICATION_ID, builder.build())
                 delay(FINISH_DELAY_MS)
                 notificationManager.cancel(NOTIFICATION_ID)
+            } else {
+                Log.w(TAG, "Notification permission not granted")
             }
             CleaningEventBus.notifyCleaned(success = false)
             Result.failure(
@@ -153,6 +159,8 @@ class FileCleanupWorker(
                 notificationManager.notify(NOTIFICATION_ID, builder.build())
                 delay(FINISH_DELAY_MS)
                 notificationManager.cancel(NOTIFICATION_ID)
+            } else {
+                Log.w(TAG, "Notification permission not granted")
             }
             Result.success()
         }
@@ -197,6 +205,7 @@ class FileCleanupWorker(
         const val MAX_PATHS_PER_WORKER = 100
         private const val NOTIFICATION_ID = 2001
         private const val NOTIFICATION_CHANNEL = "file_cleanup"
-        private const val FINISH_DELAY_MS = 4000L
+        private const val FINISH_DELAY_MS = 10000L
+        private const val TAG = "FileCleanupWorker"
     }
 }
