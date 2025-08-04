@@ -201,11 +201,30 @@ class LargeFilesViewModel(
                     }
                     WorkInfo.State.SUCCEEDED -> {
                         dataStore.clearLargeFilesCleanWorkId()
+
+                        val failedPaths =
+                            info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
+                        val failedCount = failedPaths?.size ?: 0
+                        val selectedCount =
+                            _uiState.value.data?.fileSelectionStates?.count { it.value } ?: 0
+                        val successCount = selectedCount - failedCount
+
                         delay(resultDelayMs)
                         onEvent(LargeFilesEvent.LoadLargeFiles)
+
+                        val message = if (failedCount > 0) {
+                            UiTextHelper.StringResource(
+                                R.string.cleanup_partial,
+                                successCount,
+                                failedCount,
+                            )
+                        } else {
+                            UiTextHelper.StringResource(R.string.all_clean)
+                        }
+
                         sendAction(
                             LargeFilesAction.ShowSnackbar(
-                                UiSnackbar(message = UiTextHelper.StringResource(R.string.all_clean))
+                                UiSnackbar(message = message)
                             )
                         )
                     }
