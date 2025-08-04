@@ -2,14 +2,16 @@ package com.d4rk.cleaner.app.clean.scanner.domain.operations
 
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileEntry
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileTypesData
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetDuplicatesUseCase
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
-import com.d4rk.cleaner.core.utils.extensions.partialMd5
 import java.io.File
 
 /**
  * Provides functions used during scanning to analyze files on disk.
  */
-class FileAnalyzer {
+class FileAnalyzer(
+    private val getDuplicatesUseCase: GetDuplicatesUseCase
+) {
     fun computeGroupedFiles(
         scannedFiles: List<File>,
         emptyFolders: List<File>,
@@ -50,7 +52,7 @@ class FileAnalyzer {
         duplicatesTitle?.let { filesMap[it] = mutableListOf() }
 
         val duplicateGroups: List<List<FileEntry>> = if (includeDuplicates) {
-            findDuplicateGroups(scannedFiles)
+            getDuplicatesUseCase(scannedFiles)
         } else emptyList()
         val duplicateFiles: Set<String> = if (includeDuplicates) {
             duplicateGroups.flatten().map { it.path }.toSet()
@@ -95,14 +97,4 @@ class FileAnalyzer {
         return Triple(filteredMap, duplicateOriginals, duplicateGroups)
     }
 
-    fun findDuplicateGroups(files: List<File>): List<List<FileEntry>> {
-        val hashMap = mutableMapOf<String, MutableList<File>>()
-        files.filter { it.isFile }.forEach { file ->
-            val hash = file.partialMd5() ?: return@forEach
-            hashMap.getOrPut(hash) { mutableListOf() }.add(file)
-        }
-        return hashMap.values.filter { it.size > 1 }.map { group ->
-            group.map { FileEntry(it.absolutePath, it.length(), it.lastModified()) }
-        }
-    }
 }
