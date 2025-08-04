@@ -150,27 +150,42 @@ class LargeFilesViewModel(
                 }
             }
 
-            val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .setInputData(
-                    workDataOf(
-                        FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
-                        FileCleanupWorker.KEY_PATHS to filePaths.toTypedArray()
-                    )
-                ).build()
+            val workManager = WorkManager.getInstance(application)
+            val chunks = filePaths.toList().chunked(FileCleanupWorker.MAX_PATHS_PER_WORKER)
+            var continuation: androidx.work.WorkContinuation? = null
+            var lastRequest: androidx.work.OneTimeWorkRequest? = null
+            for (chunk in chunks) {
+                val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    .setInputData(
+                        workDataOf(
+                            FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
+                            FileCleanupWorker.KEY_PATHS to chunk.toTypedArray()
+                        )
+                    ).build()
+                lastRequest = request
+                continuation = if (continuation == null) {
+                    workManager.beginWith(request)
+                } else {
+                    continuation!!.then(request)
+                }
+            }
+
+            val finalRequest = lastRequest
 
             runCatching {
-                WorkManager.getInstance(application).enqueue(request).also {
-                    dataStore.saveLargeFilesCleanWorkId(request.id.toString())
-                    observeWork(request.id)
-                    sendAction(
-                        LargeFilesAction.ShowSnackbar(
-                            UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
-                        )
-                    )
+                continuation?.enqueue()
+                finalRequest?.let { req ->
+                    dataStore.saveLargeFilesCleanWorkId(req.id.toString())
+                    observeWork(req.id)
                 }
+                sendAction(
+                    LargeFilesAction.ShowSnackbar(
+                        UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
+                    )
+                )
             }.onFailure {
-                WorkManager.getInstance(application).cancelWorkById(request.id)
+                finalRequest?.let { req -> workManager.cancelWorkById(req.id) }
                 sendAction(
                     LargeFilesAction.ShowSnackbar(
                         UiSnackbar(

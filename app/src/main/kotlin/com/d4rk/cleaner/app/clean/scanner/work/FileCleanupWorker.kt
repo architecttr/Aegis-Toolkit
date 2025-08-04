@@ -78,7 +78,7 @@ class FileCleanupWorker(
             notificationManager.notify(NOTIFICATION_ID, builder.build())
         }
 
-        val chunkSize = if (total <= BATCH_SIZE) 1 else BATCH_SIZE
+        val chunkSize = if (total <= MAX_PATHS_PER_WORKER) 1 else MAX_PATHS_PER_WORKER
         var error: DataState.Error<Unit, *>? = null
         for (batch in files.chunked(chunkSize)) {
             if (isStopped) {
@@ -186,7 +186,12 @@ class FileCleanupWorker(
         const val ACTION_DELETE = "delete"
         const val ACTION_TRASH = "trash"
 
-        private const val BATCH_SIZE = 100
+        /**
+         * Maximum number of file paths accepted by a single work request.
+         * Enqueuing code splits larger lists using this value to stay under
+         * WorkManager's Data size limit and within expedited work quotas.
+         */
+        const val MAX_PATHS_PER_WORKER = 100
         private const val NOTIFICATION_ID = 2001
         private const val NOTIFICATION_CHANNEL = "file_cleanup"
         private const val FINISH_DELAY_MS = 4000L
