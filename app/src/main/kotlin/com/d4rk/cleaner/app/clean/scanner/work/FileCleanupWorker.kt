@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -59,7 +58,6 @@ class FileCleanupWorker(
             .setOnlyAlertOnce(true)
             .setOngoing(true)
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-            .setForegroundServiceTypes(ServiceInfo.FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT)
 
         val total = files.size
         var processed = 0
@@ -188,7 +186,7 @@ class FileCleanupWorker(
         return ForegroundInfo(
             NOTIFICATION_ID,
             notification,
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT,
+            FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT,
         )
     }
 
@@ -203,5 +201,6 @@ class FileCleanupWorker(
         private const val NOTIFICATION_ID = 2001
         private const val NOTIFICATION_CHANNEL = "file_cleanup"
         private const val FINISH_DELAY_MS = 4000L
+        private const val FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT = 1 shl 12
     }
 }
