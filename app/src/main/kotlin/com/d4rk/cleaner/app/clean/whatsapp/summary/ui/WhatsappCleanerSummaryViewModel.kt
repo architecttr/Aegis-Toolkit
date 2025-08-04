@@ -95,7 +95,7 @@ class WhatsappCleanerSummaryViewModel(
                                 UiSnackbar(message = UiTextHelper.DynamicString(message))
                             )
                         )
-                        CleaningEventBus.notifyCleaned(success = failed.isEmpty())
+                        CleaningEventBus.notifyCleaned(success = true)
                     }
                     is DataState.Error -> {
                         sendAction(
@@ -132,7 +132,7 @@ class WhatsappCleanerSummaryViewModel(
                                 UiSnackbar(message = UiTextHelper.DynamicString(message))
                             )
                         )
-                        CleaningEventBus.notifyCleaned(success = failed.isEmpty())
+                        CleaningEventBus.notifyCleaned(success = true)
                     }
                     is DataState.Error -> {
                         sendAction(
