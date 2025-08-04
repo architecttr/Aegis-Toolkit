@@ -10,7 +10,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.Data
-import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.delay
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
@@ -25,8 +24,8 @@ import java.io.File
 /**
  * Worker responsible for deleting files or moving them to the trash.
  *
- * A foreground notification with a determinate progress bar is shown for the
- * entire duration of the work and is updated as files are processed. Once the
+ * A notification with a determinate progress bar is shown for the entire
+ * duration of the work and is updated as files are processed. Once the
  * operation finishes, the notification is updated with the final result and
  * dismissed after a short delay.
  */
@@ -57,7 +56,6 @@ class FileCleanupWorker(
             )
             .setOnlyAlertOnce(true)
             .setOngoing(true)
-            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
 
         val total = files.size
         var processed = 0
@@ -77,7 +75,7 @@ class FileCleanupWorker(
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
         if (hasPermission) {
-            setForeground(getForegroundInfo(builder))
+            notificationManager.notify(NOTIFICATION_ID, builder.build())
         }
 
         val chunkSize = if (total <= BATCH_SIZE) 1 else BATCH_SIZE
@@ -181,15 +179,6 @@ class FileCleanupWorker(
         }
     }
 
-    private fun getForegroundInfo(builder: NotificationCompat.Builder): ForegroundInfo {
-        val notification = builder.build()
-        return ForegroundInfo(
-            NOTIFICATION_ID,
-            notification,
-            FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT,
-        )
-    }
-
     companion object {
         const val KEY_PATHS = "paths"
         const val KEY_ACTION = "action"
@@ -201,6 +190,5 @@ class FileCleanupWorker(
         private const val NOTIFICATION_ID = 2001
         private const val NOTIFICATION_CHANNEL = "file_cleanup"
         private const val FINISH_DELAY_MS = 4000L
-        private const val FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT = 1 shl 12
     }
 }
