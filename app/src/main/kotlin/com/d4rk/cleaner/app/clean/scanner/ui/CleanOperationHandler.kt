@@ -176,7 +176,12 @@ class CleanOperationHandler(
         }
 
         val selectedPaths: Set<String> = currentScreenData.analyzeState.selectedFiles
-        val filesToDelete: Set<File> = selectedPaths.map { File(it) }.toSet()
+        val filesToDelete: Set<File> = selectedPaths
+            .mapNotNull { path ->
+                path.takeIf { it.isNotBlank() }?.let { File(it) }
+            }
+            .filter { it.exists() }
+            .toSet()
         if (filesToDelete.isEmpty()) {
             postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_to_clean), false)
             return
@@ -197,7 +202,8 @@ class CleanOperationHandler(
             }
 
             val workManager = WorkManager.getInstance(application)
-            val chunks = selectedPaths.toList().chunked(FileCleanupWorker.MAX_PATHS_PER_WORKER)
+            val validPaths = filesToDelete.map { it.absolutePath }
+            val chunks = validPaths.chunked(FileCleanupWorker.MAX_PATHS_PER_WORKER)
             var continuation: androidx.work.WorkContinuation? = null
             var lastRequest: androidx.work.OneTimeWorkRequest? = null
             for (chunk in chunks) {
@@ -316,6 +322,18 @@ class CleanOperationHandler(
         }
     }
 
+    fun onCleaningFailed() {
+        uiState.update { state ->
+            val current = state.data ?: UiScannerModel()
+            state.copy(
+                data = current.copy(
+                    analyzeState = UiAnalyzeModel(state = CleaningState.Error)
+                )
+            )
+        }
+        postSnackbar(UiTextHelper.StringResource(R.string.cleanup_failed), true)
+    }
+
     fun resetAfterError() {
         uiState.update { state ->
             val current = state.data ?: UiScannerModel()
@@ -325,6 +343,5 @@ class CleanOperationHandler(
                 )
             )
         }
-        postSnackbar(UiTextHelper.StringResource(R.string.cleanup_failed), true)
     }
 }
