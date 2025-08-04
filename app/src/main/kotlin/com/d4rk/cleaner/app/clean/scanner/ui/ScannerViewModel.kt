@@ -602,16 +602,7 @@ class ScannerViewModel(
                     WorkInfo.State.FAILED -> {
                         dataStore.clearScannerCleanWorkId()
                         delay(RESULT_DELAY_MS)
-                        _uiState.update { state ->
-                            val current = state.data ?: UiScannerModel()
-                            state.copy(
-                                data = current.copy(
-                                    analyzeState = current.analyzeState.copy(
-                                        state = CleaningState.Error
-                                    )
-                                )
-                            )
-                        }
+                        cleanOperationHandler.resetAfterError()
                     }
                     WorkInfo.State.CANCELLED -> {
                         dataStore.clearScannerCleanWorkId()
@@ -750,6 +741,10 @@ class ScannerViewModel(
                 }
             }
         }
+    }
+
+    fun resetAfterError() {
+        cleanOperationHandler.resetAfterError()
     }
 
     private fun loadEmptyFoldersHideUntil() {
