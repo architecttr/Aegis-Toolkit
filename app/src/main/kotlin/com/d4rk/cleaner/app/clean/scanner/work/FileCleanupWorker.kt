@@ -135,8 +135,12 @@ class FileCleanupWorker(
             when (val res = performAction(action, listOf(file))) {
                 is DataState.Error -> {
                     failedPaths += file.absolutePath
-                    println("FileCleanupWorker ---> ERROR deleting ${file.absolutePath} → reason = ${res.error}")
-                    Log.w(TAG, "Failed to process ${file.absolutePath}: ${res.error}")
+                    val reason = when (val err = res.error) {
+                        is Errors.Custom -> err.message
+                        else -> err.toString()
+                    }
+                    println("FileCleanupWorker ---> ERROR deleting ${file.absolutePath} → reason = $reason")
+                    Log.w(TAG, "Failed to process ${file.absolutePath}: $reason")
                 }
                 else -> {
                     successCount++
