@@ -24,10 +24,9 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 * UI components observe WorkManager's `WorkInfo` for state, ensuring the UI stays in sync without polling or relying solely on in-process events.
 
 ### Completion & Feedback
-* When the job finishes—success, failure, or cancellation—the notification updates with a localized result message.
-* The final notification remains visible for several seconds before dismissal, giving users time to read the result.
+* When the job finishes—success, failure, or cancellation—the notification updates with a localized result message and is dismissed after a short delay【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/work/FileCleanupWorker.kt†L147-L153】.
 * UI state resets to "Ready" or "Error" depending on outcome.
-* The stored job ID is cleared from DataStore.
+* The stored job ID is cleared from DataStore, either when the Worker finishes or when no WorkInfo is found【F:app/src/main/kotlin/com/d4rk/cleaner/core/data/datastore/DataStore.kt†L88-L103】【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/ui/ScannerViewModel.kt†L142-L164】.
 
 ### Process Death & Recovery
 * On restart, any persisted job IDs are used to reattach observers to the running WorkManager jobs so progress continues seamlessly.
@@ -38,7 +37,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 ## UX & Notification Policy
 * **Single job per feature:** The app never allows overlapping cleanup jobs for the same feature.
 * **Visible progress:** Notifications always display determinate progress rather than a spinner.
-* **Result shown:** Users always see a final notification summarizing success or failure, which persists briefly (a few seconds) so they don't miss the result before it's dismissed.
+* **Result shown:** Users always see a final notification summarizing success or failure, which persists briefly so they don't miss it.
 * **Localization:** All user-facing strings are fully localized.
 
 ## Developer and Contributor Guidelines
