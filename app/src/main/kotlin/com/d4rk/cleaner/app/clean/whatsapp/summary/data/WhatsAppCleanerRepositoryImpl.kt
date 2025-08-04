@@ -9,6 +9,7 @@ import androidx.documentfile.provider.DocumentFile
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.DirectorySummary
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.WhatsAppMediaSummary
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.repository.WhatsAppCleanerRepository
+import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.DeleteResult
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -86,8 +87,11 @@ class WhatsAppCleanerRepositoryImpl(private val application: Application) :
         )
     }
 
-    override suspend fun deleteFiles(files: List<File>) = withContext(Dispatchers.IO) {
+    override suspend fun deleteFiles(files: List<File>): DeleteResult = withContext(Dispatchers.IO) {
         val androidDir = Environment.getExternalStorageDirectory().absolutePath + "/Android"
+        val failed = mutableListOf<String>()
+        var deletedCount = 0
+
         files.forEach { file ->
             if (!file.exists()) return@forEach
 
@@ -113,9 +117,21 @@ class WhatsAppCleanerRepositoryImpl(private val application: Application) :
                 val result = deleteWithSaf(file)
                 println("Deletion method: SAF → path: ${file.path}")
                 println("DocumentFile.delete() success: $result for ${file.path}")
-                if (!result) throw RuntimeException("SAF_DELETE_FAILED")
+                deleted = result
+            }
+
+            if (deleted) {
+                deletedCount++
+            } else {
+                failed.add(file.path)
+                println("Deletion failed for ${file.path}")
             }
         }
+
+        DeleteResult(
+            deletedCount = deletedCount,
+            failedPaths = failed
+        )
     }
 
     private fun deleteWithSaf(target: File): Boolean {
