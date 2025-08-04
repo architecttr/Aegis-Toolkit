@@ -51,6 +51,7 @@ fun AnalyzeScreen(
                 .weight(weight = 1f)
                 .fillMaxWidth(),
         ) {
+            println(message = "The state of the screen is ${data.analyzeState.state}")
             when (data.analyzeState.state) {
 
                 CleaningState.Analyzing -> {

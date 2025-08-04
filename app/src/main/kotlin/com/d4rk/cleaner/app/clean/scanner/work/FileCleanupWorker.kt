@@ -68,11 +68,14 @@ class FileCleanupWorker(
                 ),
             )
 
-        val hasPermission =
+        val hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.POST_NOTIFICATIONS,
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS,
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
 
         if (hasPermission) {
             notificationManager.notify(NOTIFICATION_ID, builder.build())

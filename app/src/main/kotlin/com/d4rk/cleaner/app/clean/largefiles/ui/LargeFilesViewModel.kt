@@ -162,11 +162,7 @@ class LargeFilesViewModel(
                         )
                     ).build()
                 lastRequest = request
-                continuation = if (continuation == null) {
-                    workManager.beginWith(request)
-                } else {
-                    continuation!!.then(request)
-                }
+                continuation = continuation?.then(request) ?: workManager.beginWith(request)
             }
 
             val finalRequest = lastRequest
