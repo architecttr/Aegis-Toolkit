@@ -1,8 +1,11 @@
 package com.d4rk.cleaner.app.clean.whatsapp.summary.data
 
 import android.app.Application
+import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.text.format.Formatter
+import androidx.documentfile.provider.DocumentFile
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.DirectorySummary
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.WhatsAppMediaSummary
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.repository.WhatsAppCleanerRepository
@@ -84,9 +87,63 @@ class WhatsAppCleanerRepositoryImpl(private val application: Application) :
     }
 
     override suspend fun deleteFiles(files: List<File>) = withContext(Dispatchers.IO) {
+        val androidDir = Environment.getExternalStorageDirectory().absolutePath + "/Android"
         files.forEach { file ->
-            if (file.exists()) file.deleteRecursively()
+            if (!file.exists()) return@forEach
+
+            val hasManage =
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()
+            var usingSaf = !hasManage ||
+                file.absolutePath.startsWith(androidDir) || !file.canWrite()
+            var deleted = false
+
+            if (!usingSaf) {
+                val success = file.deleteRecursively()
+                if (success) {
+                    println("Deletion method: Native → path: ${file.path}")
+                    deleted = true
+                } else {
+                    println("deleteRecursively failed for ${file.path}")
+                    usingSaf = true
+                    println("Fallback to SAF for ${file.path}")
+                }
+            }
+
+            if (usingSaf && !deleted) {
+                val result = deleteWithSaf(file)
+                println("Deletion method: SAF → path: ${file.path}")
+                println("DocumentFile.delete() success: $result for ${file.path}")
+                if (!result) throw RuntimeException("SAF_DELETE_FAILED")
+            }
         }
+    }
+
+    private fun deleteWithSaf(target: File): Boolean {
+        val absPath = target.absolutePath
+        val base = Environment.getExternalStorageDirectory().absolutePath
+        val resolver = application.contentResolver
+        var document: DocumentFile? = null
+        var hasPermission = false
+        for (perm in resolver.persistedUriPermissions) {
+            val docId = DocumentsContract.getTreeDocumentId(perm.uri)
+            val rootPath = base + "/" + docId.substringAfter(':')
+            if (absPath.startsWith(rootPath)) {
+                hasPermission = true
+                var current = DocumentFile.fromTreeUri(application, perm.uri)
+                val relative = absPath.removePrefix(rootPath).trimStart('/')
+                if (relative.isNotEmpty()) {
+                    for (part in relative.split('/')) {
+                        current = current?.listFiles()?.firstOrNull { it.name == part }
+                        if (current == null) break
+                    }
+                }
+                document = current
+                break
+            }
+        }
+        println("FileCleanupWorker ---> SAF delete attempt for path: $absPath")
+        println("FileCleanupWorker ---> Found document: ${document != null} | hasPermission: $hasPermission")
+        return hasPermission && document?.delete() == true
     }
 
     override suspend fun listMediaFiles(type: String, offset: Int, limit: Int): List<File> =

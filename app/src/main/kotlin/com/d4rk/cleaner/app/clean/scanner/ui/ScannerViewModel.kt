@@ -598,6 +598,7 @@ class ScannerViewModel(
                             )
                         }
                         onEvent(ScannerEvent.RefreshData)
+                        onCloseAnalyzeComposable()
                     }
                     WorkInfo.State.FAILED -> {
                         dataStore.clearScannerCleanWorkId()
