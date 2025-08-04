@@ -2,6 +2,7 @@ package com.d4rk.cleaner.app.clean.largefiles.ui
 
 import android.app.Application
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -150,6 +151,7 @@ class LargeFilesViewModel(
             }
 
             val request = OneTimeWorkRequestBuilder<FileCleanupWorker>()
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setInputData(
                     workDataOf(
                         FileCleanupWorker.KEY_ACTION to FileCleanupWorker.ACTION_DELETE,
