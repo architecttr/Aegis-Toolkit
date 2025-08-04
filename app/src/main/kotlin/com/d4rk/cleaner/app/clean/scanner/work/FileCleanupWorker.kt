@@ -48,8 +48,23 @@ class FileCleanupWorker(
         }
         val action = inputData.getString(KEY_ACTION) ?: ACTION_DELETE
         val paths = rawPaths.toList()
-        Log.d(TAG, "Received paths: $paths")
-        val files = paths.map { File(it) }.filter { it.exists() }
+        println("FileCleanupWorker ---> Received paths: $paths")
+        val files = mutableListOf<File>()
+        for (path in paths) {
+            println("FileCleanupWorker ---> Checking path: $path")
+            val file = File(path)
+            val exists = file.exists()
+            val isFile = file.isFile
+            val isDirectory = file.isDirectory
+            println("FileCleanupWorker ---> File exists: $exists isFile: $isFile isDirectory: $isDirectory")
+            if (exists) {
+                println("FileCleanupWorker ---> canRead: ${file.canRead()} canWrite: ${file.canWrite()}")
+                if (isDirectory) {
+                    println("FileCleanupWorker ---> directory children: ${file.listFiles()?.size ?: 0}")
+                }
+                files += file
+            }
+        }
         if (files.isEmpty()) {
             Log.e(TAG, "NO_DATA: no valid files for paths=$paths")
             return Result.failure(
@@ -116,12 +131,17 @@ class FileCleanupWorker(
                 return Result.failure()
             }
 
+            println("FileCleanupWorker ---> Attempting to $action: ${file.absolutePath}")
             when (val res = performAction(action, listOf(file))) {
                 is DataState.Error -> {
                     failedPaths += file.absolutePath
+                    println("FileCleanupWorker ---> ERROR deleting ${file.absolutePath} → reason = ${res.error}")
                     Log.w(TAG, "Failed to process ${file.absolutePath}: ${res.error}")
                 }
-                else -> successCount++
+                else -> {
+                    successCount++
+                    println("FileCleanupWorker ---> Deleted: ${file.absolutePath} → result = success")
+                }
             }
             processed++
             builder.setProgress(total, processed, false)
@@ -154,6 +174,7 @@ class FileCleanupWorker(
         builder.setProgress(0, 0, false)
 
         val failedCount = failedPaths.size
+        println("FileCleanupWorker ---> Deleted $successCount, failed $failedCount")
         val resultData = Data.Builder().apply {
             if (failedPaths.isNotEmpty()) {
                 putStringArray(KEY_FAILED_PATHS, failedPaths.toTypedArray())
