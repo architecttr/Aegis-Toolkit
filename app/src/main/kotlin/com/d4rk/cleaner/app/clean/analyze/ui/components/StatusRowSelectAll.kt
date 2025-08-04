@@ -16,44 +16,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 
 @Composable
 fun StatusRowSelectAll(
-    data: UiScannerModel,
-    view: View,
-    enabled: Boolean,
-    onClickSelectAll: () -> Unit
+    data: UiScannerModel, view: View, onClickSelectAll: () -> Unit
 ) {
+    val statusText: String = if (data.analyzeState.selectedFilesCount > 0) {
+        pluralStringResource(
+            id = R.plurals.status_selected_files,
+            count = data.analyzeState.selectedFilesCount,
+            data.analyzeState.selectedFilesCount
+        )
+    } else {
+        stringResource(id = R.string.status_no_files_selected)
+    }
+    val statusColor: Color by animateColorAsState(
+        targetValue = if (data.analyzeState.selectedFilesCount > 0) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.secondary
+        }, animationSpec = tween(), label = "Selected Files Status Color Animation"
+    )
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        val statusText: String = if (data.analyzeState.selectedFilesCount > 0) {
-            pluralStringResource(
-                id = R.plurals.status_selected_files,
-                count = data.analyzeState.selectedFilesCount,
-                data.analyzeState.selectedFilesCount
-            )
-        } else {
-            stringResource(id = R.string.status_no_files_selected)
-        }
-        val statusColor: Color by animateColorAsState(
-            targetValue = if (data.analyzeState.selectedFilesCount > 0) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.secondary
-            }, animationSpec = tween(), label = "Selected Files Status Color Animation"
-        )
-
         Text(
-            text = statusText, color = statusColor, modifier = Modifier.animateContentSize()
+            text = statusText,
+            color = statusColor,
+            modifier = Modifier
+                .animateContentSize()
+                .weight(1f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         SelectAllComposable(
             selected = data.analyzeState.areAllFilesSelected, view = view, onClickSelectAll = {
                 onClickSelectAll()
-            })
+            },
+        )
     }
 }

@@ -22,7 +22,6 @@ import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -41,7 +40,6 @@ class LargeFilesViewModel(
     private val limit = 20
 
     private var activeWorkObserver: Job? = null
-    private val resultDelayMs = 3600L
 
     init {
         onEvent(LargeFilesEvent.LoadLargeFiles)
@@ -209,14 +207,12 @@ class LargeFilesViewModel(
                             _uiState.value.data?.fileSelectionStates?.count { it.value } ?: 0
                         val successCount = selectedCount - failedCount
 
-                        delay(resultDelayMs)
                         onEvent(LargeFilesEvent.LoadLargeFiles)
 
                         val message = if (failedCount > 0) {
                             UiTextHelper.StringResource(
                                 R.string.cleanup_partial,
-                                successCount,
-                                failedCount,
+                                listOf(successCount, failedCount)
                             )
                         } else {
                             UiTextHelper.StringResource(R.string.all_clean)

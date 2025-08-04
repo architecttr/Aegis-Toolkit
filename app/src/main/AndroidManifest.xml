@@ -165,8 +165,6 @@
                 android:value="alerting|conversations|ongoing|silent" />
         </service>
 
-
-
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"

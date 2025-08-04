@@ -104,7 +104,6 @@ fun AnalyzeScreen(
                 data = data,
                 view = view,
                 onClickSelectAll = { viewModel.toggleSelectAllFiles() },
-                enabled = hasSelectedFiles
             )
         }
 

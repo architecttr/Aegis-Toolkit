@@ -3,11 +3,7 @@ package com.d4rk.cleaner.app.clean.analyze.ui.components
 import android.view.SoundEffectConstants
 import android.view.View
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -16,7 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,39 +29,30 @@ import com.d4rk.cleaner.R
 fun SelectAllComposable(
     selected: Boolean, view: View, onClickSelectAll: () -> Unit
 ) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
-    ) {
-        val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
-        FilterChip(
-            modifier = Modifier.bounceClick(),
-            selected = selected,
-            onClick = {
-                onClickSelectAll()
-                view.playSoundEffect(SoundEffectConstants.CLICK)
-            },
-            label = { Text(text = stringResource(id = R.string.select_all)) },
-            leadingIcon = {
-                AnimatedContent(
-                    targetState = selected,
-                    transitionSpec = { SelectAllTransitions.fadeScale },
-                    label = "Checkmark Animation"
-                ) { targetChecked ->
-                    if (targetChecked) {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = null,
-                            modifier = Modifier.size(size = 18.dp)
-                        )
-                    }
+    val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    FilterChip(
+        modifier = Modifier.bounceClick(),
+        selected = selected,
+        onClick = {
+            onClickSelectAll()
+            view.playSoundEffect(SoundEffectConstants.CLICK)
+        },
+        label = { Text(text = stringResource(id = R.string.select_all)) },
+        leadingIcon = {
+            AnimatedContent(
+                targetState = selected,
+                transitionSpec = { SelectAllTransitions.fadeScale },
+                label = "Checkmark Animation"
+            ) { targetChecked ->
+                if (targetChecked) {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(size = 18.dp)
+                    )
                 }
-            },
-            interactionSource = interactionSource,
-        )
-    }
+            }
+        },
+        interactionSource = interactionSource,
+    )
 }
