@@ -148,6 +148,7 @@ class FileCleanupWorker(
                 Log.w(TAG, "Notification permission not granted")
             }
             CleaningEventBus.notifyCleaned(success = false)
+            println(message = "Error for cleaning is: ${error.error}")
             Result.failure(
                 Data.Builder().putString(KEY_ERROR, error.error.toString()).build(),
             )
