@@ -601,8 +601,7 @@ class ScannerViewModel(
                     }
                     WorkInfo.State.FAILED -> {
                         dataStore.clearScannerCleanWorkId()
-                        delay(RESULT_DELAY_MS)
-                        cleanOperationHandler.resetAfterError()
+                        cleanOperationHandler.onCleaningFailed()
                     }
                     WorkInfo.State.CANCELLED -> {
                         dataStore.clearScannerCleanWorkId()

@@ -16,6 +16,7 @@ import kotlinx.coroutines.delay
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
+import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.google.android.material.color.MaterialColors
 import org.koin.core.component.KoinComponent
@@ -38,10 +39,23 @@ class FileCleanupWorker(
     private val cleaningManager: CleaningManager by inject()
 
     override suspend fun doWork(): Result {
-        val paths = inputData.getStringArray(KEY_PATHS)?.toList() ?: return Result.success()
+        val rawPaths = inputData.getStringArray(KEY_PATHS)
+        if (rawPaths.isNullOrEmpty()) {
+            Log.e(TAG, "NO_DATA: input=$inputData")
+            return Result.failure(
+                Data.Builder().putString(KEY_ERROR, Errors.UseCase.NO_DATA.toString()).build(),
+            )
+        }
         val action = inputData.getString(KEY_ACTION) ?: ACTION_DELETE
-        val files = paths.map { File(it) }
-        if (files.isEmpty()) return Result.success()
+        val paths = rawPaths.toList()
+        Log.d(TAG, "Received paths: $paths")
+        val files = paths.map { File(it) }.filter { it.exists() }
+        if (files.isEmpty()) {
+            Log.e(TAG, "NO_DATA: no valid files for paths=$paths")
+            return Result.failure(
+                Data.Builder().putString(KEY_ERROR, Errors.UseCase.NO_DATA.toString()).build(),
+            )
+        }
 
         createChannelIfNeeded()
         val notificationManager = NotificationManagerCompat.from(applicationContext)
