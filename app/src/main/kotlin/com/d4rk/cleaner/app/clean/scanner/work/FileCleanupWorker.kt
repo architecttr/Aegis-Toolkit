@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -57,6 +58,8 @@ class FileCleanupWorker(
             )
             .setOnlyAlertOnce(true)
             .setOngoing(true)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+            .setForegroundServiceTypes(ServiceInfo.FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT)
 
         val total = files.size
         var processed = 0
@@ -76,7 +79,7 @@ class FileCleanupWorker(
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
         if (hasPermission) {
-            setForeground(ForegroundInfo(NOTIFICATION_ID, builder.build()))
+            setForeground(getForegroundInfo(builder))
         }
 
         val chunkSize = if (total <= BATCH_SIZE) 1 else BATCH_SIZE
@@ -178,6 +181,15 @@ class FileCleanupWorker(
             )
             NotificationManagerCompat.from(applicationContext).createNotificationChannel(channel)
         }
+    }
+
+    private fun getForegroundInfo(builder: NotificationCompat.Builder): ForegroundInfo {
+        val notification = builder.build()
+        return ForegroundInfo(
+            NOTIFICATION_ID,
+            notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_FILE_MANAGEMENT,
+        )
     }
 
     companion object {
