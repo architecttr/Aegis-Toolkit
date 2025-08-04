@@ -1,73 +1,85 @@
 # Cleaning Screens and Flows
 
 ## 1. Dashboard Screen
-**What happens here**
-- Displays overall device stats such as used/free space and file type counts.
-- Provides buttons for actions like "Scan for junk", "Large files", and "WhatsApp cleaner".
-- No automatic scans: every action requires a user tap.
+**Trigger**
+- User opens the app or returns from other screens.
 
-**Effect on state**
-- Performs lightweight disk queries; heavy analysis is deferred to later screens.
-- When the user leaves, the system may clear the Dashboard from memory.
-- Shows the latest known summary, which may be stale if no recent scan ran.
+**UI states**
+- Shows storage stats and entry points for other cleaners.
+- No background scanning; every action requires a tap.
+
+**State persistence**
+- Stats are loaded from repository each time the screen is shown.
+- No disk state is persisted; values may be stale after process death.
+
+**Error handling**
+- IO failures surface as snackbars and the screen falls back to the last known values.
+
+**System events**
+- Process death simply reloads stats on next visit.
+- Removing the app from memory discards any cached values.
 
 ## 2. Analyze Screen
-**UI state flow**
-- Initial: offers a "Start scan" action.
-- Scanning: shows a progress indicator and blocks other input except cancel.
-- Results: after scanning, categories (images, videos, etc.) appear with counts and sizes.
-- Ready to clean: user can select files or categories for cleanup.
-- Cleaning: disables selection and shows cleanup progress until completion.
+**Trigger**
+- User presses **Start scan** from the Analyze tab.
 
-**Internal details**
-- ViewModel launches file analysis on scan.
-- Results streamed via `MutableStateFlow` to the UI.
-- File metadata is cached in RAM for the session only.
-- File selections are transient and not persisted.
-- Both scan results and selections live only in memory; if the process dies they are cleared and require a new scan.
+**UI states**
+1. *Idle* – waiting for the user to initiate a scan.
+2. *Analyzing* – shows determinate progress and disables input.
+3. *ReadyToClean* – lists results, including empty folders and duplicates.
+4. *Cleaning* – WorkManager job running; selections disabled.
+5. *Complete/Error* – results updated, job ID cleared.
 
-## 3. File Discovery, Storage, and Cleaning Flow
-**File discovery**
-- The analyzer walks storage to collect files by type or category.
-- Optionally groups duplicates via hashes or names.
-- Results stored in a `UiScannerModel`.
+**State persistence**
+- `UiScannerModel` holds results in memory only; a crash or process kill removes them.
+- Active job IDs are persisted via `DataStore` for recovery.
 
-**UI presentation**
-- Each tab lists matching files using a `LazyColumn`.
-- Users can filter, select all, or pick individual files.
+**Error handling**
+- Failures during analysis or cleaning post a snackbar and move the state to `Error`.
 
-**Move to trash / Delete**
-- User action triggers `CleanOperationHandler`.
-- Existing jobs are checked; if one is active, the new request is blocked.
-- Otherwise a WorkManager job is enqueued and its ID persisted.
+**System events**
+- On restart, the ViewModel reattaches to any running cleanup job using the stored ID and clears stale IDs when no work exists【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/ui/ScannerViewModel.kt†L142-L164】.
 
-**Worker jobs**
-- Run in the foreground and process each file sequentially.
-- Notifications update with exact progress and final status.
-- UI state resets to ready or error and the job ID is cleared.
+## 3. WhatsApp Cleaner Screen
+**Trigger**
+- User navigates from Dashboard or Analyze to the WhatsApp section.
 
-## 4. WhatsApp Cleaner Screen
-- Mirrors the Analyze screen but targets WhatsApp media folders (images, videos, documents, etc.).
-- Presents category tabs specific to WhatsApp (stickers, voice notes, and more).
-- Uses the same WorkManager cleanup flow and notification handling.
-- Job IDs may be tracked separately, but core logic is shared.
+**UI states**
+- Idle → Scanning individual WhatsApp directories → Displaying media categories → Cleaning.
 
-## 5. Large Files Scanner
-- Starts from Dashboard or Analyze depending on navigation.
-- Scans storage for files above a threshold (e.g., >100 MB).
-- Results shown in a list with optional filtering.
-- User selects files to delete, triggering the standard WorkManager cleanup job.
+**State persistence**
+- Lists and selections live in memory; job IDs stored in `DataStore` reuse the general `scannerCleanWorkId` key.
 
-## Meta-Observations
-- All cleanup operations follow a unified pattern: UI event → handler → WorkManager → notification → state sync.
-- No background or scheduled cleanups; every operation is user initiated and foregrounded.
-- State is resilient: after crashes or restarts, UI and notifications reflect the true job state.
-- Users always know what is happening, what succeeded or failed, and when they can retry.
+**Error handling**
+- Scan or delete failures show snackbars; media lists fall back to empty results.
 
-## Documenting New Screens
-When adding or documenting a new screen, capture:
-- What triggers a scan or cleanup.
-- What the user sees during each state.
-- How file data is stored or cached.
-- What happens on navigation away, crash, or restart.
-- Any unique behavior relative to existing screens.
+**System events**
+- Process death requires a rescan unless a job is running, in which case the UI reattaches using the stored ID.
+
+## 4. Large Files Scanner
+**Trigger**
+- User taps **Large files** from Dashboard or Analyze.
+
+**UI states**
+1. Idle/Loading – fetching the largest files.
+2. Ready – list of large files with selection checkboxes.
+3. Cleaning – WorkManager job removes selected files.
+4. Complete/Error – list refreshed and job ID cleared.
+
+**State persistence**
+- File list kept in memory; selections lost on process death.
+- Job ID persisted as `largeFilesCleanWorkId` for recovery【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/largefiles/ui/LargeFilesViewModel.kt†L45-L58】.
+
+**Error handling**
+- Failures show snackbars and keep the last known list.
+
+**System events**
+- ViewModel reconnects to running jobs and clears stale IDs on start【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/largefiles/ui/LargeFilesViewModel.kt†L130-L146】.
+
+## 5. Other Screens
+- [Clipboard Cleaner](clipboard_cleaner.md)
+- [Empty Folder Cleaner](empty_folder_cleaner.md)
+- [Trash Recovery](trash_recovery.md)
+- [App Manager](app_manager.md)
+
+All cleanup operations share a common pattern: user action → handler → WorkManager job → notification → UI/ID reset.
