@@ -98,9 +98,9 @@ class FileCleanupWorker(
             Log.w(TAG, "Notification permission not granted")
         }
 
-        val chunkSize = if (total <= MAX_PATHS_PER_WORKER) 1 else MAX_PATHS_PER_WORKER
-        var error: DataState.Error<Unit, *>? = null
-        for (batch in files.chunked(chunkSize)) {
+        val failedPaths = mutableListOf<String>()
+        var successCount = 0
+        for (file in files) {
             if (isStopped) {
                 if (hasPermission) {
                     builder.setProgress(0, 0, false)
@@ -116,12 +116,14 @@ class FileCleanupWorker(
                 return Result.failure()
             }
 
-            val res = performAction(action, batch)
-            if (res is DataState.Error) {
-                error = res
-                break
+            when (val res = performAction(action, listOf(file))) {
+                is DataState.Error -> {
+                    failedPaths += file.absolutePath
+                    Log.w(TAG, "Failed to process ${file.absolutePath}: ${res.error}")
+                }
+                else -> successCount++
             }
-            processed += batch.size
+            processed++
             builder.setProgress(total, processed, false)
                 .setContentText(
                     applicationContext.getString(
@@ -151,33 +153,59 @@ class FileCleanupWorker(
         }
         builder.setProgress(0, 0, false)
 
-        return if (error != null) {
-            if (hasPermission) {
-                builder.setContentTitle(applicationContext.getString(R.string.cleanup_failed))
-                    .setContentText(applicationContext.getString(R.string.cleanup_failed_details))
-                notificationManager.notify(NOTIFICATION_ID, builder.build())
-                delay(FINISH_DELAY_MS)
-                notificationManager.cancel(NOTIFICATION_ID)
-            } else {
-                Log.w(TAG, "Notification permission not granted")
+        val failedCount = failedPaths.size
+        val resultData = Data.Builder().apply {
+            if (failedPaths.isNotEmpty()) {
+                putStringArray(KEY_FAILED_PATHS, failedPaths.toTypedArray())
             }
-            CleaningEventBus.notifyCleaned(success = false)
-            println(message = "Error for cleaning is: ${error.error}")
-            Result.failure(
-                Data.Builder().putString(KEY_ERROR, error.error.toString()).build(),
-            )
-        } else {
-            CleaningEventBus.notifyCleaned(success = true)
-            if (hasPermission) {
-                builder.setContentTitle(applicationContext.getString(R.string.cleanup_finished))
-                    .setContentText(applicationContext.getString(R.string.all_clean))
-                notificationManager.notify(NOTIFICATION_ID, builder.build())
-                delay(FINISH_DELAY_MS)
-                notificationManager.cancel(NOTIFICATION_ID)
-            } else {
-                Log.w(TAG, "Notification permission not granted")
+        }.build()
+
+        return when {
+            failedCount == 0 -> {
+                CleaningEventBus.notifyCleaned(success = true)
+                if (hasPermission) {
+                    builder.setContentTitle(applicationContext.getString(R.string.cleanup_finished))
+                        .setContentText(applicationContext.getString(R.string.all_clean))
+                    notificationManager.notify(NOTIFICATION_ID, builder.build())
+                    delay(FINISH_DELAY_MS)
+                    notificationManager.cancel(NOTIFICATION_ID)
+                } else {
+                    Log.w(TAG, "Notification permission not granted")
+                }
+                Result.success()
             }
-            Result.success()
+            successCount == 0 -> {
+                if (hasPermission) {
+                    builder.setContentTitle(applicationContext.getString(R.string.cleanup_failed))
+                        .setContentText(applicationContext.getString(R.string.cleanup_failed_details))
+                    notificationManager.notify(NOTIFICATION_ID, builder.build())
+                    delay(FINISH_DELAY_MS)
+                    notificationManager.cancel(NOTIFICATION_ID)
+                } else {
+                    Log.w(TAG, "Notification permission not granted")
+                }
+                CleaningEventBus.notifyCleaned(success = false)
+                Result.failure(resultData)
+            }
+            else -> {
+                if (hasPermission) {
+                    builder.setContentTitle(applicationContext.getString(R.string.cleanup_finished))
+                        .setContentText(
+                            applicationContext.getString(
+                                R.string.cleanup_partial,
+                                successCount,
+                                failedCount,
+                            ),
+                        )
+                    notificationManager.notify(NOTIFICATION_ID, builder.build())
+                    delay(FINISH_DELAY_MS)
+                    notificationManager.cancel(NOTIFICATION_ID)
+                } else {
+                    Log.w(TAG, "Notification permission not granted")
+                }
+                CleaningEventBus.notifyCleaned(success = false)
+                Result.success(resultData)
+            }
         }
     }
 
@@ -209,6 +237,7 @@ class FileCleanupWorker(
         const val KEY_PATHS = "paths"
         const val KEY_ACTION = "action"
         const val KEY_ERROR = "error"
+        const val KEY_FAILED_PATHS = "failed_paths"
         const val ACTION_DELETE = "delete"
         const val ACTION_TRASH = "trash"
 
