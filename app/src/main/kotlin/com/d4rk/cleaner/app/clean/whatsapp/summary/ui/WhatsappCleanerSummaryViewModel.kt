@@ -82,20 +82,35 @@ class WhatsappCleanerSummaryViewModel(
             }
 
             deleteUseCase(files).collectLatest { result ->
-                val freed = files.sumOf { it.length() }
-                if (result is DataState.Success) {
-                    sendAction(
-                        WhatsAppCleanerAction.ShowSnackbar(
-                            UiSnackbar(
-                                message = UiTextHelper.DynamicString(
-                                    "Cleaned ${FileSizeFormatter.format(freed)}"
+                when (result) {
+                    is DataState.Success -> {
+                        val failed = result.data.failedPaths
+                        val freed = files.filterNot { it.path in failed }.sumOf { it.length() }
+                        val message = buildString {
+                            append("Cleaned ${FileSizeFormatter.format(freed)}")
+                            if (failed.isNotEmpty()) append(", ${failed.size} failed")
+                        }
+                        sendAction(
+                            WhatsAppCleanerAction.ShowSnackbar(
+                                UiSnackbar(message = UiTextHelper.DynamicString(message))
+                            )
+                        )
+                        CleaningEventBus.notifyCleaned(success = failed.isEmpty())
+                    }
+                    is DataState.Error -> {
+                        sendAction(
+                            WhatsAppCleanerAction.ShowSnackbar(
+                                UiSnackbar(
+                                    message = UiTextHelper.DynamicString("${result.error}"),
+                                    isError = true
                                 )
                             )
                         )
-                    )
+                        CleaningEventBus.notifyCleaned(success = false)
+                    }
+                    else -> Unit
                 }
                 onEvent(WhatsAppCleanerEvent.LoadMedia)
-                CleaningEventBus.notifyCleaned(success = true)
             }
         }
     }
@@ -104,20 +119,35 @@ class WhatsappCleanerSummaryViewModel(
         if (files.isEmpty()) return
         launch(context = dispatchers.io) {
             deleteUseCase(files).collectLatest { result ->
-                val freed = files.sumOf { it.length() }
-                if (result is DataState.Success) {
-                    sendAction(
-                        WhatsAppCleanerAction.ShowSnackbar(
-                            UiSnackbar(
-                                message = UiTextHelper.DynamicString(
-                                    "Cleaned ${FileSizeFormatter.format(freed)}"
+                when (result) {
+                    is DataState.Success -> {
+                        val failed = result.data.failedPaths
+                        val freed = files.filterNot { it.path in failed }.sumOf { it.length() }
+                        val message = buildString {
+                            append("Cleaned ${FileSizeFormatter.format(freed)}")
+                            if (failed.isNotEmpty()) append(", ${failed.size} failed")
+                        }
+                        sendAction(
+                            WhatsAppCleanerAction.ShowSnackbar(
+                                UiSnackbar(message = UiTextHelper.DynamicString(message))
+                            )
+                        )
+                        CleaningEventBus.notifyCleaned(success = failed.isEmpty())
+                    }
+                    is DataState.Error -> {
+                        sendAction(
+                            WhatsAppCleanerAction.ShowSnackbar(
+                                UiSnackbar(
+                                    message = UiTextHelper.DynamicString("${result.error}"),
+                                    isError = true
                                 )
                             )
                         )
-                    )
+                        CleaningEventBus.notifyCleaned(success = false)
+                    }
+                    else -> Unit
                 }
                 onEvent(WhatsAppCleanerEvent.LoadMedia)
-                CleaningEventBus.notifyCleaned(success = true)
             }
         }
     }
