@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.d4rk.cleaner.app.clean.scanner.utils.helpers
 
 import android.content.ComponentCallbacks2
@@ -10,6 +12,7 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaFormat.KEY_MAX_INPUT_SIZE
 import android.media.MediaMetadataRetriever
+import android.os.Build
 import android.util.LruCache
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -177,18 +180,26 @@ object FilePreviewHelper {
         }
 
     /**
-     * Respond to system memory pressure. Evicts all cached bitmaps when the
-     * process is in the background or the system is running critically low on
-     * memory. Under moderate pressure the cache size is halved.
+     * Respond to system memory pressure. On Android 14 (API 34) and above,
+     * only the UI hidden callback is dispatched, so we clear the entire cache
+     * when the UI is no longer visible. On older versions we retain the
+     * existing behaviour of halving the cache size under background pressure
+     * and evicting everything under moderate pressure.
      */
     fun onTrimMemory(level: Int) {
-        when {
-            level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
                 bitmapCache.evictAll()
             }
-            level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> {
-                val newSize = bitmapCache.maxSize() / 2
-                bitmapCache.resize(newSize)
+        } else {
+            when {
+                level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
+                    bitmapCache.evictAll()
+                }
+                level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND -> {
+                    val newSize = bitmapCache.maxSize() / 2
+                    bitmapCache.resize(newSize)
+                }
             }
         }
     }
