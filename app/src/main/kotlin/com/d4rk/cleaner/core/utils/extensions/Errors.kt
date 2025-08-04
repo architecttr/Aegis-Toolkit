@@ -34,6 +34,10 @@ fun Throwable.toError(default: Errors = Errors.UseCase.NO_DATA): Errors {
             else -> Errors.UseCase.FAILED_TO_ENCRYPT_CART
         }
 
-        else -> default
+        else -> if (default == Errors.UseCase.NO_DATA) {
+            Errors.Custom(this.message)
+        } else {
+            default
+        }
     }
 }

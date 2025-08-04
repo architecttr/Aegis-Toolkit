@@ -4,6 +4,14 @@ import com.d4rk.android.libs.apptoolkit.core.domain.model.network.Error
 
 sealed interface Errors : Error {
 
+    /**
+     * Generic error used when a more specific type is not available. It carries
+     * the original message so that it can be logged for debugging purposes.
+     */
+    data class Custom(val message: String? = null) : Errors {
+        override fun toString(): String = message ?: "Unknown error"
+    }
+
     enum class Network : Errors {
         REQUEST_TIMEOUT, NO_INTERNET, SERVER_ERROR, SERIALIZATION
     }
