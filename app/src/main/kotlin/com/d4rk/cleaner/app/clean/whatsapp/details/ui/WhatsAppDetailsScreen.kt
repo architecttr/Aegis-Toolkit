@@ -81,6 +81,7 @@ import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.UiWhatsAppCleane
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.WhatsappCleanerSummaryViewModel
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
 import com.d4rk.cleaner.app.clean.whatsapp.utils.helpers.openFile
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.qualifier.named
@@ -301,7 +302,9 @@ fun DetailsScreen(
                                 .align(Alignment.CenterHorizontally)
                                 .padding(8.dp),
                             onClick = { showConfirm = true },
-                            enabled = selected.isNotEmpty(),
+                            enabled = selected.isNotEmpty() &&
+                                state.data?.cleaningState != CleaningState.Cleaning &&
+                                state.data?.cleaningState != CleaningState.Error,
                             iconContentDescription = null,
                             label = stringResource(id = R.string.delete_selected),
                             icon = Icons.Outlined.Delete
@@ -502,6 +505,8 @@ private fun SmartSuggestionsCard(
                     onShowConfirmChange(true)
                 },
                 modifier = Modifier.align(Alignment.End),
+                enabled = state.data?.cleaningState != CleaningState.Cleaning &&
+                    state.data?.cleaningState != CleaningState.Error,
                 label = stringResource(id = R.string.delete_all_suggested),
                 icon = Icons.Outlined.Delete
             )

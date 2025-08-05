@@ -1,5 +1,7 @@
 package com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model
 
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
+
 data class WhatsAppMediaSummary(
     val images: DirectorySummary = DirectorySummary(),
     val videos: DirectorySummary = DirectorySummary(),
@@ -34,4 +36,5 @@ data class WhatsAppMediaSummary(
 data class UiWhatsAppCleanerModel(
     val mediaSummary: WhatsAppMediaSummary = WhatsAppMediaSummary(),
     val totalSize: String = mediaSummary.formattedTotalSize,
+    val cleaningState: CleaningState = CleaningState.Idle,
 )

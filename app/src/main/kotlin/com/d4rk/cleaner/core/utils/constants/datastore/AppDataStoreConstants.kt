@@ -41,4 +41,5 @@ object AppDataStoreConstants : DataStoreNamesConstants() {
     const val DATA_STORE_SCANNER_CLEAN_WORK_ID = "scanner_clean_work_id"
     const val DATA_STORE_LARGE_FILES_CLEAN_WORK_ID = "large_files_clean_work_id"
     const val DATA_STORE_TRASH_CLEAN_WORK_ID = "trash_clean_work_id"
+    const val DATA_STORE_WHATSAPP_CLEAN_WORK_ID = "whatsapp_clean_work_id"
 }
