@@ -44,6 +44,7 @@ import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
+import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,7 +74,8 @@ class ScannerViewModel(
     private val getLargestFilesUseCase: GetLargestFilesUseCase,
     private val getEmptyFoldersUseCase: GetEmptyFoldersUseCase,
     private val dispatchers: DispatcherProvider,
-    private val dataStore: DataStore
+    private val dataStore: DataStore,
+    private val fileCleanWorkEnqueuer: FileCleanWorkEnqueuer
 ) : ScreenViewModel<UiScannerModel, ScannerEvent, ScannerAction>(
     initialState = UiStateScreen(data = UiScannerModel())
 ) {
@@ -120,6 +122,7 @@ class ScannerViewModel(
         scope = viewModelScope,
         dispatchers = dispatchers,
         dataStore = dataStore,
+        fileCleanWorkEnqueuer = fileCleanWorkEnqueuer,
         analyzeFilesUseCase = analyzeFilesUseCase,
         getEmptyFoldersUseCase = getEmptyFoldersUseCase,
         cleaningManager = cleaningManager,
