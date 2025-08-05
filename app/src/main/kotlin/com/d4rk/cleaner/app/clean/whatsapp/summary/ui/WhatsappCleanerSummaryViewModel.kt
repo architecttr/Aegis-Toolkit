@@ -24,6 +24,7 @@ import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
+import com.d4rk.cleaner.core.work.WorkObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -202,86 +203,74 @@ class WhatsappCleanerSummaryViewModel(
 
     private fun observeWork(id: UUID) {
         activeWorkObserver?.cancel()
-        activeWorkObserver = launch(dispatchers.io) {
-            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info ->
-                when (info?.state) {
-                    WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.IsLoading(),
-                                data = it.data?.copy(cleaningState = CleaningState.Cleaning)
-                            )
-                        }
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        dataStore.clearWhatsAppCleanWorkId()
-                        val failedPaths =
-                            info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
-                                ?.toSet() ?: emptySet()
-                        val failedCount = failedPaths.size
-                        val successSize = pendingDeleteSizes
-                            .filterKeys { it !in failedPaths }
-                            .values
-                            .sum()
-                        pendingDeleteSizes = emptyMap()
+        activeWorkObserver = WorkObserver.observe(
+            scope = this,
+            workManager = WorkManager.getInstance(application),
+            workId = id,
+            dispatcher = dispatchers.io,
+            clearWorkId = { dataStore.clearWhatsAppCleanWorkId() },
+            onRunning = {
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.IsLoading(),
+                        data = it.data?.copy(cleaningState = CleaningState.Cleaning)
+                    )
+                }
+            },
+            onSuccess = { info ->
+                val failedPaths =
+                    info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
+                        ?.toSet() ?: emptySet()
+                val failedCount = failedPaths.size
+                val successSize = pendingDeleteSizes
+                    .filterKeys { it !in failedPaths }
+                    .values
+                    .sum()
+                pendingDeleteSizes = emptyMap()
 
-                        onEvent(WhatsAppCleanerEvent.LoadMedia)
+                onEvent(WhatsAppCleanerEvent.LoadMedia)
 
-                        val message = buildString {
-                            append("Cleaned ${FileSizeFormatter.format(successSize)}")
-                            if (failedCount > 0) append(", $failedCount failed")
-                        }
+                val message = buildString {
+                    append("Cleaned ${FileSizeFormatter.format(successSize)}")
+                    if (failedCount > 0) append(", $failedCount failed")
+                }
 
-                        _uiState.update { current ->
-                            current.copy(
-                                data = current.data?.copy(cleaningState = CleaningState.Result)
-                            )
-                        }
+                _uiState.update { current ->
+                    current.copy(
+                        data = current.data?.copy(cleaningState = CleaningState.Result)
+                    )
+                }
 
-                        sendAction(
-                            WhatsAppCleanerAction.ShowSnackbar(
-                                UiSnackbar(message = UiTextHelper.DynamicString(message))
-                            )
+                sendAction(
+                    WhatsAppCleanerAction.ShowSnackbar(
+                        UiSnackbar(message = UiTextHelper.DynamicString(message))
+                    )
+                )
+                CleaningEventBus.notifyCleaned(success = failedCount == 0)
+            },
+            onFailed = {
+                pendingDeleteSizes = emptyMap()
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.Error(),
+                        data = it.data?.copy(cleaningState = CleaningState.Error),
+                        errors = it.errors + UiSnackbar(
+                            message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
+                            isError = true
                         )
-                        CleaningEventBus.notifyCleaned(success = failedCount == 0)
-                    }
-                    WorkInfo.State.FAILED -> {
-                        dataStore.clearWhatsAppCleanWorkId()
-                        pendingDeleteSizes = emptyMap()
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.Error(),
-                                data = it.data?.copy(cleaningState = CleaningState.Error),
-                                errors = it.errors + UiSnackbar(
-                                    message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
-                                    isError = true
-                                )
-                            )
-                        }
-                        CleaningEventBus.notifyCleaned(success = false)
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        dataStore.clearWhatsAppCleanWorkId()
-                        pendingDeleteSizes = emptyMap()
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.Success(),
-                                data = it.data?.copy(cleaningState = CleaningState.Idle)
-                            )
-                        }
-                    }
-                    null -> {
-                        dataStore.clearWhatsAppCleanWorkId()
-                        pendingDeleteSizes = emptyMap()
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.Success(),
-                                data = it.data?.copy(cleaningState = CleaningState.Idle)
-                            )
-                        }
-                    }
+                    )
+                }
+                CleaningEventBus.notifyCleaned(success = false)
+            },
+            onCancelled = {
+                pendingDeleteSizes = emptyMap()
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.Success(),
+                        data = it.data?.copy(cleaningState = CleaningState.Idle)
+                    )
                 }
             }
-        }
+        )
     }
 }
