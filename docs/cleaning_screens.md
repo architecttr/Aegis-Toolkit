@@ -48,13 +48,15 @@
 - Idle → Scanning individual WhatsApp directories → Displaying media categories → Cleaning.
 
 **State persistence**
-- Lists and selections live in memory; job IDs stored in `DataStore` reuse the general `scannerCleanWorkId` key.
+ - Lists and selections remain in memory; job IDs stored in `DataStore` under `whatsappCleanWorkId`.
+ - `FileCleaner.enqueue` schedules work, stores `whatsappCleanWorkId`, and prevents duplicate jobs.
+ - `observeFileCleanWork` reads that ID to report progress and surface per-file failures from worker output.
 
 **Error handling**
 - Scan or delete failures show snackbars; media lists fall back to empty results.
 
 **System events**
-- Process death requires a rescan unless a job is running, in which case the UI reattaches using the stored ID.
+ - Because selections and lists are memory-only, process death forces a rescan unless a job is active; when active, `observeFileCleanWork` reattaches using the stored ID.
 
 ## 4. Large Files Scanner
 **Trigger**
