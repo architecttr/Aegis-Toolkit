@@ -149,7 +149,7 @@ class ScannerRepositoryImpl(
     }
 
     override suspend fun deleteFiles(files: Collection<File>): Unit {
-        val results = FileDeletionHelper.deleteFiles(files)
+        val results = FileDeletionHelper.deleteFiles(files, application.contentResolver)
         val totalSize = results.filter { it.success }.sumOf { it.file.length() }
         val failed = results.filter { !it.success }
         if (failed.isNotEmpty()) {
