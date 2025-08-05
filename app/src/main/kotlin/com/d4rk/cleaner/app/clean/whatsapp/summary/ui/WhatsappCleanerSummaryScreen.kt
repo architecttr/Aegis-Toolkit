@@ -47,7 +47,6 @@ import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.components.CleanerInfoCard
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.components.DirectoryGrid
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.components.WhatsAppEmptyState
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
-import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.qualifier.named
@@ -77,8 +76,6 @@ fun WhatsappCleanerSummaryScreen(activity: Activity) {
             AnimatedExtendedFloatingActionButton(
                 visible = state.data?.mediaSummary?.totalBytes != 0L,
                 onClick = { showCleanDialog = true },
-                enabled = state.data?.cleaningState != CleaningState.Cleaning &&
-                    state.data?.cleaningState != CleaningState.Error,
                 icon = {
                     Icon(
                         imageVector = Icons.Outlined.DeleteSweep,

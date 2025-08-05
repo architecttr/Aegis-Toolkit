@@ -124,13 +124,8 @@ class ScannerViewModel(
         fileCleanWorkEnqueuer = fileCleanWorkEnqueuer,
         analyzeFilesUseCase = analyzeFilesUseCase,
         getEmptyFoldersUseCase = getEmptyFoldersUseCase,
-        cleaningManager = cleaningManager,
         fileAnalyzer = fileAnalyzer,
         uiState = _uiState,
-        loadInitialData = ::loadInitialData,
-        loadWhatsAppMedia = ::loadWhatsAppMedia,
-        loadClipboardData = { clipboardHandler.refresh() },
-        loadEmptyFoldersPreview = ::loadEmptyFoldersPreview,
         postSnackbar = ::postSnackbar,
         updateTrashSize = ::updateTrashSize,
         onWorkEnqueued = ::observeCleaningWork

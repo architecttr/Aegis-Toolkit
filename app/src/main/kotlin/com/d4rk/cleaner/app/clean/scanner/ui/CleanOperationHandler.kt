@@ -1,6 +1,5 @@
 package com.d4rk.cleaner.app.clean.scanner.ui
 
-import android.app.Application
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.android.libs.apptoolkit.core.domain.model.ui.ScreenState
@@ -11,14 +10,13 @@ import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningType
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.FileEntry
-import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiAnalyzeModel
-import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.AnalyzeFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
-import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
+import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
@@ -43,13 +41,8 @@ class CleanOperationHandler(
     private val fileCleanWorkEnqueuer: FileCleanWorkEnqueuer,
     private val analyzeFilesUseCase: AnalyzeFilesUseCase,
     private val getEmptyFoldersUseCase: GetEmptyFoldersUseCase,
-    private val cleaningManager: CleaningManager, // FIXME: Property "loadInitialData" is never used
     private val fileAnalyzer: FileAnalyzer,
     private val uiState: MutableStateFlow<UiStateScreen<UiScannerModel>>,
-    private val loadInitialData: () -> Unit, // FIXME: Property "loadInitialData" is never used
-    private val loadWhatsAppMedia: () -> Unit, // FIXME: Property "loadWhatsAppMedia" is never used
-    private val loadClipboardData: () -> Unit, // FIXME: Property "loadClipboardData" is never used
-    private val loadEmptyFoldersPreview: () -> Unit, // FIXME: Property "loadEmptyFoldersPreview" is never used
     private val postSnackbar: (UiTextHelper, Boolean) -> Unit,
     private val updateTrashSize: (Long) -> Unit,
     private val onWorkEnqueued: (UUID) -> Unit,

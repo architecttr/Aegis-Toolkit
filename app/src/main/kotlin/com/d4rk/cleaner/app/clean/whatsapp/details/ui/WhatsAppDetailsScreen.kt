@@ -235,7 +235,8 @@ fun DetailsScreen(
                             SmartSuggestionsCard(
                                 selected = selected,
                                 suggested = suggested,
-                                onShowConfirmChange = { showConfirm = it }
+                                onShowConfirmChange = { showConfirm = it },
+                                state = state
                             )
                         }
 
@@ -450,6 +451,7 @@ private fun SmartSuggestionsCard(
     selected: MutableList<File>,
     suggested: List<File>,
     onShowConfirmChange: (Boolean) -> Unit,
+    state: UiStateScreen<UiWhatsAppCleanerModel>
 ) {
     val context: Context = LocalContext.current
     Card(
