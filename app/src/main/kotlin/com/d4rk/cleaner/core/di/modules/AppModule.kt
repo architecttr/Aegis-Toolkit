@@ -224,12 +224,13 @@ val appModule: Module = module {
     single<GetEmptyFoldersUseCase> { GetEmptyFoldersUseCase(repository = get()) }
     viewModel<TrashViewModel> {
         TrashViewModel(
+            application = get(),
             getTrashFilesUseCase = get(),
-            deleteFilesUseCase = get(),
             updateTrashSizeUseCase = get(),
             restoreFromTrashUseCase = get(),
             dispatchers = get(),
-            dataStore = get()
+            dataStore = get(),
+            fileCleanWorkEnqueuer = get(),
         )
     }
 
