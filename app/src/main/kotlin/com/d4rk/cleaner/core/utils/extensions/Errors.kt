@@ -31,7 +31,7 @@ fun Throwable.toError(default: Errors = Errors.UseCase.NO_DATA): Errors {
         is SerializationException -> Errors.Network.SERIALIZATION
         is SQLException, is SQLiteException -> Errors.Database.DATABASE_OPERATION_FAILED
         is IllegalStateException -> when (this.message) {
-            else -> Errors.UseCase.FAILED_TO_ENCRYPT_CART
+            else -> Errors.UseCase.INVALID_DATA
         }
 
         else -> if (default == Errors.UseCase.NO_DATA) {

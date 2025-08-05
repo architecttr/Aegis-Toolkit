@@ -148,7 +148,7 @@ class ScannerRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFiles(files: Collection<File>): Unit {
+    override suspend fun deleteFiles(files: Collection<File>) {
         val results = FileDeletionHelper.deleteFiles(files, application.contentResolver)
         val totalSize = results.filter { it.success }.sumOf { it.file.length() }
         val failed = results.filter { !it.success }
@@ -171,7 +171,7 @@ class ScannerRepositoryImpl(
         }
     }
 
-    override suspend fun moveToTrash(files: Collection<File>): Unit {
+    override suspend fun moveToTrash(files: Collection<File>) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val uris = files.filter { it.exists() }.map { file ->
                 dataStore.addTrashFileOriginalPath(originalPath = file.absolutePath)
