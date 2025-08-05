@@ -5,6 +5,7 @@ This directory contains technical and product documentation for the Smart Cleane
 ## Table of Contents
 - [Cleaning Screens and Flows](cleaning_screens.md)
 - [Cleanup Job System](cleanup_jobs.md)
+- [File Cleaner Lifecycle](cleaner_lifecycle.md)
 - [Clipboard Cleaner](clipboard_cleaner.md)
 - [Empty Folder Cleaner](empty_folder_cleaner.md)
 - [Trash Recovery](trash_recovery.md)
