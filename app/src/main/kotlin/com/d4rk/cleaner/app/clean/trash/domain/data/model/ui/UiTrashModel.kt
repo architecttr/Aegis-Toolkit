@@ -1,5 +1,6 @@
 package com.d4rk.cleaner.app.clean.trash.domain.data.model.ui
 
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import java.io.File
 
 data class UiTrashModel(
@@ -10,4 +11,5 @@ data class UiTrashModel(
     val selectedFileCount: Int = 0,
     val trashSize: Long = 0L,
     val trashFileOriginalPaths: Set<String> = emptySet(),
+    val cleaningState: CleaningState = CleaningState.Idle,
 )

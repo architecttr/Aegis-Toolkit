@@ -120,6 +120,24 @@ class DataStore(val context: Context) : CommonDataStore(context = context) {
         }
     }
 
+    private val trashCleanWorkIdKey =
+        stringPreferencesKey(AppDataStoreConstants.DATA_STORE_TRASH_CLEAN_WORK_ID)
+    val trashCleanWorkId: Flow<String?> = dataStore.data.map { prefs ->
+        prefs[trashCleanWorkIdKey]
+    }
+
+    suspend fun saveTrashCleanWorkId(id: String) {
+        dataStore.edit { prefs ->
+            prefs[trashCleanWorkIdKey] = id
+        }
+    }
+
+    suspend fun clearTrashCleanWorkId() {
+        dataStore.edit { prefs ->
+            prefs.remove(trashCleanWorkIdKey)
+        }
+    }
+
 
     private val trashFileOriginalPathsKey =
         stringSetPreferencesKey(AppDataStoreConstants.DATA_STORE_TRASH_FILE_ORIGINAL_PATHS)
