@@ -21,6 +21,7 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
+import com.d4rk.cleaner.core.work.WorkObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -145,61 +146,54 @@ class LargeFilesViewModel(
     }
     private fun observeWork(id: UUID) {
         activeWorkObserver?.cancel()
-        activeWorkObserver = launch(dispatchers.io) {
-            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info ->
-                when (info?.state) {
-                    WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
-                        _uiState.update { it.copy(screenState = ScreenState.IsLoading()) }
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        dataStore.clearLargeFilesCleanWorkId()
+        activeWorkObserver = WorkObserver.observe(
+            scope = this,
+            workManager = WorkManager.getInstance(application),
+            workId = id,
+            dispatcher = dispatchers.io,
+            clearWorkId = { dataStore.clearLargeFilesCleanWorkId() },
+            onRunning = {
+                _uiState.update { it.copy(screenState = ScreenState.IsLoading()) }
+            },
+            onSuccess = { info ->
+                val failedPaths =
+                    info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
+                val failedCount = failedPaths?.size ?: 0
+                val selectedCount =
+                    _uiState.value.data?.fileSelectionStates?.count { it.value } ?: 0
+                val successCount = selectedCount - failedCount
 
-                        val failedPaths =
-                            info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
-                        val failedCount = failedPaths?.size ?: 0
-                        val selectedCount =
-                            _uiState.value.data?.fileSelectionStates?.count { it.value } ?: 0
-                        val successCount = selectedCount - failedCount
+                onEvent(LargeFilesEvent.LoadLargeFiles)
 
-                        onEvent(LargeFilesEvent.LoadLargeFiles)
-
-                        val message = if (failedCount > 0) {
-                            UiTextHelper.StringResource(
-                                R.string.cleanup_partial,
-                                listOf(successCount, failedCount)
-                            )
-                        } else {
-                            UiTextHelper.StringResource(R.string.all_clean)
-                        }
-
-                        sendAction(
-                            LargeFilesAction.ShowSnackbar(
-                                UiSnackbar(message = message)
-                            )
-                        )
-                    }
-                    WorkInfo.State.FAILED -> {
-                        dataStore.clearLargeFilesCleanWorkId()
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.Error(),
-                                errors = it.errors + UiSnackbar(
-                                    message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
-                                    isError = true
-                                )
-                            )
-                        }
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        dataStore.clearLargeFilesCleanWorkId()
-                        _uiState.update { it.copy(screenState = ScreenState.Success()) }
-                    }
-                    null -> {
-                        dataStore.clearLargeFilesCleanWorkId()
-                        _uiState.update { it.copy(screenState = ScreenState.Success()) }
-                    }
+                val message = if (failedCount > 0) {
+                    UiTextHelper.StringResource(
+                        R.string.cleanup_partial,
+                        listOf(successCount, failedCount)
+                    )
+                } else {
+                    UiTextHelper.StringResource(R.string.all_clean)
                 }
+
+                sendAction(
+                    LargeFilesAction.ShowSnackbar(
+                        UiSnackbar(message = message)
+                    )
+                )
+            },
+            onFailed = {
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.Error(),
+                        errors = it.errors + UiSnackbar(
+                            message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
+                            isError = true
+                        )
+                    )
+                }
+            },
+            onCancelled = {
+                _uiState.update { it.copy(screenState = ScreenState.Success()) }
             }
-        }
+        )
     }
 }

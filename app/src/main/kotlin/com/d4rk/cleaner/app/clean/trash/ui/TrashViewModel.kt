@@ -24,6 +24,7 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
+import com.d4rk.cleaner.core.work.WorkObserver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -68,104 +69,92 @@ class TrashViewModel(
 
     private fun observeWork(id: UUID) {
         activeWorkObserver?.cancel()
-        activeWorkObserver = launch(dispatchers.io) {
-            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info ->
-                when (info?.state) {
-                    WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
+        activeWorkObserver = WorkObserver.observe(
+            scope = this,
+            workManager = WorkManager.getInstance(application),
+            workId = id,
+            dispatcher = dispatchers.io,
+            clearWorkId = { dataStore.clearTrashCleanWorkId() },
+            onRunning = {
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.IsLoading(),
+                        data = it.data?.copy(cleaningState = CleaningState.Cleaning)
+                    )
+                }
+            },
+            onSuccess = { info ->
+                val failedPaths = info.outputData
+                    .getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
+                    ?.toSet() ?: emptySet()
+                val failedCount = failedPaths.size
+                val successSize = pendingDeleteSizes
+                    .filterKeys { it !in failedPaths }
+                    .values
+                    .sum()
+                val selectedCount = pendingDeleteSizes.size
+                val successCount = selectedCount - failedCount
+                pendingDeleteSizes = emptyMap()
+
+                updateTrashSizeUseCase(-successSize).collectLatest { updateResult ->
+                    if (updateResult is DataState.Error) {
                         _uiState.update {
                             it.copy(
-                                screenState = ScreenState.IsLoading(),
-                                data = it.data?.copy(cleaningState = CleaningState.Cleaning)
-                            )
-                        }
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        dataStore.clearTrashCleanWorkId()
-                        val failedPaths = info.outputData
-                            .getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
-                            ?.toSet() ?: emptySet()
-                        val failedCount = failedPaths.size
-                        val successSize = pendingDeleteSizes
-                            .filterKeys { it !in failedPaths }
-                            .values
-                            .sum()
-                        val selectedCount = pendingDeleteSizes.size
-                        val successCount = selectedCount - failedCount
-                        pendingDeleteSizes = emptyMap()
-
-                        updateTrashSizeUseCase(-successSize).collectLatest { updateResult ->
-                            if (updateResult is DataState.Error) {
-                                _uiState.update {
-                                    it.copy(
-                                        errors = it.errors + UiSnackbar(
-                                            message = UiTextHelper.DynamicString(
-                                                "Failed to update trash size: ${updateResult.error}"
-                                            ),
-                                            isError = true
-                                        )
-                                    )
-                                }
-                            }
-                        }
-
-                        onEvent(TrashEvent.LoadTrashItems)
-
-                        val message = if (failedCount > 0) {
-                            UiTextHelper.StringResource(
-                                R.string.cleanup_partial,
-                                listOf(successCount, failedCount)
-                            )
-                        } else {
-                            UiTextHelper.StringResource(R.string.all_clean)
-                        }
-
-                        _uiState.updateData(newState = _uiState.value.screenState) {
-                            it.copy(cleaningState = CleaningState.Idle)
-                        }
-
-                        sendAction(
-                            TrashAction.ShowSnackbar(
-                                UiSnackbar(message = message)
-                            )
-                        )
-                    }
-                    WorkInfo.State.FAILED -> {
-                        dataStore.clearTrashCleanWorkId()
-                        pendingDeleteSizes = emptyMap()
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.Error(),
-                                data = it.data?.copy(cleaningState = CleaningState.Error),
                                 errors = it.errors + UiSnackbar(
-                                    message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
+                                    message = UiTextHelper.DynamicString(
+                                        "Failed to update trash size: ${updateResult.error}"
+                                    ),
                                     isError = true
                                 )
                             )
                         }
                     }
-                    WorkInfo.State.CANCELLED -> {
-                        dataStore.clearTrashCleanWorkId()
-                        pendingDeleteSizes = emptyMap()
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.Success(),
-                                data = it.data?.copy(cleaningState = CleaningState.Idle)
-                            )
-                        }
-                    }
-                    null -> {
-                        dataStore.clearTrashCleanWorkId()
-                        pendingDeleteSizes = emptyMap()
-                        _uiState.update {
-                            it.copy(
-                                screenState = ScreenState.Success(),
-                                data = it.data?.copy(cleaningState = CleaningState.Idle)
-                            )
-                        }
-                    }
+                }
+
+                onEvent(TrashEvent.LoadTrashItems)
+
+                val message = if (failedCount > 0) {
+                    UiTextHelper.StringResource(
+                        R.string.cleanup_partial,
+                        listOf(successCount, failedCount)
+                    )
+                } else {
+                    UiTextHelper.StringResource(R.string.all_clean)
+                }
+
+                _uiState.updateData(newState = _uiState.value.screenState) {
+                    it.copy(cleaningState = CleaningState.Idle)
+                }
+
+                sendAction(
+                    TrashAction.ShowSnackbar(
+                        UiSnackbar(message = message)
+                    )
+                )
+            },
+            onFailed = {
+                pendingDeleteSizes = emptyMap()
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.Error(),
+                        data = it.data?.copy(cleaningState = CleaningState.Error),
+                        errors = it.errors + UiSnackbar(
+                            message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
+                            isError = true
+                        )
+                    )
+                }
+            },
+            onCancelled = {
+                pendingDeleteSizes = emptyMap()
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.Success(),
+                        data = it.data?.copy(cleaningState = CleaningState.Idle)
+                    )
                 }
             }
-        }
+        )
     }
 
     private fun observeTrashInfo() {
