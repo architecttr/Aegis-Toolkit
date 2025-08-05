@@ -1,7 +1,6 @@
 package com.d4rk.cleaner.app.clean.largefiles.ui
 
 import android.app.Application
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
@@ -18,12 +17,13 @@ import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesMo
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
-import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.utils.extensions.selectedFiles
+import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.WorkObserver
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -146,7 +146,7 @@ class LargeFilesViewModel(
     private fun observeWork(id: UUID) {
         activeWorkObserver?.cancel()
         activeWorkObserver = WorkObserver.observe(
-            scope = this,
+            scope = MainScope(),
             workManager = WorkManager.getInstance(application),
             workId = id,
             dispatcher = dispatchers.io,

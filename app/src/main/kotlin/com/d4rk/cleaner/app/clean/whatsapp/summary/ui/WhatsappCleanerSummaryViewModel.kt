@@ -1,7 +1,6 @@
 package com.d4rk.cleaner.app.clean.whatsapp.summary.ui
 
 import android.app.Application
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
@@ -26,11 +25,11 @@ import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.WorkObserver
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import java.io.File
-import java.util.LinkedHashMap
 import java.util.UUID
 
 class WhatsappCleanerSummaryViewModel(
@@ -204,7 +203,7 @@ class WhatsappCleanerSummaryViewModel(
     private fun observeWork(id: UUID) {
         activeWorkObserver?.cancel()
         activeWorkObserver = WorkObserver.observe(
-            scope = this,
+            scope = MainScope(),
             workManager = WorkManager.getInstance(application),
             workId = id,
             dispatcher = dispatchers.io,
