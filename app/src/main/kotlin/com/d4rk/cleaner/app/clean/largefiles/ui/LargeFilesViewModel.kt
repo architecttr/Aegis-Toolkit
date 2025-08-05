@@ -19,6 +19,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
+import com.d4rk.cleaner.core.utils.extensions.selectedFiles
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.WorkObserver
@@ -118,9 +119,7 @@ class LargeFilesViewModel(
 
     private fun deleteSelected() {
         launch(context = dispatchers.io) {
-            val filePaths =
-                _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
-            val files = filePaths.map { File(it) }.toSet()
+            val files = _uiState.value.data?.fileSelectionStates.selectedFiles()
             if (files.isEmpty()) {
                 sendAction(
                     LargeFilesAction.ShowSnackbar(
@@ -134,7 +133,7 @@ class LargeFilesViewModel(
 
             FileCleaner.enqueue(
                 enqueuer = fileCleanWorkEnqueuer,
-                paths = filePaths.toList(),
+                paths = files.map { it.absolutePath },
                 action = FileCleanupWorker.ACTION_DELETE,
                 getWorkId = { dataStore.largeFilesCleanWorkId.first() },
                 saveWorkId = { dataStore.saveLargeFilesCleanWorkId(it) },

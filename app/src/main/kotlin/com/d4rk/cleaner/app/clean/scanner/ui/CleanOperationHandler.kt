@@ -20,6 +20,7 @@ import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstant
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
+import com.d4rk.cleaner.core.utils.extensions.selectedFiles
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import kotlinx.coroutines.CoroutineScope
@@ -166,13 +167,9 @@ class CleanOperationHandler(
             return
         }
 
-        val selectedPaths: Set<String> = currentScreenData.analyzeState.selectedFiles
-        val filesToDelete: Set<File> = selectedPaths
-            .mapNotNull { path ->
-                path.takeIf { it.isNotBlank() }?.let { File(it) }
-            }
-            .filter { it.exists() }
-            .toSet()
+        val filesToDelete = currentScreenData.analyzeState.selectedFiles
+            .associateWith { true }
+            .selectedFiles()
         if (filesToDelete.isEmpty()) {
             postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_to_clean), false)
             return

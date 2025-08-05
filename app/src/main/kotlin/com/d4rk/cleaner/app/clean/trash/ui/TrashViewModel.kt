@@ -22,6 +22,7 @@ import com.d4rk.cleaner.app.clean.trash.domain.usecases.GetTrashFilesUseCase
 import com.d4rk.cleaner.app.clean.trash.domain.usecases.RestoreFromTrashUseCase
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
+import com.d4rk.cleaner.core.utils.extensions.selectedFiles
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.WorkObserver
@@ -250,9 +251,7 @@ class TrashViewModel(
 
     private fun restoreSelectedFromTrash() {
         launch(context = dispatchers.io) {
-            val pathsToRestore =
-                _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
-            val filesToRestore = pathsToRestore.map { File(it) }.toSet()
+            val filesToRestore = _uiState.value.data?.fileSelectionStates.selectedFiles()
             if (filesToRestore.isEmpty()) {
                 sendAction(
                     TrashAction.ShowSnackbar(
@@ -302,9 +301,7 @@ class TrashViewModel(
 
     private fun deleteSelectedPermanently() {
         launch(context = dispatchers.io) {
-            val pathsToDelete =
-                _uiState.value.data?.fileSelectionStates?.filter { it.value }?.keys ?: emptySet()
-            val files = pathsToDelete.map { File(it) }
+            val files = _uiState.value.data?.fileSelectionStates.selectedFiles()
             if (files.isEmpty()) {
                 sendAction(
                     TrashAction.ShowSnackbar(
@@ -320,7 +317,7 @@ class TrashViewModel(
 
             FileCleaner.enqueue(
                 enqueuer = fileCleanWorkEnqueuer,
-                paths = pathsToDelete.toList(),
+                paths = files.map { it.absolutePath },
                 action = FileCleanupWorker.ACTION_DELETE,
                 getWorkId = { dataStore.trashCleanWorkId.first() },
                 saveWorkId = { dataStore.saveTrashCleanWorkId(it) },
