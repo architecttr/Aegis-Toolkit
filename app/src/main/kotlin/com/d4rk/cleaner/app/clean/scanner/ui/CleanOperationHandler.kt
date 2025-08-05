@@ -23,6 +23,7 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
+import com.d4rk.cleaner.core.work.FileCleaner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -186,19 +187,15 @@ class CleanOperationHandler(
 
         scope.launch(dispatchers.io) {
             val validPaths = filesToDelete.map { it.absolutePath }
-            when (
-                val result = fileCleanWorkEnqueuer.enqueue(
-                    paths = validPaths,
-                    action = FileCleanupWorker.ACTION_DELETE,
-                    getWorkId = { dataStore.scannerCleanWorkId.first() },
-                    saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
-                    clearWorkId = { dataStore.clearScannerCleanWorkId() }
-                )
-            ) {
-                FileCleanWorkEnqueuer.Result.AlreadyRunning -> {
-                    postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
-                }
-                is FileCleanWorkEnqueuer.Result.Enqueued -> {
+            FileCleaner.enqueue(
+                enqueuer = fileCleanWorkEnqueuer,
+                paths = validPaths,
+                action = FileCleanupWorker.ACTION_DELETE,
+                getWorkId = { dataStore.scannerCleanWorkId.first() },
+                saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
+                clearWorkId = { dataStore.clearScannerCleanWorkId() },
+                showSnackbar = { postSnackbar(it.message, it.isError) },
+                onEnqueued = { id ->
                     uiState.update { state ->
                         val currentData = state.data ?: UiScannerModel()
                         state.copy(
@@ -210,13 +207,9 @@ class CleanOperationHandler(
                             )
                         )
                     }
-                    onWorkEnqueued(result.id)
-                    postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+                    onWorkEnqueued(id)
                 }
-                is FileCleanWorkEnqueuer.Result.Error -> {
-                    postSnackbar(UiTextHelper.StringResource(R.string.failed_to_delete_files), true)
-                }
-            }
+            )
         }
     }
 
@@ -230,19 +223,15 @@ class CleanOperationHandler(
         val totalFileSizeToMove: Long = files.sumOf { it.toFile().length() }
 
         scope.launch(dispatchers.io) {
-            when (
-                val result = fileCleanWorkEnqueuer.enqueue(
-                    paths = paths,
-                    action = FileCleanupWorker.ACTION_TRASH,
-                    getWorkId = { dataStore.scannerCleanWorkId.first() },
-                    saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
-                    clearWorkId = { dataStore.clearScannerCleanWorkId() }
-                )
-            ) {
-                FileCleanWorkEnqueuer.Result.AlreadyRunning -> {
-                    postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
-                }
-                is FileCleanWorkEnqueuer.Result.Enqueued -> {
+            FileCleaner.enqueue(
+                enqueuer = fileCleanWorkEnqueuer,
+                paths = paths,
+                action = FileCleanupWorker.ACTION_TRASH,
+                getWorkId = { dataStore.scannerCleanWorkId.first() },
+                saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
+                clearWorkId = { dataStore.clearScannerCleanWorkId() },
+                showSnackbar = { postSnackbar(it.message, it.isError) },
+                onEnqueued = { id ->
                     uiState.update { state: UiStateScreen<UiScannerModel> ->
                         val currentData: UiScannerModel = state.data ?: UiScannerModel()
                         state.copy(
@@ -254,14 +243,11 @@ class CleanOperationHandler(
                             )
                         )
                     }
-                    onWorkEnqueued(result.id)
-                    postSnackbar(UiTextHelper.StringResource(R.string.cleaning_in_progress), false)
+                    onWorkEnqueued(id)
                     updateTrashSize(totalFileSizeToMove)
-                }
-                is FileCleanWorkEnqueuer.Result.Error -> {
-                    postSnackbar(UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash), true)
-                }
-            }
+                },
+                errorMessage = UiTextHelper.StringResource(R.string.failed_to_move_files_to_trash)
+            )
         }
     }
 
