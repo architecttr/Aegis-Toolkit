@@ -42,8 +42,8 @@ import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
-import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
+import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -105,6 +105,8 @@ class ScannerViewModel(
 
     private val _cleaningApks = MutableStateFlow(false)
     val cleaningApks: StateFlow<Boolean> = _cleaningApks
+
+    private var pendingEmptyFoldersCleanup = false
 
     private val clipboardHandler = ClipboardHandler(application)
     private val streakHandler = StreakHandler(
@@ -302,86 +304,44 @@ class ScannerViewModel(
         if (files.isEmpty()) {
             postSnackbar(
                 message = UiTextHelper.StringResource(R.string.no_files_selected_to_delete),
-                isError = false
+                isError = false,
             )
             return
         }
-        if (fromApkCleaner) _cleaningApks.value = true
+
+        val paths = files.map { it.path }
 
         launch(context = dispatchers.io) {
-            _uiState.update { state: UiStateScreen<UiScannerModel> ->
-                val currentData: UiScannerModel = state.data ?: UiScannerModel()
-                state.copy(
-                    data = currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            state = CleaningState.Cleaning,
-                            cleaningType = CleaningType.DELETE
+            FileCleaner.enqueue(
+                enqueuer = fileCleanWorkEnqueuer,
+                paths = paths,
+                action = FileCleanupWorker.ACTION_DELETE,
+                getWorkId = { dataStore.scannerCleanWorkId.first() },
+                saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
+                clearWorkId = { dataStore.clearScannerCleanWorkId() },
+                showSnackbar = { postSnackbar(it.message, it.isError) },
+                onEnqueued = { id ->
+                    if (fromApkCleaner) _cleaningApks.value = true
+                    _uiState.update { state ->
+                        val currentData: UiScannerModel = state.data ?: UiScannerModel()
+                        state.copy(
+                            data = currentData.copy(
+                                analyzeState = currentData.analyzeState.copy(
+                                    state = CleaningState.Cleaning,
+                                    cleaningType = CleaningType.DELETE,
+                                ),
+                            ),
                         )
-                    )
-                )
-            }
-
-
-            val fileObjs = files.map { it.toFile() }.toSet()
-            val result = cleaningManager.deleteFiles(fileObjs)
-            val includeDuplicates = dataStore.deleteDuplicateFiles.first() &&
-                    dataStore.duplicateScanEnabled.first()
-            _uiState.applyResult(
-                result = result,
-                errorMessage = UiTextHelper.StringResource(R.string.failed_to_delete_files)
-            ) { data, currentData ->
-                    val (groupedFilesUpdated, duplicateOriginals, duplicateGroups) = fileAnalyzer.computeGroupedFiles(
-                        scannedFiles = currentData.analyzeState.scannedFileList.filterNot {
-                            files.contains(
-                                it
-                            )
-                        }.map { it.toFile() },
-                        emptyFolders = currentData.analyzeState.emptyFolderList.map { it.toFile() },
-                        fileTypesData = currentData.analyzeState.fileTypesData,
-                        preferences = mapOf(),
-                        includeDuplicates = includeDuplicates
-                    )
-
-                    val filesByDateForCategory = groupedFilesUpdated.mapValues { (_, entries) ->
-                        FileGroupingHelper.groupFileEntriesByDate(entries)
                     }
-                    val duplicateGroupsByDate = FileGroupingHelper.groupDuplicateGroupsByDate(duplicateGroups)
-
-                    currentData.copy(
-                        analyzeState = currentData.analyzeState.copy(
-                            scannedFileList = currentData.analyzeState.scannedFileList.filterNot {
-                                files.contains(it)
-                            },
-                            groupedFiles = groupedFilesUpdated,
-                            filesByDateForCategory = filesByDateForCategory,
-                            duplicateOriginals = duplicateOriginals,
-                            duplicateGroups = duplicateGroups,
-                            duplicateGroupsByDate = duplicateGroupsByDate,
-                            selectedFilesCount = 0,
-                            areAllFilesSelected = false,
-                            selectedFiles = mutableSetOf(),
-                            isAnalyzeScreenVisible = false
-                        ),
-                        storageInfo = currentData.storageInfo.copy(
-                            isFreeSpaceLoading = true,
-                            isCleanedSpaceLoading = true
-                        )
-                    )
-            }
-
-            if (result is DataState.Success) {
-                launch { dataStore.saveLastScanTimestamp(timestamp = System.currentTimeMillis()) }
-                loadInitialData()
-                loadWhatsAppMedia()
-                clipboardHandler.refresh()
-                loadEmptyFoldersPreview()
-                CleaningEventBus.notifyCleaned(success = true)
-            }
-            _cleaningApks.value = false
+                    observeCleaningWork(id)
+                },
+                onError = {
+                    if (fromApkCleaner) _cleaningApks.value = false
+                    if (pendingEmptyFoldersCleanup) pendingEmptyFoldersCleanup = false
+                },
+            )
         }
     }
-
-
     fun onCloseAnalyzeComposable() {
         _uiState.update { state: UiStateScreen<UiScannerModel> ->
             val currentData: UiScannerModel = state.data ?: UiScannerModel()
@@ -596,6 +556,15 @@ class ScannerViewModel(
                             UiTextHelper.StringResource(R.string.all_clean)
                         }
                         postSnackbar(message, false)
+                        if (pendingEmptyFoldersCleanup) {
+                            _emptyFolders.value = emptyList()
+                            dataStore.saveEmptyFoldersHideUntil(
+                                System.currentTimeMillis() + EMPTY_FOLDERS_HIDE_DURATION_MS
+                            )
+                            pendingEmptyFoldersCleanup = false
+                        }
+                        dataStore.saveLastScanTimestamp(System.currentTimeMillis())
+                        _cleaningApks.value = false
 
                         _uiState.update { state ->
                             val current = state.data ?: UiScannerModel()
@@ -613,9 +582,13 @@ class ScannerViewModel(
                     WorkInfo.State.FAILED -> {
                         dataStore.clearScannerCleanWorkId()
                         cleanOperationHandler.onCleaningFailed()
+                        _cleaningApks.value = false
+                        pendingEmptyFoldersCleanup = false
                     }
                     WorkInfo.State.CANCELLED -> {
                         dataStore.clearScannerCleanWorkId()
+                        _cleaningApks.value = false
+                        pendingEmptyFoldersCleanup = false
                         _uiState.update { state ->
                             val current = state.data ?: UiScannerModel()
                             state.copy(
@@ -629,6 +602,8 @@ class ScannerViewModel(
                     }
                     null -> {
                         dataStore.clearScannerCleanWorkId()
+                        _cleaningApks.value = false
+                        pendingEmptyFoldersCleanup = false
                         _uiState.update { state ->
                             val current = state.data ?: UiScannerModel()
                             state.copy(
@@ -863,12 +838,8 @@ class ScannerViewModel(
     fun onCleanEmptyFolders(folders: List<File>) {
         val entries =
             folders.map { FileEntry(it.absolutePath, 0, it.lastModified()) }.toSet()
+        pendingEmptyFoldersCleanup = true
         deleteFiles(entries)
-        _emptyFolders.value = emptyList()
-        launch(dispatchers.io) {
-            dataStore.saveEmptyFoldersHideUntil(System.currentTimeMillis() + EMPTY_FOLDERS_HIDE_DURATION_MS)
-        }
-        postSnackbar(UiTextHelper.StringResource(R.string.empty_folders_cleaned), isError = false)
     }
 
     fun onCleanWhatsAppFiles() {
