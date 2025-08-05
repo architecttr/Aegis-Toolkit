@@ -49,7 +49,6 @@ import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetPromotedAppUseCase
-import com.d4rk.cleaner.app.clean.scanner.domain.usecases.MoveToTrashUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.UpdateTrashSizeUseCase
 import com.d4rk.cleaner.app.clean.scanner.ui.ScannerViewModel
 import com.d4rk.cleaner.app.clean.trash.domain.usecases.GetTrashFilesUseCase
@@ -111,15 +110,14 @@ val appModule: Module = module {
     }
     single<GetFileTypesUseCase> { GetFileTypesUseCase(homeRepository = get()) }
     single<AnalyzeFilesUseCase> { AnalyzeFilesUseCase(homeRepository = get()) }
-    single<DeleteFilesUseCase> { DeleteFilesUseCase(homeRepository = get()) }
-    single<MoveToTrashUseCase> { MoveToTrashUseCase(homeRepository = get()) }
+    single<DeleteFilesUseCase> { DeleteFilesUseCase() }
     single<UpdateTrashSizeUseCase> { UpdateTrashSizeUseCase(homeRepository = get()) }
     single { com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetDuplicatesUseCase(dispatchers = get()) }
     single { com.d4rk.cleaner.app.clean.scanner.domain.operations.FileAnalyzer(get()) }
     single {
         com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager(
+            repository = get(),
             deleteFilesUseCase = get(),
-            moveToTrashUseCase = get(),
             updateTrashSizeUseCase = get()
         )
     }

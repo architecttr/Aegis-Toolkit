@@ -11,6 +11,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetEmptyFoldersUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetFileTypesUseCase
 import com.d4rk.cleaner.app.images.utils.ImageHashUtils
 import com.d4rk.cleaner.app.settings.cleaning.utils.constants.ExtensionsConstants
+import com.d4rk.cleaner.app.clean.scanner.domain.`interface`.ScannerRepositoryInterface
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.extensions.partialMd5
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
@@ -30,6 +31,7 @@ class AutoCleanWorker(
     private val getFileTypes: GetFileTypesUseCase by inject()
     private val getEmptyFolders: GetEmptyFoldersUseCase by inject()
     private val dataStore: DataStore by inject()
+    private val repository: ScannerRepositoryInterface by inject()
 
     override suspend fun doWork(): Result {
         if (!dataStore.autoCleanEnabled.first()) return Result.success()
@@ -97,7 +99,7 @@ class AutoCleanWorker(
         )
         if (toDelete.isEmpty()) return Result.success()
 
-        deleteFiles(filesToDelete = toDelete.toSet()).collect {}
+        deleteFiles(repository = repository, files = toDelete, mode = DeleteFilesUseCase.Mode.PERMANENT).collect {}
         dataStore.saveLastScanTimestamp(now)
         CleaningEventBus.notifyCleaned(success = true)
         return Result.success()

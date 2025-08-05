@@ -148,8 +148,8 @@ class ScannerRepositoryImpl(
         }
     }
 
-    override suspend fun deleteFiles(filesToDelete: Set<File>) {
-        val results = FileDeletionHelper.deleteFiles(application, filesToDelete)
+    override suspend fun deleteFiles(files: Collection<File>): Unit {
+        val results = FileDeletionHelper.deleteFiles(application, files)
         val totalSize = results.filter { it.success }.sumOf { it.file.length() }
         if (results.any { !it.success }) {
             throw RuntimeException("SAF_DELETE_FAILED")
@@ -169,9 +169,9 @@ class ScannerRepositoryImpl(
         }
     }
 
-    override suspend fun moveToTrash(filesToMove: List<File>) {
+    override suspend fun moveToTrash(files: Collection<File>): Unit {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val uris = filesToMove.filter { it.exists() }.map { file ->
+            val uris = files.filter { it.exists() }.map { file ->
                 dataStore.addTrashFileOriginalPath(originalPath = file.absolutePath)
                 dataStore.addTrashSize(size = file.length())
                 FileProvider.getUriForFile(
@@ -188,7 +188,7 @@ class ScannerRepositoryImpl(
                 trashDir.mkdirs()
             }
 
-            filesToMove.forEach { file ->
+            files.forEach { file ->
                 if (file.exists()) {
                     val destination = File(trashDir, file.name)
 
