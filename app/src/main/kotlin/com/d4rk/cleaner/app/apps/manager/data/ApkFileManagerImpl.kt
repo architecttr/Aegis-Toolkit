@@ -13,6 +13,7 @@ import com.d4rk.cleaner.core.utils.extensions.toError
 import com.d4rk.cleaner.core.utils.helpers.DirectoryScanner
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.File
 
 class ApkFileManagerImpl(private val application: Application) : ApkFileManager {
     override fun getApkFilesFromStorage(): Flow<DataState<List<ApkInfo>, Errors>> = flow {
@@ -39,6 +40,8 @@ class ApkFileManagerImpl(private val application: Application) : ApkFileManager 
                 while (it.moveToNext()) {
                     val id: Long = it.getLong(idColumn)
                     val path: String = it.getString(dataColumn)
+                    val file = File(path)
+                    if (!file.exists() || !file.canWrite()) continue
                     val size: Long = it.getLong(sizeColumn)
                     apkFiles.add(ApkInfo(id, path, size))
                     addedPaths.add(path)
@@ -48,7 +51,7 @@ class ApkFileManagerImpl(private val application: Application) : ApkFileManager 
             DirectoryScanner.scan(Environment.getExternalStorageDirectory()) { file ->
                 if (file.extension.equals("apk", ignoreCase = true)) {
                     val path = file.absolutePath
-                    if (addedPaths.add(path)) {
+                    if (file.exists() && file.canWrite() && addedPaths.add(path)) {
                         apkFiles.add(ApkInfo(file.hashCode().toLong(), path, file.length()))
                     }
                 }
