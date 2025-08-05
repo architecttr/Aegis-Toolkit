@@ -20,6 +20,7 @@ import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
+import com.d4rk.cleaner.core.work.FileCleaner
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -130,41 +131,16 @@ class LargeFilesViewModel(
                 return@launch
             }
 
-            when (
-                val result = fileCleanWorkEnqueuer.enqueue(
-                    paths = filePaths.toList(),
-                    action = FileCleanupWorker.ACTION_DELETE,
-                    getWorkId = { dataStore.largeFilesCleanWorkId.first() },
-                    saveWorkId = { dataStore.saveLargeFilesCleanWorkId(it) },
-                    clearWorkId = { dataStore.clearLargeFilesCleanWorkId() }
-                )
-            ) {
-                FileCleanWorkEnqueuer.Result.AlreadyRunning -> {
-                    sendAction(
-                        LargeFilesAction.ShowSnackbar(
-                            UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
-                        )
-                    )
-                }
-                is FileCleanWorkEnqueuer.Result.Enqueued -> {
-                    observeWork(result.id)
-                    sendAction(
-                        LargeFilesAction.ShowSnackbar(
-                            UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
-                        )
-                    )
-                }
-                is FileCleanWorkEnqueuer.Result.Error -> {
-                    sendAction(
-                        LargeFilesAction.ShowSnackbar(
-                            UiSnackbar(
-                                message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
-                                isError = true
-                            )
-                        )
-                    )
-                }
-            }
+            FileCleaner.enqueue(
+                enqueuer = fileCleanWorkEnqueuer,
+                paths = filePaths.toList(),
+                action = FileCleanupWorker.ACTION_DELETE,
+                getWorkId = { dataStore.largeFilesCleanWorkId.first() },
+                saveWorkId = { dataStore.saveLargeFilesCleanWorkId(it) },
+                clearWorkId = { dataStore.clearLargeFilesCleanWorkId() },
+                showSnackbar = { sendAction(LargeFilesAction.ShowSnackbar(it)) },
+                onEnqueued = { id -> observeWork(id) }
+            )
         }
     }
     private fun observeWork(id: UUID) {

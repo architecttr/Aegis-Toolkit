@@ -23,6 +23,7 @@ import com.d4rk.cleaner.app.clean.trash.domain.usecases.RestoreFromTrashUseCase
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
+import com.d4rk.cleaner.core.work.FileCleaner
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -328,46 +329,29 @@ class TrashViewModel(
                 return@launch
             }
 
-            when (
-                val result = fileCleanWorkEnqueuer.enqueue(
-                    paths = pathsToDelete.toList(),
-                    action = FileCleanupWorker.ACTION_DELETE,
-                    getWorkId = { dataStore.trashCleanWorkId.first() },
-                    saveWorkId = { dataStore.saveTrashCleanWorkId(it) },
-                    clearWorkId = { dataStore.clearTrashCleanWorkId() }
-                )
-            ) {
-                FileCleanWorkEnqueuer.Result.AlreadyRunning -> {
-                    sendAction(
-                        TrashAction.ShowSnackbar(
-                            UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
-                        )
-                    )
-                }
-                is FileCleanWorkEnqueuer.Result.Enqueued -> {
+            FileCleaner.enqueue(
+                enqueuer = fileCleanWorkEnqueuer,
+                paths = pathsToDelete.toList(),
+                action = FileCleanupWorker.ACTION_DELETE,
+                getWorkId = { dataStore.trashCleanWorkId.first() },
+                saveWorkId = { dataStore.saveTrashCleanWorkId(it) },
+                clearWorkId = { dataStore.clearTrashCleanWorkId() },
+                showSnackbar = { sendAction(TrashAction.ShowSnackbar(it)) },
+                onEnqueued = { id ->
                     pendingDeleteSizes = files.associate { it.absolutePath to it.length() }
-                    observeWork(result.id)
+                    observeWork(id)
                     _uiState.updateData(newState = _uiState.value.screenState) {
                         it.copy(cleaningState = CleaningState.Cleaning)
                     }
-                    sendAction(
-                        TrashAction.ShowSnackbar(
-                            UiSnackbar(message = UiTextHelper.StringResource(R.string.cleaning_in_progress))
-                        )
-                    )
-                }
-                is FileCleanWorkEnqueuer.Result.Error -> {
+                },
+                onError = {
                     _uiState.update {
                         it.copy(
-                            errors = it.errors + UiSnackbar(
-                                message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
-                                isError = true
-                            ),
                             data = it.data?.copy(cleaningState = CleaningState.Error)
                         )
                     }
                 }
-            }
+            )
         }
     }
 }
