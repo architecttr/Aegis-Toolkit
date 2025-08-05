@@ -151,8 +151,10 @@ class ScannerRepositoryImpl(
     override suspend fun deleteFiles(files: Collection<File>): Unit {
         val results = FileDeletionHelper.deleteFiles(files)
         val totalSize = results.filter { it.success }.sumOf { it.file.length() }
-        if (results.any { !it.success }) {
-            throw RuntimeException("SAF_DELETE_FAILED")
+        val failed = results.filter { !it.success }
+        if (failed.isNotEmpty()) {
+            val paths = failed.joinToString { it.file.absolutePath }
+            throw RuntimeException("FILE_DELETE_FAILED: $paths")
         }
         if (totalSize > 0) {
             dataStore.addCleanedSpace(space = totalSize)
