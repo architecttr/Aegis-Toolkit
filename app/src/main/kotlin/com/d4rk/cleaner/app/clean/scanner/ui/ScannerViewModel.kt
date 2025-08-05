@@ -811,9 +811,21 @@ class ScannerViewModel(
     }
 
     fun onCleanApks(apkFiles: List<File>) {
-        val entries =
-            apkFiles.map { FileEntry(it.absolutePath, it.length(), it.lastModified()) }.toSet()
-        deleteFiles(entries, fromApkCleaner = true)
+        val (validFiles, invalidFiles) = apkFiles.partition { it.exists() && it.canWrite() }
+
+        if (invalidFiles.isNotEmpty()) {
+            postSnackbar(
+                UiTextHelper.StringResource(R.string.cleanup_failed_details),
+                isError = true
+            )
+        }
+
+        val entries = validFiles
+            .map { FileEntry(it.absolutePath, it.length(), it.lastModified()) }
+            .toSet()
+        if (entries.isNotEmpty()) {
+            deleteFiles(entries, fromApkCleaner = true)
+        }
     }
 
     fun onCleanEmptyFolders(folders: List<File>) {
