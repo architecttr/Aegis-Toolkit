@@ -413,4 +413,5 @@
     <string name="cleanup_failed">Échec du nettoyage</string>
     <string name="cleanup_failed_details">Certains fichiers n\'ont pas pu être supprimés</string>
     <string name="cleanup_cancelled">Nettoyage annulé</string>
+    <string name="cleanup_partial">%1$d fichiers supprimés, %2$d échoués</string>
 </resources>

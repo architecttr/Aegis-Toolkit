@@ -420,4 +420,5 @@
     <string name="cleanup_failed">Очищення не вдалося</string>
     <string name="cleanup_failed_details">Деякі файли не вдалося видалити</string>
     <string name="cleanup_cancelled">Очищення скасовано</string>
+    <string name="cleanup_partial">Видалено %1$d файлів, %2$d не вдалося</string>
 </resources>

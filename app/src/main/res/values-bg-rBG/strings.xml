@@ -403,4 +403,5 @@
     <string name="cleanup_failed">Почистването се провали</string>
     <string name="cleanup_failed_details">Някои файлове не можаха да бъдат изтрити</string>
     <string name="cleanup_cancelled">Почистването е отменено</string>
+    <string name="cleanup_partial">%1$d файла изтрити, %2$d неуспешни</string>
 </resources>

@@ -404,4 +404,5 @@
     <string name="cleanup_failed">Tisztítás sikertelen</string>
     <string name="cleanup_failed_details">Néhány fájlt nem sikerült törölni</string>
     <string name="cleanup_cancelled">Tisztítás megszakítva</string>
+    <string name="cleanup_partial">%1$d fájl törölve, %2$d sikertelen</string>
 </resources>

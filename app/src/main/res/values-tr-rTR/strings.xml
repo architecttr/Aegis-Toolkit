@@ -404,4 +404,5 @@
     <string name="cleanup_failed">Temizlik başarısız</string>
     <string name="cleanup_failed_details">Bazı dosyalar silinemedi</string>
     <string name="cleanup_cancelled">Temizlik iptal edildi</string>
+    <string name="cleanup_partial">%1$d dosya silindi, %2$d başarısız oldu</string>
 </resources>
