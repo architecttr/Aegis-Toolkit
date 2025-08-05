@@ -38,6 +38,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetPromotedAppUseCase
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetStorageInfoUseCase
 import com.d4rk.cleaner.app.clean.scanner.utils.helpers.getWhatsAppMediaSummary
+import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
@@ -581,6 +582,24 @@ class ScannerViewModel(
                     }
                     WorkInfo.State.SUCCEEDED -> {
                         dataStore.clearScannerCleanWorkId()
+
+                        val failedPaths =
+                            info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
+                        val failedCount = failedPaths?.size ?: 0
+                        val selectedCount =
+                            _uiState.value.data?.analyzeState?.selectedFiles?.size ?: 0
+                        val successCount = selectedCount - failedCount
+
+                        val message = if (failedCount > 0) {
+                            UiTextHelper.StringResource(
+                                R.string.cleanup_partial,
+                                listOf(successCount, failedCount)
+                            )
+                        } else {
+                            UiTextHelper.StringResource(R.string.all_clean)
+                        }
+                        postSnackbar(message, false)
+
                         _uiState.update { state ->
                             val current = state.data ?: UiScannerModel()
                             state.copy(
