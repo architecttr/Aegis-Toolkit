@@ -412,4 +412,5 @@
     <string name="cleanup_failed">Falha na limpeza</string>
     <string name="cleanup_failed_details">Alguns arquivos não puderam ser excluídos</string>
     <string name="cleanup_cancelled">Limpeza cancelada</string>
+    <string name="cleanup_partial">%1$d arquivos excluídos, %2$d falharam</string>
 </resources>

@@ -404,4 +404,5 @@
     <string name="cleanup_failed">Bereinigung fehlgeschlagen</string>
     <string name="cleanup_failed_details">Einige Dateien konnten nicht gelöscht werden</string>
     <string name="cleanup_cancelled">Bereinigung abgebrochen</string>
+    <string name="cleanup_partial">%1$d Dateien gelöscht, %2$d fehlgeschlagen</string>
 </resources>

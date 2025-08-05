@@ -412,4 +412,5 @@
     <string name="cleanup_failed">Curățare eșuată</string>
     <string name="cleanup_failed_details">Unele fișiere nu au putut fi șterse</string>
     <string name="cleanup_cancelled">Curățare anulată</string>
+    <string name="cleanup_partial">%1$d fișiere șterse, %2$d eșuate</string>
 </resources>

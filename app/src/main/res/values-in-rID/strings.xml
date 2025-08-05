@@ -396,4 +396,5 @@
     <string name="cleanup_failed">Pembersihan gagal</string>
     <string name="cleanup_failed_details">Beberapa file tidak dapat dihapus</string>
     <string name="cleanup_cancelled">Pembersihan dibatalkan</string>
+    <string name="cleanup_partial">%1$d file dihapus, %2$d gagal</string>
 </resources>

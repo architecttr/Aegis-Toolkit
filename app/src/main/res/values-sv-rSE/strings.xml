@@ -404,4 +404,5 @@
     <string name="cleanup_failed">Rensning misslyckades</string>
     <string name="cleanup_failed_details">Vissa filer kunde inte tas bort</string>
     <string name="cleanup_cancelled">Rensning avbruten</string>
+    <string name="cleanup_partial">%1$d filer raderades, %2$d misslyckades</string>
 </resources>

@@ -396,4 +396,5 @@
     <string name="cleanup_failed">การล้างล้มเหลว</string>
     <string name="cleanup_failed_details">ไม่สามารถลบไฟล์บางไฟล์ได้</string>
     <string name="cleanup_cancelled">ยกเลิกการล้าง</string>
+    <string name="cleanup_partial">ลบไฟล์ %1$d ไฟล์แล้ว, ล้มเหลว %2$d ไฟล์</string>
 </resources>

@@ -404,4 +404,5 @@
     <string name="cleanup_failed">सफाई असफल रही</string>
     <string name="cleanup_failed_details">कुछ फ़ाइलें हटाई नहीं जा सकीं</string>
     <string name="cleanup_cancelled">सफाई रद्द की गई</string>
+    <string name="cleanup_partial">%1$d फ़ाइलें हटाई गईं, %2$d असफल रहीं</string>
 </resources>

@@ -396,4 +396,5 @@
     <string name="cleanup_failed">清理失敗</string>
     <string name="cleanup_failed_details">部分檔案無法刪除</string>
     <string name="cleanup_cancelled">清理已取消</string>
+    <string name="cleanup_partial">已刪除 %1$d 個檔案，%2$d 個失敗</string>
 </resources>
