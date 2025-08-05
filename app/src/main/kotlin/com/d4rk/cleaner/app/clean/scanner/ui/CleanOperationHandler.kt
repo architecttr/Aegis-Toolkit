@@ -36,7 +36,6 @@ import java.util.UUID
  * Encapsulates heavy cleaning operations so the ViewModel stays lean.
  */
 class CleanOperationHandler(
-    private val application: Application,
     private val scope: CoroutineScope,
     private val dispatchers: DispatcherProvider,
     private val dataStore: DataStore,
@@ -54,7 +53,6 @@ class CleanOperationHandler(
     private val updateTrashSize: (Long) -> Unit,
     private val onWorkEnqueued: (UUID) -> Unit,
 ) {
-    private val resultDelayMs = 3600L // FIXME: Property "resultDelayMs" is never used
 
     fun analyzeFiles() {
         if (uiState.value.data?.analyzeState?.state != CleaningState.Idle) {

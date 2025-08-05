@@ -118,7 +118,6 @@ class ScannerViewModel(
         }
     )
     private val cleanOperationHandler = CleanOperationHandler(
-        application = application,
         scope = viewModelScope,
         dispatchers = dispatchers,
         dataStore = dataStore,
