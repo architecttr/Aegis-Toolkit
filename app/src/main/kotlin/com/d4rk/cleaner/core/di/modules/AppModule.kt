@@ -71,6 +71,7 @@ import com.d4rk.cleaner.app.images.compressor.ui.ImageOptimizerViewModel
 import com.d4rk.cleaner.app.main.ui.MainViewModel
 import com.d4rk.cleaner.app.onboarding.utils.interfaces.providers.AppOnboardingProvider
 import com.d4rk.cleaner.core.data.datastore.DataStore
+import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -78,6 +79,7 @@ import org.koin.dsl.module
 
 val appModule: Module = module {
     single<DataStore> { DataStore(context = get()) }
+    single { FileCleanWorkEnqueuer(application = get()) }
     single<AdsCoreManager> { AdsCoreManager(context = get(), buildInfoProvider = get()) }
     single { KtorClient().createClient() }
 
@@ -137,7 +139,8 @@ val appModule: Module = module {
             getLargestFilesUseCase = get(),
             getEmptyFoldersUseCase = get(),
             dispatchers = get(),
-            dataStore = get()
+            dataStore = get(),
+            fileCleanWorkEnqueuer = get()
         )
     }
 
@@ -235,7 +238,8 @@ val appModule: Module = module {
             application = get(),
             getLargestFilesUseCase = get(),
             dataStore = get(),
-            dispatchers = get()
+            dispatchers = get(),
+            fileCleanWorkEnqueuer = get()
         )
     }
 
