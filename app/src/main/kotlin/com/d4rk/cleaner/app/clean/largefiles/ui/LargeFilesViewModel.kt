@@ -21,9 +21,8 @@ import com.d4rk.cleaner.core.utils.extensions.selectedFiles
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
-import com.d4rk.cleaner.core.work.WorkObserver
+import com.d4rk.cleaner.core.work.observeFileCleanWork
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -144,12 +143,11 @@ class LargeFilesViewModel(
         }
     }
     private fun observeWork(id: UUID) {
-        activeWorkObserver?.cancel()
-        activeWorkObserver = WorkObserver.observe(
-            scope = MainScope(),
-            workManager = WorkManager.getInstance(application),
-            workId = id,
+        activeWorkObserver = observeFileCleanWork(
+            previousObserver = activeWorkObserver,
+            application = application,
             dispatcher = dispatchers.io,
+            workId = id,
             clearWorkId = { dataStore.clearLargeFilesCleanWorkId() },
             onRunning = {
                 _uiState.update { it.copy(screenState = ScreenState.IsLoading()) }

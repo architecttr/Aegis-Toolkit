@@ -24,10 +24,9 @@ import com.d4rk.cleaner.core.utils.extensions.selectedFiles
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
-import com.d4rk.cleaner.core.work.WorkObserver
+import com.d4rk.cleaner.core.work.observeFileCleanWork
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -69,12 +68,11 @@ class TrashViewModel(
     }
 
     private fun observeWork(id: UUID) {
-        activeWorkObserver?.cancel()
-        activeWorkObserver = WorkObserver.observe(
-            scope = MainScope(),
-            workManager = WorkManager.getInstance(application),
-            workId = id,
+        activeWorkObserver = observeFileCleanWork(
+            previousObserver = activeWorkObserver,
+            application = application,
             dispatcher = dispatchers.io,
+            workId = id,
             clearWorkId = { dataStore.clearTrashCleanWorkId() },
             onRunning = {
                 _uiState.update {
