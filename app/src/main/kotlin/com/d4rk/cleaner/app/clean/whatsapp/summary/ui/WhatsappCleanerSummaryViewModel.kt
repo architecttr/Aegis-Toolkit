@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import java.io.File
+import java.util.LinkedHashMap
 import java.util.UUID
 
 class WhatsappCleanerSummaryViewModel(
@@ -44,6 +45,15 @@ class WhatsappCleanerSummaryViewModel(
 
     private var activeWorkObserver: Job? = null
     private var pendingDeleteSizes: Map<String, Long> = emptyMap()
+    private val filesCache = object : LinkedHashMap<String, List<File>>(MAX_CACHE_SIZE, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, List<File>>?): Boolean {
+            return size > MAX_CACHE_SIZE
+        }
+    }
+
+    companion object {
+        private const val MAX_CACHE_SIZE = 20
+    }
 
     init {
         onEvent(WhatsAppCleanerEvent.LoadMedia)
@@ -73,27 +83,36 @@ class WhatsappCleanerSummaryViewModel(
     private fun loadSummary() {
         launch(context = dispatchers.io) {
             getSummaryUseCase().collectLatest { result ->
-                _uiState.update { current ->
-                    when (result) {
-                        is DataState.Loading -> current.copy(
+                when (result) {
+                    is DataState.Loading -> _uiState.update { current ->
+                        current.copy(
                             screenState = ScreenState.IsLoading(),
                             data = current.data?.copy(cleaningState = CleaningState.Analyzing)
                                 ?: UiWhatsAppCleanerModel(cleaningState = CleaningState.Analyzing)
                         )
-                        is DataState.Success -> current.copy(
-                            screenState = if (result.data.totalBytes != 0L) ScreenState.Success() else ScreenState.NoData(),
-                            data = current.data?.copy(
-                                mediaSummary = result.data,
-                                totalSize = result.data.formattedTotalSize,
-                                cleaningState = CleaningState.Idle
-                            ) ?: UiWhatsAppCleanerModel(
-                                mediaSummary = result.data,
-                                totalSize = result.data.formattedTotalSize,
-                                cleaningState = CleaningState.Idle
-                            )
-                        )
+                    }
 
-                        is DataState.Error -> current.copy(
+                    is DataState.Success -> {
+                        _uiState.update { current ->
+                            current.copy(
+                                screenState = if (result.data.totalBytes != 0L) ScreenState.Success() else ScreenState.NoData(),
+                                data = current.data?.copy(
+                                    mediaSummary = result.data,
+                                    totalSize = result.data.formattedTotalSize,
+                                    cleaningState = CleaningState.Idle
+                                ) ?: UiWhatsAppCleanerModel(
+                                    mediaSummary = result.data,
+                                    totalSize = result.data.formattedTotalSize,
+                                    cleaningState = CleaningState.Idle
+                                )
+                            )
+                        }
+                        filesCache.clear()
+                        populateCache()
+                    }
+
+                    is DataState.Error -> _uiState.update { current ->
+                        current.copy(
                             screenState = ScreenState.Error(),
                             data = current.data?.copy(cleaningState = CleaningState.Error),
                             errors = current.errors + UiSnackbar(
@@ -107,13 +126,32 @@ class WhatsappCleanerSummaryViewModel(
         }
     }
 
+    private suspend fun populateCache() {
+        val types = WhatsAppMediaConstants.DIRECTORIES.keys
+        for (type in types) {
+            getFilesUseCase(type, 0, Int.MAX_VALUE).collectLatest { res ->
+                if (res is DataState.Success) {
+                    filesCache[type] = res.data
+                }
+            }
+        }
+    }
+
     private fun cleanAll() {
         launch(context = dispatchers.io) {
             val types = WhatsAppMediaConstants.DIRECTORIES.keys
             val files = mutableListOf<File>()
             for (type in types) {
-                getFilesUseCase(type, 0, Int.MAX_VALUE).collectLatest { res ->
-                    if (res is DataState.Success) files.addAll(res.data)
+                val cached = filesCache[type]
+                if (cached != null) {
+                    files.addAll(cached)
+                } else {
+                    getFilesUseCase(type, 0, Int.MAX_VALUE).collectLatest { res ->
+                        if (res is DataState.Success) {
+                            files.addAll(res.data)
+                            filesCache[type] = res.data
+                        }
+                    }
                 }
             }
 
