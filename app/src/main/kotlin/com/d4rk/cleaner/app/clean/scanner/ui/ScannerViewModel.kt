@@ -3,7 +3,6 @@ package com.d4rk.cleaner.app.clean.scanner.ui
 import android.app.Application
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.d4rk.android.libs.apptoolkit.core.di.DispatcherProvider
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
@@ -43,8 +42,9 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
-import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
+import com.d4rk.cleaner.core.work.FileCleaner
+import com.d4rk.cleaner.core.work.observeFileCleanWork
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +54,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
 import java.util.UUID
@@ -521,104 +520,86 @@ class ScannerViewModel(
 
 
     private fun observeCleaningWork(id: UUID) {
-        activeCleanWorkObserver?.cancel()
-        activeCleanWorkObserver = launch(dispatchers.io) {
-            WorkManager.getInstance(application).getWorkInfoByIdFlow(id).collect { info: WorkInfo? ->
-                when (info?.state) {
-                    WorkInfo.State.ENQUEUED, WorkInfo.State.RUNNING, WorkInfo.State.BLOCKED -> {
-                        _uiState.update { state ->
-                            val current = state.data ?: UiScannerModel()
-                            state.copy(
-                                data = current.copy(
-                                    analyzeState = current.analyzeState.copy(
-                                        state = CleaningState.Cleaning
-                                    )
-                                )
+        activeCleanWorkObserver = observeFileCleanWork(
+            previousObserver = activeCleanWorkObserver,
+            application = application,
+            dispatcher = dispatchers.io,
+            workId = id,
+            clearWorkId = { dataStore.clearScannerCleanWorkId() },
+            onRunning = {
+                _uiState.update { state ->
+                    val current = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = current.copy(
+                            analyzeState = current.analyzeState.copy(
+                                state = CleaningState.Cleaning
                             )
-                        }
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        dataStore.clearScannerCleanWorkId()
+                        )
+                    )
+                }
+            },
+            onSuccess = { info ->
+                val failedPaths =
+                    info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
+                val failedCount = failedPaths?.size ?: 0
+                val selectedCount =
+                    _uiState.value.data?.analyzeState?.selectedFiles?.size ?: 0
+                val successCount = selectedCount - failedCount
 
-                        val failedPaths =
-                            info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
-                        val failedCount = failedPaths?.size ?: 0
-                        val selectedCount =
-                            _uiState.value.data?.analyzeState?.selectedFiles?.size ?: 0
-                        val successCount = selectedCount - failedCount
+                val message = if (failedCount > 0) {
+                    UiTextHelper.StringResource(
+                        R.string.cleanup_partial,
+                        listOf(successCount, failedCount)
+                    )
+                } else {
+                    UiTextHelper.StringResource(R.string.all_clean)
+                }
+                postSnackbar(message, false)
+                if (pendingEmptyFoldersCleanup) {
+                    _emptyFolders.value = emptyList()
+                    dataStore.saveEmptyFoldersHideUntil(
+                        System.currentTimeMillis() + EMPTY_FOLDERS_HIDE_DURATION_MS
+                    )
+                    pendingEmptyFoldersCleanup = false
+                }
+                dataStore.saveLastScanTimestamp(System.currentTimeMillis())
+                _cleaningApks.value = false
 
-                        val message = if (failedCount > 0) {
-                            UiTextHelper.StringResource(
-                                R.string.cleanup_partial,
-                                listOf(successCount, failedCount)
+                _uiState.update { state ->
+                    val current = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = current.copy(
+                            analyzeState = current.analyzeState.copy(
+                                state = CleaningState.Result
                             )
-                        } else {
-                            UiTextHelper.StringResource(R.string.all_clean)
-                        }
-                        postSnackbar(message, false)
-                        if (pendingEmptyFoldersCleanup) {
-                            _emptyFolders.value = emptyList()
-                            dataStore.saveEmptyFoldersHideUntil(
-                                System.currentTimeMillis() + EMPTY_FOLDERS_HIDE_DURATION_MS
+                        )
+                    )
+                }
+                onEvent(ScannerEvent.RefreshData)
+                onCloseAnalyzeComposable()
+            },
+            onFailed = {
+                cleanOperationHandler.onCleaningFailed()
+                _cleaningApks.value = false
+                pendingEmptyFoldersCleanup = false
+            },
+            onCancelled = {
+                _cleaningApks.value = false
+                pendingEmptyFoldersCleanup = false
+                _uiState.update { state ->
+                    val current = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = current.copy(
+                            analyzeState = current.analyzeState.copy(
+                                state = CleaningState.Idle
                             )
-                            pendingEmptyFoldersCleanup = false
-                        }
-                        dataStore.saveLastScanTimestamp(System.currentTimeMillis())
-                        _cleaningApks.value = false
-
-                        _uiState.update { state ->
-                            val current = state.data ?: UiScannerModel()
-                            state.copy(
-                                data = current.copy(
-                                    analyzeState = current.analyzeState.copy(
-                                        state = CleaningState.Result
-                                    )
-                                )
-                            )
-                        }
-                        onEvent(ScannerEvent.RefreshData)
-                        onCloseAnalyzeComposable()
-                    }
-                    WorkInfo.State.FAILED -> {
-                        dataStore.clearScannerCleanWorkId()
-                        cleanOperationHandler.onCleaningFailed()
-                        _cleaningApks.value = false
-                        pendingEmptyFoldersCleanup = false
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        dataStore.clearScannerCleanWorkId()
-                        _cleaningApks.value = false
-                        pendingEmptyFoldersCleanup = false
-                        _uiState.update { state ->
-                            val current = state.data ?: UiScannerModel()
-                            state.copy(
-                                data = current.copy(
-                                    analyzeState = current.analyzeState.copy(
-                                        state = CleaningState.Idle
-                                    )
-                                )
-                            )
-                        }
-                    }
-                    null -> {
-                        dataStore.clearScannerCleanWorkId()
-                        _cleaningApks.value = false
-                        pendingEmptyFoldersCleanup = false
-                        _uiState.update { state ->
-                            val current = state.data ?: UiScannerModel()
-                            state.copy(
-                                data = current.copy(
-                                    analyzeState = current.analyzeState.copy(
-                                        state = CleaningState.Idle
-                                    )
-                                )
-                            )
-                        }
-                    }
+                        )
+                    )
                 }
             }
-        }
+        )
     }
+
     fun moveSelectedToTrash() {
         if (_uiState.value.data?.analyzeState?.state != CleaningState.ReadyToClean) {
             return
