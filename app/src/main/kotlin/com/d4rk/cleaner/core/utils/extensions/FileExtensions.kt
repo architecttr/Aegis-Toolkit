@@ -52,6 +52,3 @@ fun File.partialMd5(): String? = runCatching {
     md.digest().joinToString("") { "%02x".format(it) }
 }.getOrNull()
 
-fun File.deleteRecursivelySafe(): Boolean = runCatching {
-    deleteRecursively()
-}.getOrDefault(false)
