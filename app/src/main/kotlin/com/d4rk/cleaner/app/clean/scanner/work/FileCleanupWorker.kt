@@ -16,6 +16,7 @@ import kotlinx.coroutines.delay
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
+import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.google.android.material.color.MaterialColors
@@ -235,15 +236,12 @@ class FileCleanupWorker(
     }
 
     private suspend fun performAction(action: String, files: List<File>): DataState<Unit, *> {
-        return when (action) {
-            ACTION_TRASH -> {
-                when (val result = cleaningManager.moveToTrash(files)) {
-                    is DataState.Error -> result
-                    else -> DataState.Success(Unit)
-                }
-            }
-            else -> cleaningManager.deleteFiles(files.toSet())
+        val mode = if (action == ACTION_TRASH) {
+            DeleteFilesUseCase.Mode.TRASH
+        } else {
+            DeleteFilesUseCase.Mode.PERMANENT
         }
+        return cleaningManager.deleteFiles(files, mode)
     }
 
     private fun createChannelIfNeeded() {
