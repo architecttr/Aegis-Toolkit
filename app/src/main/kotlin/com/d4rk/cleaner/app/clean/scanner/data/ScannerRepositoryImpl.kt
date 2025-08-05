@@ -149,7 +149,7 @@ class ScannerRepositoryImpl(
     }
 
     override suspend fun deleteFiles(files: Collection<File>): Unit {
-        val results = FileDeletionHelper.deleteFiles(application, files)
+        val results = FileDeletionHelper.deleteFiles(files)
         val totalSize = results.filter { it.success }.sumOf { it.file.length() }
         if (results.any { !it.success }) {
             throw RuntimeException("SAF_DELETE_FAILED")

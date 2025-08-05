@@ -86,7 +86,7 @@ class WhatsAppCleanerRepositoryImpl(private val application: Application) :
     }
 
     override suspend fun deleteFiles(files: Collection<File>): DeleteResult = withContext(Dispatchers.IO) {
-        val results = FileDeletionHelper.deleteFiles(application, files)
+        val results = FileDeletionHelper.deleteFiles(files)
         val deletedCount = results.count { it.success }
         val failed = results.filter { !it.success }.map { it.file.path }
         DeleteResult(
