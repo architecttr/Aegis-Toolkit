@@ -3,7 +3,12 @@
 Smart Cleaner performs cleanup tasks only when the user explicitly initiates them. Each job runs as standard background work with determinate progress notifications and chunking, and its state is preserved so progress can resume after crashes or restarts.
 
 ## Overview
-Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. Every job begins with explicit user action and presents real-time progress in the UI and notification bar.
+Smart Cleaner runs all file deletion and trash moves through WorkManager jobs without using the Storage Access Framework (SAF), keeping file access straightforward. Every job begins with explicit user action and presents real-time progress in the UI and notification bar【F:docs/cleaning_features.md†L1-L5】.
+
+## Core Helpers
+* `FileCleanWorkEnqueuer` chunks file paths, enqueues `FileCleanupWorker` jobs, and persists the `WorkRequest` ID for later observation【F:app/src/main/kotlin/com/d4rk/cleaner/core/work/FileCleanWorkEnqueuer.kt†L12-L18】.
+* `FileCleaner` wraps the enqueuer to provide standardized UI feedback and callbacks around each enqueue attempt【F:app/src/main/kotlin/com/d4rk/cleaner/core/work/FileCleaner.kt†L8-L15】.
+* `observeFileCleanWork` attaches to a running job's `WorkInfo`, cancelling any previous observer and relaying state changes via callbacks【F:app/src/main/kotlin/com/d4rk/cleaner/core/work/FileCleanWorkObserver.kt†L11-L17】.
 
 ## Requirements for New Cleaning Features
 * Start via explicit user action
@@ -26,6 +31,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 ### Completion & Feedback
 * When the job finishes—success, failure, or cancellation—the notification updates with a localized result message and is dismissed after a short delay【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/work/FileCleanupWorker.kt†L147-L153】.
 * UI state resets to "Ready" or "Error" depending on outcome.
+* `FileCleanupWorker` reports any files it couldn't process through `KEY_FAILED_PATHS`; observers read this output to show partial-success messages and highlight failed paths in the UI【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/work/FileCleanupWorker.kt†L193-L199】【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/largefiles/ui/LargeFilesViewModel.kt†L163-L178】.
 * The stored job ID is cleared from DataStore, either when the Worker finishes or when no WorkInfo is found【F:app/src/main/kotlin/com/d4rk/cleaner/core/data/datastore/DataStore.kt†L88-L103】【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/ui/ScannerViewModel.kt†L142-L164】.
 
 ### Process Death & Recovery
@@ -41,7 +47,7 @@ Smart Cleaner runs all file deletion and trash moves through WorkManager jobs. E
 * **Localization:** All user-facing strings are fully localized.
 
 ## Quota & Responsiveness Strategy
-* Cleanup jobs run as standard background work with determinate progress notifications, avoiding any foreground service type.
+* Cleanup jobs run solely via WorkManager with determinate progress notifications; no `FOREGROUND_SERVICE_TYPE_DATA_SYNC` or other foreground service type is used.
 * When more than 100 file paths are queued, the app splits them into sequential `FileCleanupWorker` requests to stay under WorkManager's 10 KB limit while still processing large batches efficiently.
 
 ## Developer and Contributor Guidelines
