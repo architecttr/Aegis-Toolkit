@@ -20,5 +20,5 @@
 - Extend `PreviewType` and update `getPreviewType` in `FilePreviewHelper` to support new file formats.
 - Respect memory limits: previews should decode on `Dispatchers.IO` and rely on the shared `LruCache`.
 
-## TODO
-- Provide a template or script for creating new feature modules.
+## Feature Module Template
+- Refer to the [Feature Module Template](feature_module_template.md) for scaffolding new cleanup features.

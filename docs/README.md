@@ -16,3 +16,4 @@ This directory contains technical and product documentation for the Smart Cleane
 - [Cleaning Feature Checklist](cleaning_feature_checklist.md)
 - [Testing Strategy](testing_strategy.md)
 - [Development Guidelines](development_guidelines.md)
+- [Feature Module Template](feature_module_template.md)

@@ -11,8 +11,12 @@ class ClipboardCleanerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val manager = getSystemService(CLIPBOARD_SERVICE) as? ClipboardManager
-        manager?.clearClipboardCompat()
-        Toast.makeText(this, R.string.clipboard_cleaned, Toast.LENGTH_SHORT).show()
+        if (manager != null) {
+            manager.clearClipboardCompat()
+            Toast.makeText(this, R.string.clipboard_cleaned, Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, R.string.clipboard_service_unavailable, Toast.LENGTH_SHORT).show()
+        }
         finishAndRemoveTask()
     }
 }

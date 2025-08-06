@@ -160,6 +160,7 @@
     <string name="clipboard_current_format">Поточний буфер: %1$s</string>
     <string name="clean_clipboard">Очистити буфер обміну</string>
     <string name="clipboard_cleaned">Буфер обміну був очищений</string>
+    <string name="clipboard_service_unavailable">Служба буфера обміну недоступна</string>
     <string name="link_cleaner">Очищувач посилань</string>
     <string name="link_cleaned">Посилання очищено</string>
     <string name="link_cleaner_card_title">Очищувач посилань</string>

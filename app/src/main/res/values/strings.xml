@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">Current clipboard: %1$s</string>
     <string name="clean_clipboard">Clear Clipboard</string>
     <string name="clipboard_cleaned">Clipboard cleaned</string>
+    <string name="clipboard_service_unavailable">Clipboard service unavailable</string>
     <string name="link_cleaner">Link Cleaner</string>
     <string name="link_cleaned">Link cleaned</string>
     <string name="link_cleaner_card_title">Link Cleaner</string>

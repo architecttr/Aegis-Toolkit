@@ -151,6 +151,7 @@
     <string name="clipboard_current_format">目前剪貼簿：%1$s</string>
     <string name="clean_clipboard">清除剪貼簿</string>
     <string name="clipboard_cleaned">剪貼板已清潔</string>
+    <string name="clipboard_service_unavailable">剪貼板服務不可用</string>
     <string name="link_cleaner">連結清理</string>
     <string name="link_cleaned">連結已清理</string>
     <string name="link_cleaner_card_title">連結清理</string>

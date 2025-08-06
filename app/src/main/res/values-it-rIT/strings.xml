@@ -157,6 +157,7 @@
     <string name="clipboard_current_format">Appunti correnti: %1$s</string>
     <string name="clean_clipboard">Cancella appunti</string>
     <string name="clipboard_cleaned">Gli appunti sono stati puliti</string>
+    <string name="clipboard_service_unavailable">Servizio degli appunti non disponibile</string>
     <string name="link_cleaner">Pulitore link</string>
     <string name="link_cleaned">Link pulito</string>
     <string name="link_cleaner_card_title">Pulitore link</string>

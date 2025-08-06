@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">Aktuális vágólap: %1$s</string>
     <string name="clean_clipboard">Vágólap törlése</string>
     <string name="clipboard_cleaned">A vágólapot megtisztították</string>
+    <string name="clipboard_service_unavailable">A vágólap szolgáltatása nem érhető el</string>
     <string name="link_cleaner">Linktisztító</string>
     <string name="link_cleaned">A linket megtisztították</string>
     <string name="link_cleaner_card_title">Linktisztító</string>

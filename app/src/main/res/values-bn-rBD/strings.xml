@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">বর্তমান ক্লিপবোর্ড: %1$s</string>
     <string name="clean_clipboard">ক্লিপবোর্ড পরিষ্কার করুন</string>
     <string name="clipboard_cleaned">ক্লিপবোর্ড পরিষ্কার করা হয়েছে</string>
+    <string name="clipboard_service_unavailable">ক্লিপবোর্ড পরিষেবা অনুপলব্ধ</string>
     <string name="link_cleaner">লিঙ্ক ক্লিনার</string>
     <string name="link_cleaned">লিঙ্ক পরিষ্কার হয়েছে</string>
     <string name="link_cleaner_card_title">লিঙ্ক ক্লিনার</string>

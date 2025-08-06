@@ -157,6 +157,7 @@
     <string name="clipboard_current_format">Clipboard curent: %1$s</string>
     <string name="clean_clipboard">Curăță clipboard-ul</string>
     <string name="clipboard_cleaned">Clipboard a fost curățat</string>
+    <string name="clipboard_service_unavailable">Serviciul de clipboard indisponibil</string>
     <string name="link_cleaner">Curățare linkuri</string>
     <string name="link_cleaned">Link curățat</string>
     <string name="link_cleaner_card_title">Curățare linkuri</string>

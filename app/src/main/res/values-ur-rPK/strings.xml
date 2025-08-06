@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">موجودہ کلپ بورڈ: %1$s</string>
     <string name="clean_clipboard">کلپ بورڈ صاف کریں</string>
     <string name="clipboard_cleaned">کلپ بورڈ صاف کیا گیا ہے</string>
+    <string name="clipboard_service_unavailable">کلپ بورڈ سروس دستیاب نہیں ہے</string>
     <string name="link_cleaner">لنک کلینر</string>
     <string name="link_cleaned">لنک صاف ہوگیا</string>
     <string name="link_cleaner_card_title">لنک کلینر</string>

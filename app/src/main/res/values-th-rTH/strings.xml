@@ -151,6 +151,7 @@
     <string name="clipboard_current_format">คลิปบอร์ดปัจจุบัน: %1$s</string>
     <string name="clean_clipboard">ล้างคลิปบอร์ด</string>
     <string name="clipboard_cleaned">คลิปบอร์ดได้รับการทำความสะอาด</string>
+    <string name="clipboard_service_unavailable">บริการคลิปบอร์ดไม่พร้อมใช้งาน</string>
     <string name="link_cleaner">ตัวล้างลิงก์</string>
     <string name="link_cleaned">ลิงก์ถูกล้างแล้ว</string>
     <string name="link_cleaner_card_title">ตัวล้างลิงก์</string>

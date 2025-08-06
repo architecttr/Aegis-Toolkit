@@ -157,6 +157,7 @@
     <string name="clipboard_current_format">Presse-papiers actuel : %1$s</string>
     <string name="clean_clipboard">Effacer le presse-papiers</string>
     <string name="clipboard_cleaned">Le presse-papiers a été nettoyé</string>
+    <string name="clipboard_service_unavailable">Service de presse-papiers indisponible</string>
     <string name="link_cleaner">Nettoyeur de liens</string>
     <string name="link_cleaned">Lien nettoyé</string>
     <string name="link_cleaner_card_title">Nettoyeur de liens</string>

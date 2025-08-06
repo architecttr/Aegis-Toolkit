@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">Geçerli pano: %1$s</string>
     <string name="clean_clipboard">Panoyu Temizle</string>
     <string name="clipboard_cleaned">Pano temizlendi</string>
+    <string name="clipboard_service_unavailable">Pano hizmeti kullanılamıyor</string>
     <string name="link_cleaner">Bağlantı Temizleyici</string>
     <string name="link_cleaned">Bağlantı temizlendi</string>
     <string name="link_cleaner_card_title">Bağlantı Temizleyici</string>
