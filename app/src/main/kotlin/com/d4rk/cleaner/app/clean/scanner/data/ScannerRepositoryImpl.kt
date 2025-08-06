@@ -113,13 +113,17 @@ class ScannerRepositoryImpl(
         }
     }
 
-    override fun getAllFiles(): Flow<File> = flow {
+    override fun getAllFiles(onLockedDir: ((File) -> Unit)?): Flow<File> = flow {
         val stack: ArrayDeque<File> = ArrayDeque()
         val root: File = Environment.getExternalStorageDirectory()
         stack.addFirst(root)
 
         val trashDir =
             File(application.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "Trash")
+        val lockedDirs = listOf(
+            File(root, "Android/data"),
+            File(root, "Android/obb")
+        ).map { it.absolutePath }
 
         while (stack.isNotEmpty()) {
             val currentFile: File = stack.removeFirst()
@@ -127,7 +131,11 @@ class ScannerRepositoryImpl(
                 if (!currentFile.absolutePath.startsWith(trashDir.absolutePath)) {
                     currentFile.listFiles()?.forEach { child ->
                         if (child.isDirectory) {
-                            stack.addLast(child)
+                            if (lockedDirs.any { locked -> child.absolutePath.startsWith(locked) }) {
+                                onLockedDir?.invoke(child)
+                            } else {
+                                stack.addLast(child)
+                            }
                         } else {
                             emit(child)
                         }

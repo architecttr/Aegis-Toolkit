@@ -12,10 +12,10 @@ import java.io.File
 class AnalyzeFilesUseCase(
     private val homeRepository: ScannerRepositoryInterface
 ) {
-    operator fun invoke(): Flow<DataState<File, Errors>> = flow {
+    operator fun invoke(onLockedDir: ((File) -> Unit)? = null): Flow<DataState<File, Errors>> = flow {
         emit(DataState.Loading())
         runCatching {
-            homeRepository.getAllFiles().collect { file ->
+            homeRepository.getAllFiles(onLockedDir).collect { file ->
                 emit(DataState.Success(file))
             }
         }.onFailure { throwable ->
