@@ -50,13 +50,13 @@
 **State persistence**
  - Lists and selections remain in memory; job IDs stored in `DataStore` under `whatsappCleanWorkId`.
  - `FileCleaner.enqueue` schedules work, stores `whatsappCleanWorkId`, and prevents duplicate jobs.
- - `observeFileCleanWork` reads that ID to report progress and surface per-file failures from worker output.
+ - `observeFileCleanWork` cancels any previous observer, reads that ID to report progress, and surfaces per-file failures from worker output to keep the UI resilient after process death【F:app/src/main/kotlin/com/d4rk/cleaner/core/work/FileCleanWorkObserver.kt†L11-L17】.
 
 **Error handling**
 - Scan or delete failures show snackbars; media lists fall back to empty results.
 
 **System events**
- - Because selections and lists are memory-only, process death forces a rescan unless a job is active; when active, `observeFileCleanWork` reattaches using the stored ID.
+ - Because selections and lists are memory-only, process death forces a rescan unless a job is active; when active, `observeFileCleanWork` cancels stale observers and reattaches using the stored ID.
 
 ## 4. Large Files Scanner
 **Trigger**
@@ -73,12 +73,32 @@
 - Job ID persisted as `largeFilesCleanWorkId` for recovery【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/largefiles/ui/LargeFilesViewModel.kt†L45-L58】.
 
 **Error handling**
-- Failures show snackbars and keep the last known list.
+ - `FileCleanupWorker` reports failed paths via `KEY_FAILED_PATHS`【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/work/FileCleanupWorker.kt†L193-L199】; `LargeFilesViewModel` parses them to show partial-success messages while keeping the last known list intact【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/largefiles/ui/LargeFilesViewModel.kt†L153-L188】.
 
 **System events**
 - ViewModel reconnects to running jobs and clears stale IDs on start【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/largefiles/ui/LargeFilesViewModel.kt†L130-L146】.
 
-## 5. Other Screens
+## 5. Trash Screen
+**Trigger**
+- User opens **Trash** from the dashboard or notification.
+
+**UI states**
+1. Loading – retrieving trashed entries.
+2. Ready – list of trashed files with selection checkboxes.
+3. Cleaning – WorkManager job permanently deletes selected files.
+4. Complete/Error – list refreshed and job ID cleared.
+
+**State persistence**
+- Trashed paths and aggregate size stored in `DataStore`; selections live in memory.
+- Job ID persisted as `trashCleanWorkId` for recovery.
+
+**Error handling**
+ - `FileCleanupWorker` outputs failed paths through `KEY_FAILED_PATHS`【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/scanner/work/FileCleanupWorker.kt†L193-L199】; `TrashViewModel` reads them to show partial-success snackbars and update sizes accordingly【F:app/src/main/kotlin/com/d4rk/cleaner/app/clean/trash/ui/TrashViewModel.kt†L85-L133】.
+
+**System events**
+- `observeFileCleanWork` cancels prior observers and reattaches using the stored ID so the UI recovers after process death.
+
+## 6. Other Screens
 - [Clipboard Cleaner](clipboard_cleaner.md)
 - [Empty Folder Cleaner](empty_folder_cleaner.md)
 - [Trash Recovery](trash_recovery.md)
