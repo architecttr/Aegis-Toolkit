@@ -1,6 +1,6 @@
 # Cleaning Features Overview
 
-Smart Cleaner provides multiple cleaning modules built on a shared cleanup architecture. Each module runs WorkManager jobs without relying on the Storage Access Framework (SAF), ensuring a streamlined file-deletion flow.
+Smart Cleaner provides multiple cleaning modules built on a shared cleanup architecture. All cleaners avoid the Storage Access Framework (SAF) and any foreground service types, running WorkManager jobs for a streamlined file-deletion flow.
 
 All cleanup jobs enqueue a `FileCleanupWorker` via the centralized [FileCleanWorkEnqueuer](../app/src/main/kotlin/com/d4rk/cleaner/core/work/FileCleanWorkEnqueuer.kt). Work request IDs for active jobs are stored in [DataStore](../app/src/main/kotlin/com/d4rk/cleaner/core/data/datastore/DataStore.kt) so each feature tracks its own progress.
 
