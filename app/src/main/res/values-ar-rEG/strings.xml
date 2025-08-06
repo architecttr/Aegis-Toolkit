@@ -357,6 +357,8 @@
     <string name="delete_invalid_media">حذف الوسائط التالفة</string>
     <string name="summary_preference_settings_delete_invalid_media">حذف الصور التالفة</string>
     <string name="scanner">الماسح</string>
+    <string name="show_hidden_files">إظهار الملفات المخفية</string>
+    <string name="summary_preference_settings_show_hidden_files">تضمين الملفات المخفية والمحمية في نتائج الفحص</string>
     <string name="clipboard_clean">تنظيف الحافظة</string>
     <string name="summary_preference_settings_delete_duplicates">حذف الملفات المكررة أثناء التنظيف</string>
 

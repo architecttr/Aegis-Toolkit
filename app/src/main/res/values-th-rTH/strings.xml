@@ -317,6 +317,8 @@
     <string name="delete_invalid_media">ลบไฟล์สื่อที่เสียหาย</string>
     <string name="summary_preference_settings_delete_invalid_media">ลบรูปภาพที่เสียหาย</string>
     <string name="scanner">สแกนเนอร์</string>
+    <string name="show_hidden_files">แสดงไฟล์ที่ซ่อนอยู่</string>
+    <string name="summary_preference_settings_show_hidden_files">รวมไฟล์ที่ซ่อนและป้องกันไว้ในผลการสแกน</string>
     <string name="clipboard_clean">ล้างคลิปบอร์ด</string>
     <string name="summary_preference_settings_delete_duplicates">ลบไฟล์ที่ซ้ำกันระหว่างการทำความสะอาด</string>
 

@@ -383,7 +383,7 @@ class DataStore(val context: Context) : CommonDataStore(context = context) {
     private val showHiddenFilesKey =
         booleanPreferencesKey(name = AppDataStoreConstants.DATA_STORE_SHOW_HIDDEN_FILES)
     val showHiddenFiles: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[showHiddenFilesKey] == true
+        prefs[showHiddenFilesKey] ?: false
     }
 
     suspend fun saveShowHiddenFiles(isChecked: Boolean) {

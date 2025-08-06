@@ -325,6 +325,8 @@
     <string name="delete_invalid_media">غلط میڈیا حذف کریں</string>
     <string name="summary_preference_settings_delete_invalid_media">خراب تصاویر حذف کریں</string>
     <string name="scanner">اسکینر</string>
+    <string name="show_hidden_files">پوشیدہ فائلیں دکھائیں</string>
+    <string name="summary_preference_settings_show_hidden_files">اسکین کے نتائج میں پوشیدہ اور محفوظ فائلیں شامل کریں</string>
     <string name="clipboard_clean">کلپ بورڈ صاف کریں</string>
     <string name="summary_preference_settings_delete_duplicates">صفائی کے دوران ڈپلیکیٹ فائلوں کو حذف کریں</string>
 

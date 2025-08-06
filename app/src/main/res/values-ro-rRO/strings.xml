@@ -333,6 +333,8 @@
     <string name="delete_invalid_media">Șterge media invalidă</string>
     <string name="summary_preference_settings_delete_invalid_media">Șterge imaginile corupte</string>
     <string name="scanner">Scaner</string>
+    <string name="show_hidden_files">Afișează fișierele ascunse</string>
+    <string name="summary_preference_settings_show_hidden_files">Include fișierele ascunse și protejate în rezultatele scanării</string>
     <string name="clipboard_clean">Curăță clipboard</string>
     <string name="summary_preference_settings_delete_duplicates">Ștergeți fișierele duplicate în timpul curățării</string>
 

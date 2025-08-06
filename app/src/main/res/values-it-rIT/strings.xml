@@ -333,6 +333,8 @@
     <string name="delete_invalid_media">Elimina media non validi</string>
     <string name="summary_preference_settings_delete_invalid_media">Elimina immagini corrotte</string>
     <string name="scanner">Scanner</string>
+    <string name="show_hidden_files">Mostra file nascosti</string>
+    <string name="summary_preference_settings_show_hidden_files">Includi i file nascosti e protetti nei risultati della scansione</string>
     <string name="clipboard_clean">Pulisci appunti</string>
     <string name="summary_preference_settings_delete_duplicates">Elimina file duplicati durante la pulizia</string>
 
