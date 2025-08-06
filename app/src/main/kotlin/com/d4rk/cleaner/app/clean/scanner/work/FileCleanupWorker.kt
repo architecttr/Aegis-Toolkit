@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import kotlinx.coroutines.delay
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.cleaner.R
@@ -110,6 +111,7 @@ class FileCleanupWorker(
                     total,
                 ),
             )
+        setProgress(workDataOf(KEY_PROGRESS_CURRENT to processed, KEY_PROGRESS_TOTAL to total))
 
         val hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.checkSelfPermission(
@@ -169,6 +171,7 @@ class FileCleanupWorker(
                         total,
                     ),
                 )
+            setProgress(workDataOf(KEY_PROGRESS_CURRENT to processed, KEY_PROGRESS_TOTAL to total))
             if (hasPermission) {
                 notificationManager.notify(NOTIFICATION_ID, builder.build())
             }
@@ -273,6 +276,8 @@ class FileCleanupWorker(
         const val KEY_ACTION = "action"
         const val KEY_ERROR = "error"
         const val KEY_FAILED_PATHS = "failed_paths"
+        const val KEY_PROGRESS_CURRENT = "progress_current"
+        const val KEY_PROGRESS_TOTAL = "progress_total"
         const val ACTION_DELETE = "delete"
         const val ACTION_TRASH = "trash"
 

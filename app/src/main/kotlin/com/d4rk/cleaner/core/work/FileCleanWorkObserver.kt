@@ -24,6 +24,7 @@ fun observeFileCleanWork(
     onSuccess: suspend (WorkInfo) -> Unit = {},
     onFailed: suspend () -> Unit = {},
     onCancelled: suspend () -> Unit = {},
+    onProgress: suspend (WorkInfo) -> Unit = {},
 ): Job {
     previousObserver?.cancel()
     return WorkObserver.observe(
@@ -36,6 +37,7 @@ fun observeFileCleanWork(
         onSuccess = onSuccess,
         onFailed = onFailed,
         onCancelled = onCancelled,
+        onProgress = onProgress,
     )
 }
 

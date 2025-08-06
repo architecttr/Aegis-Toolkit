@@ -68,7 +68,10 @@ fun AnalyzeScreen(
                 }
 
                 CleaningState.Cleaning -> {
-                    CleaningAnimationScreen()
+                    CleaningAnimationScreen(
+                        cleaned = data.analyzeState.cleanedFilesCount,
+                        total = data.analyzeState.totalFilesToClean,
+                    )
                 }
 
                 CleaningState.ReadyToClean -> {

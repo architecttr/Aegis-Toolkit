@@ -193,11 +193,14 @@ class CleanOperationHandler(
                 onEnqueued = { id ->
                     uiState.update { state ->
                         val currentData = state.data ?: UiScannerModel()
+                        val total = validPaths.size
                         state.copy(
                             data = currentData.copy(
                                 analyzeState = currentData.analyzeState.copy(
                                     state = CleaningState.Cleaning,
-                                    cleaningType = CleaningType.DELETE
+                                    cleaningType = CleaningType.DELETE,
+                                    totalFilesToClean = total,
+                                    cleanedFilesCount = 0
                                 )
                             )
                         )
@@ -235,11 +238,14 @@ class CleanOperationHandler(
                 onEnqueued = { id ->
                     uiState.update { state: UiStateScreen<UiScannerModel> ->
                         val currentData: UiScannerModel = state.data ?: UiScannerModel()
+                        val total = paths.size
                         state.copy(
                             data = currentData.copy(
                                 analyzeState = currentData.analyzeState.copy(
                                     state = CleaningState.Cleaning,
-                                    cleaningType = CleaningType.MOVE_TO_TRASH
+                                    cleaningType = CleaningType.MOVE_TO_TRASH,
+                                    totalFilesToClean = total,
+                                    cleanedFilesCount = 0
                                 )
                             )
                         )
