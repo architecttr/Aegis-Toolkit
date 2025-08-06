@@ -317,6 +317,8 @@
     <string name="delete_invalid_media">無効なメディアを削除</string>
     <string name="summary_preference_settings_delete_invalid_media">破損した画像を削除します</string>
     <string name="scanner">スキャナー</string>
+    <string name="show_hidden_files">非表示ファイルを表示</string>
+    <string name="summary_preference_settings_show_hidden_files">スキャン結果に非表示および保護されたファイルを含める</string>
     <string name="clipboard_clean">クリップボードをクリア</string>
     <string name="summary_preference_settings_delete_duplicates">クリーニング中に複製ファイルを削除します</string>
 

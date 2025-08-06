@@ -317,6 +317,8 @@
     <string name="delete_invalid_media">Hapus media tidak valid</string>
     <string name="summary_preference_settings_delete_invalid_media">Hapus gambar yang rusak</string>
     <string name="scanner">Pemindai</string>
+    <string name="show_hidden_files">Tampilkan file tersembunyi</string>
+    <string name="summary_preference_settings_show_hidden_files">Sertakan file tersembunyi dan terlindungi dalam hasil pemindaian</string>
     <string name="clipboard_clean">Bersihkan clipboard</string>
     <string name="summary_preference_settings_delete_duplicates">Hapus file duplikat selama pembersihan</string>
 

@@ -324,6 +324,8 @@
     <string name="delete_invalid_media">ত্রুটিপূর্ণ মিডিয়া মুছুন</string>
     <string name="summary_preference_settings_delete_invalid_media">ত্রুটিপূর্ণ ছবি মুছুন</string>
     <string name="scanner">স্ক্যানার</string>
+    <string name="show_hidden_files">লুকানো ফাইল দেখান</string>
+    <string name="summary_preference_settings_show_hidden_files">স্ক্যানের ফলাফলে লুকানো ও সুরক্ষিত ফাইল অন্তর্ভুক্ত করুন</string>
     <string name="clipboard_clean">ক্লিপবোর্ড পরিষ্কার করুন</string>
     <string name="summary_preference_settings_delete_duplicates">পরিষ্কারের সময় সদৃশ ফাইলগুলি মুছুন</string>
 

@@ -317,6 +317,8 @@
     <string name="delete_invalid_media">잘못된 미디어 삭제</string>
     <string name="summary_preference_settings_delete_invalid_media">손상된 이미지를 삭제합니다.</string>
     <string name="scanner">스캐너</string>
+    <string name="show_hidden_files">숨김 파일 표시</string>
+    <string name="summary_preference_settings_show_hidden_files">스캔 결과에 숨김 및 보호된 파일 포함</string>
     <string name="clipboard_clean">클립보드 정리</string>
     <string name="summary_preference_settings_delete_duplicates">청소 중에 중복 파일을 삭제하십시오</string>
 

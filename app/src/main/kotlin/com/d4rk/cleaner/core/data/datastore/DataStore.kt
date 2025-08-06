@@ -380,7 +380,17 @@ class DataStore(val context: Context) : CommonDataStore(context = context) {
         prefs[duplicateScanEnabledKey] ?: true
     }
 
+    private val showHiddenFilesKey =
+        booleanPreferencesKey(name = AppDataStoreConstants.DATA_STORE_SHOW_HIDDEN_FILES)
+    val showHiddenFiles: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[showHiddenFilesKey] ?: false
+    }
 
+    suspend fun saveShowHiddenFiles(isChecked: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[showHiddenFilesKey] = isChecked
+        }
+    }
 
     private val storagePermissionGrantedKey =
         booleanPreferencesKey(AppDataStoreConstants.DATA_STORE_PERMISSION_STORAGE_GRANTED)

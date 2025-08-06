@@ -325,6 +325,8 @@
     <string name="delete_invalid_media">Ungültige Medien löschen</string>
     <string name="summary_preference_settings_delete_invalid_media">Beschädigte Bilder löschen</string>
     <string name="scanner">Scanner</string>
+    <string name="show_hidden_files">Versteckte Dateien anzeigen</string>
+    <string name="summary_preference_settings_show_hidden_files">Versteckte und geschützte Dateien in die Scan-Ergebnisse einbeziehen</string>
     <string name="clipboard_clean">Zwischenablage bereinigen</string>
     <string name="summary_preference_settings_delete_duplicates">Löschen Sie doppelte Dateien während der Reinigung</string>
 

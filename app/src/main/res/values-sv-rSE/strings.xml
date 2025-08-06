@@ -325,6 +325,8 @@
     <string name="delete_invalid_media">Radera ogiltig media</string>
     <string name="summary_preference_settings_delete_invalid_media">Radera korrupta bilder</string>
     <string name="scanner">Skanner</string>
+    <string name="show_hidden_files">Visa dolda filer</string>
+    <string name="summary_preference_settings_show_hidden_files">Inkludera dolda och skyddade filer i skanningsresultaten</string>
     <string name="clipboard_clean">Rensa urklipp</string>
     <string name="summary_preference_settings_delete_duplicates">Ta bort duplicerade filer under rengöring</string>
 

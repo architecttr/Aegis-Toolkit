@@ -325,6 +325,8 @@
     <string name="delete_invalid_media">अमान्य मीडिया हटाएं</string>
     <string name="summary_preference_settings_delete_invalid_media">भ्रष्ट छवियां हटाएं</string>
     <string name="scanner">स्कैनर</string>
+    <string name="show_hidden_files">छिपी फ़ाइलें दिखाएँ</string>
+    <string name="summary_preference_settings_show_hidden_files">स्कैन परिणामों में छिपी और संरक्षित फ़ाइलें शामिल करें</string>
     <string name="clipboard_clean">क्लिपबोर्ड साफ़ करें</string>
     <string name="summary_preference_settings_delete_duplicates">सफाई के दौरान डुप्लिकेट फ़ाइलों को हटाएं</string>
 

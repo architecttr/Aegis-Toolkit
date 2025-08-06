@@ -325,6 +325,8 @@
     <string name="delete_invalid_media">Érvénytelen média törlése</string>
     <string name="summary_preference_settings_delete_invalid_media">Sérült képek törlése</string>
     <string name="scanner">Kereső</string>
+    <string name="show_hidden_files">Rejtett fájlok megjelenítése</string>
+    <string name="summary_preference_settings_show_hidden_files">A vizsgálat eredményeibe a rejtett és védett fájlok is bekerülnek</string>
     <string name="clipboard_clean">Vágólap tisztítása</string>
     <string name="summary_preference_settings_delete_duplicates">Törölje a duplikált fájlokat a tisztítás során</string>
 

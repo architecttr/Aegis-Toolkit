@@ -333,6 +333,8 @@
     <string name="delete_invalid_media">Excluir mídia inválida</string>
     <string name="summary_preference_settings_delete_invalid_media">Excluir imagens corrompidas</string>
     <string name="scanner">Scanner</string>
+    <string name="show_hidden_files">Mostrar arquivos ocultos</string>
+    <string name="summary_preference_settings_show_hidden_files">Incluir arquivos ocultos e protegidos nos resultados da verificação</string>
     <string name="clipboard_clean">Limpar área de transferência</string>
     <string name="summary_preference_settings_delete_duplicates">Excluir arquivos duplicados durante a limpeza</string>
 

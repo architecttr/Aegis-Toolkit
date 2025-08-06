@@ -317,6 +317,8 @@
     <string name="delete_invalid_media">Xóa phương tiện không hợp lệ</string>
     <string name="summary_preference_settings_delete_invalid_media">Xóa hình ảnh bị hỏng</string>
     <string name="scanner">Trình quét</string>
+    <string name="show_hidden_files">Hiển thị tệp ẩn</string>
+    <string name="summary_preference_settings_show_hidden_files">Bao gồm các tệp ẩn và được bảo vệ trong kết quả quét</string>
     <string name="clipboard_clean">Dọn dẹp bảng tạm</string>
     <string name="summary_preference_settings_delete_duplicates">Xóa các tệp trùng lặp trong khi làm sạch</string>
 

@@ -334,6 +334,8 @@
     <string name="delete_invalid_media">Supprimer les médias non valides</string>
     <string name="summary_preference_settings_delete_invalid_media">Supprimer les images corrompues</string>
     <string name="scanner">Scanner</string>
+    <string name="show_hidden_files">Afficher les fichiers cachés</string>
+    <string name="summary_preference_settings_show_hidden_files">Inclure les fichiers cachés et protégés dans les résultats de l\'analyse</string>
     <string name="clipboard_clean">Nettoyer le presse-papiers</string>
     <string name="summary_preference_settings_delete_duplicates">Supprimer les fichiers en double pendant le nettoyage</string>
 
