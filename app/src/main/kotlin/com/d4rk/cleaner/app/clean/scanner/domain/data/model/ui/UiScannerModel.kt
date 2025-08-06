@@ -24,6 +24,8 @@ data class UiAnalyzeModel(
     /** Paths of selected files */
     var selectedFiles: MutableSet<String> = mutableSetOf(),
     var selectedFilesCount: Int = 0,
+    var totalFilesToClean: Int = 0,
+    var cleanedFilesCount: Int = 0,
     var groupedFiles: Map<String, List<FileEntry>> = emptyMap(),
     var filesByDateForCategory: Map<String, Map<String, List<File>>> = emptyMap(),
     /** Set of original files when duplicates are detected */

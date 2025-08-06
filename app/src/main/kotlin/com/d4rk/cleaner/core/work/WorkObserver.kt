@@ -18,10 +18,12 @@ object WorkObserver {
         onRunning: suspend () -> Unit = {},
         onSuccess: suspend (WorkInfo) -> Unit = {},
         onFailed: suspend () -> Unit = {},
-        onCancelled: suspend () -> Unit = {}
+        onCancelled: suspend () -> Unit = {},
+        onProgress: suspend (WorkInfo) -> Unit = {}
     ): Job {
         return scope.launch(dispatcher) {
             workManager.getWorkInfoByIdFlow(workId).collect { info ->
+                info?.let { onProgress(it) }
                 when (info?.state) {
                     WorkInfo.State.ENQUEUED,
                     WorkInfo.State.RUNNING,

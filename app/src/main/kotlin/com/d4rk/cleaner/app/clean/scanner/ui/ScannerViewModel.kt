@@ -607,6 +607,21 @@ class ScannerViewModel(
                         )
                     )
                 }
+            },
+            onProgress = { info ->
+                val processed = info.progress.getInt(FileCleanupWorker.KEY_PROGRESS_CURRENT, 0)
+                val total = info.progress.getInt(FileCleanupWorker.KEY_PROGRESS_TOTAL, 0)
+                _uiState.update { state ->
+                    val current = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = current.copy(
+                            analyzeState = current.analyzeState.copy(
+                                cleanedFilesCount = processed,
+                                totalFilesToClean = total
+                            )
+                        )
+                    )
+                }
             }
         )
     }
