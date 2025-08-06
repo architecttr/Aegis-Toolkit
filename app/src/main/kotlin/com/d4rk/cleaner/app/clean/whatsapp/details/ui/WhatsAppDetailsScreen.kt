@@ -71,6 +71,7 @@ import com.d4rk.cleaner.app.clean.analyze.ui.components.FileCard
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FileListItem
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FilePreviewCard
 import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
+import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.actions.WhatsAppDetailsEvent
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.model.UiWhatsAppDetailsModel
 import com.d4rk.cleaner.app.clean.whatsapp.details.ui.components.CustomTabLayout
@@ -158,7 +159,13 @@ fun DetailsScreen(
     ) { paddingValues ->
         ScreenStateHandler(
             screenState = state,
-            onLoading = { LoadingScreen() },
+            onLoading = {
+                if (state.data?.cleaningState == CleaningState.Cleaning) {
+                    CleaningAnimationScreen()
+                } else {
+                    LoadingScreen()
+                }
+            },
             onEmpty = {
                 NoDataScreen(
                     icon = Icons.Outlined.FolderOff,
