@@ -166,6 +166,7 @@
     <string name="clipboard_current_format">الحافظة الحالية: %1$s</string>
     <string name="clean_clipboard">مسح الحافظة</string>
     <string name="clipboard_cleaned">تم تنظيف الحافظة</string>
+    <string name="clipboard_service_unavailable">خدمة الحافظة غير متوفرة</string>
     <string name="link_cleaner">منظف الروابط</string>
     <string name="link_cleaned">تم تنظيف الرابط</string>
     <string name="link_cleaner_card_title">منظف الروابط</string>

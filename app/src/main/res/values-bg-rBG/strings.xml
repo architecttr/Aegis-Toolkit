@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">Текущ клипборд: %1$s</string>
     <string name="clean_clipboard">Изчисти клипборда</string>
     <string name="clipboard_cleaned">Клипбордът е почистен</string>
+    <string name="clipboard_service_unavailable">Услугата за клипборд е недостъпна</string>
     <string name="link_cleaner">Почистващ връзки</string>
     <string name="link_cleaned">Връзката е почистена</string>
     <string name="link_cleaner_card_title">Почистващ връзки</string>

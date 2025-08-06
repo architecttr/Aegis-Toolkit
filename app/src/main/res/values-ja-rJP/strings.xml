@@ -151,6 +151,7 @@
     <string name="clipboard_current_format">現在のクリップボード: %1$s</string>
     <string name="clean_clipboard">クリップボードを消去</string>
     <string name="clipboard_cleaned">クリップボードが掃除されました</string>
+    <string name="clipboard_service_unavailable">クリップボードサービスは利用できません</string>
     <string name="link_cleaner">リンククリーナー</string>
     <string name="link_cleaned">リンクをクリーンしました</string>
     <string name="link_cleaner_card_title">リンククリーナー</string>

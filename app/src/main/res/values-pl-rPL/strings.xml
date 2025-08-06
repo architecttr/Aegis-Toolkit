@@ -160,6 +160,7 @@
     <string name="clipboard_current_format">Aktualny schowek: %1$s</string>
     <string name="clean_clipboard">Wyczyść schowek</string>
     <string name="clipboard_cleaned">Schowek został wyczyszczony</string>
+    <string name="clipboard_service_unavailable">Usługa schowka niedostępna</string>
     <string name="link_cleaner">Czyszczenie linków</string>
     <string name="link_cleaned">Link wyczyszczony</string>
     <string name="link_cleaner_card_title">Czyszczenie linków</string>

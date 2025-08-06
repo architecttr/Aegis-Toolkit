@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">Kasalukuyang clipboard: %1$s</string>
     <string name="clean_clipboard">I-clear ang Clipboard</string>
     <string name="clipboard_cleaned">Ang clipboard ay nalinis</string>
+    <string name="clipboard_service_unavailable">Hindi magagamit ang serbisyo ng clipboard</string>
     <string name="link_cleaner">Tagalinis ng Link</string>
     <string name="link_cleaned">Nalinis ang link</string>
     <string name="link_cleaner_card_title">Tagalinis ng Link</string>

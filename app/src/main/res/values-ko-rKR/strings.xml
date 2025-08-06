@@ -151,6 +151,7 @@
     <string name="clipboard_current_format">현재 클립보드: %1$s</string>
     <string name="clean_clipboard">클립보드 지우기</string>
     <string name="clipboard_cleaned">클립 보드가 청소되었습니다</string>
+    <string name="clipboard_service_unavailable">클립보드 서비스를 사용할 수 없습니다</string>
     <string name="link_cleaner">링크 클리너</string>
     <string name="link_cleaned">링크가 정리되었습니다</string>
     <string name="link_cleaner_card_title">링크 클리너</string>

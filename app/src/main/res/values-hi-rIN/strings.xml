@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">वर्तमान क्लिपबोर्ड: %1$s</string>
     <string name="clean_clipboard">क्लिपबोर्ड साफ़ करें</string>
     <string name="clipboard_cleaned">क्लिपबोर्ड को साफ किया गया है</string>
+    <string name="clipboard_service_unavailable">क्लिपबोर्ड सेवा अनुपलब्ध</string>
     <string name="link_cleaner">लिंक क्लीनर</string>
     <string name="link_cleaned">लिंक साफ़ किया गया</string>
     <string name="link_cleaner_card_title">लिंक क्लीनर</string>

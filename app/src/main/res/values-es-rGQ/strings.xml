@@ -157,6 +157,7 @@
     <string name="clipboard_current_format">Portapapeles actual: %1$s</string>
     <string name="clean_clipboard">Borrar portapapeles</string>
     <string name="clipboard_cleaned">El portapapeles ha sido limpiado</string>
+    <string name="clipboard_service_unavailable">Servicio de portapapeles no disponible</string>
     <string name="link_cleaner">Limpiador de enlaces</string>
     <string name="link_cleaned">Enlace limpiado</string>
     <string name="link_cleaner_card_title">Limpiador de enlaces</string>

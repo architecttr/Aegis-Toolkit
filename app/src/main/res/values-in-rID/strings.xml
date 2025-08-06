@@ -151,6 +151,7 @@
     <string name="clipboard_current_format">Clipboard saat ini: %1$s</string>
     <string name="clean_clipboard">Bersihkan Clipboard</string>
     <string name="clipboard_cleaned">Clipboard telah dibersihkan</string>
+    <string name="clipboard_service_unavailable">Layanan Clipboard tidak tersedia</string>
     <string name="link_cleaner">Pembersih Tautan</string>
     <string name="link_cleaned">Tautan telah dibersihkan</string>
     <string name="link_cleaner_card_title">Pembersih Tautan</string>

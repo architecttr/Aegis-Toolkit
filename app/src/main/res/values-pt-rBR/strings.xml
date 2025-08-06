@@ -157,6 +157,7 @@
     <string name="clipboard_current_format">Área de transferência atual: %1$s</string>
     <string name="clean_clipboard">Limpar área de transferência</string>
     <string name="clipboard_cleaned">A área de transferência foi limpa</string>
+    <string name="clipboard_service_unavailable">Serviço de área de transferência indisponível</string>
     <string name="link_cleaner">Limpador de links</string>
     <string name="link_cleaned">Link limpo</string>
     <string name="link_cleaner_card_title">Limpador de links</string>

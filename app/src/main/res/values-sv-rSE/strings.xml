@@ -154,6 +154,7 @@
     <string name="clipboard_current_format">Aktuellt urklipp: %1$s</string>
     <string name="clean_clipboard">Rensa urklipp</string>
     <string name="clipboard_cleaned">Urklipp har rengjorts</string>
+    <string name="clipboard_service_unavailable">Urklippstjänsten är inte tillgänglig</string>
     <string name="link_cleaner">Länkrensare</string>
     <string name="link_cleaned">Länken rensad</string>
     <string name="link_cleaner_card_title">Länkrensare</string>
