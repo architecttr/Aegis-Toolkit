@@ -396,6 +396,7 @@
     <string name="data_not_available">Data not available.</string>
     <string name="feature_not_available">Feature not available yet.</string>
     <string name="no_files_selected_to_clean">No files selected to clean.</string>
+    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
     <string name="failed_to_update_trash_size">Failed to update trash size: %1$s</string>
     <string name="no_cleaning_options_selected">Please choose your cleaning preferences in settings to proceed.</string>
     <string name="cleaning_in_progress">Cleaning in progress</string>

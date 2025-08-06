@@ -42,6 +42,7 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.observeFileCleanWork
@@ -308,7 +309,16 @@ class ScannerViewModel(
             return
         }
 
-        val paths = files.map { it.path }
+        val accessible = files.filterNot { File(it.path).isProtectedAndroidDir() }
+        if (accessible.isEmpty()) {
+            postSnackbar(
+                message = UiTextHelper.StringResource(R.string.protected_android_folder),
+                isError = false,
+            )
+            return
+        }
+
+        val paths = accessible.map { it.path }
 
         launch(context = dispatchers.io) {
             FileCleaner.enqueue(
@@ -378,7 +388,7 @@ class ScannerViewModel(
                     currentData.analyzeState.groupedFiles.values.flatten()
                 val visiblePaths = visibleFiles.map { it.path }
                 val selectedVisibleCount: Int =
-                    updatedFileSelectionStates.count { it in visiblePaths }
+                    updatedFileSelectionStates.count { it in visiblePaths && !File(it).isProtectedAndroidDir() }
                 state.copy(
                     data = currentData.copy(
                         analyzeState = currentData.analyzeState.copy(
@@ -418,7 +428,7 @@ class ScannerViewModel(
                 } else mutableSetOf()
 
                 val selectedVisibleCount = if (newState) {
-                    updatedSet.count { it in visiblePaths }
+                    updatedSet.count { it in visiblePaths && !File(it).isProtectedAndroidDir() }
                 } else 0
 
                 state.copy(
@@ -462,7 +472,7 @@ class ScannerViewModel(
                     currentData.analyzeState.groupedFiles.values.flatten()
                 val visiblePaths = visibleFiles.map { it.path }
                 val selectedVisibleCount: Int =
-                    updatedSelection.count { it in visiblePaths }
+                    updatedSelection.count { it in visiblePaths && !File(it).isProtectedAndroidDir() }
 
                 currentState.copy(
                     data = currentData.copy(
@@ -502,7 +512,7 @@ class ScannerViewModel(
                 val visibleFiles = currentData.analyzeState.groupedFiles.values.flatten()
                 val visiblePaths = visibleFiles.map { it.path }
                 val selectedVisibleCount =
-                    updatedSelectionSet.count { it in visiblePaths }
+                    updatedSelectionSet.count { it in visiblePaths && !File(it).isProtectedAndroidDir() }
 
                 currentState.copy(
                     data = currentData.copy(
@@ -543,7 +553,8 @@ class ScannerViewModel(
                     info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
                 val failedCount = failedPaths?.size ?: 0
                 val selectedCount =
-                    _uiState.value.data?.analyzeState?.selectedFiles?.size ?: 0
+                    _uiState.value.data?.analyzeState?.selectedFiles
+                        ?.count { !File(it).isProtectedAndroidDir() } ?: 0
                 val successCount = selectedCount - failedCount
 
                 val message = if (failedCount > 0) {

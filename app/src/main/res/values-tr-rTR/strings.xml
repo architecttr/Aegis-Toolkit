@@ -396,6 +396,7 @@
     <string name="data_not_available">Veriler mevcut değil.</string>
     <string name="feature_not_available">Özellik henüz kullanılamıyor.</string>
     <string name="no_files_selected_to_clean">Temizlemek için dosya seçilmedi.</string>
+    <string name="protected_android_folder">Bu klasör korumalıdır ve temizlenemez.</string>
     <string name="failed_to_update_trash_size">Çöp Boyutunu Güncelleme: %1$s</string>
     <string name="no_cleaning_options_selected">Lütfen devam etmek için ayarlarda temizlik tercihlerinizi seçin.</string>
     <string name="cleaning_in_progress">Temizlik devam ediyor</string>

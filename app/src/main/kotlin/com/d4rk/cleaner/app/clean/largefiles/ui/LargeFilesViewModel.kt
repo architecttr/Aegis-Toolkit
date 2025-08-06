@@ -19,6 +19,7 @@ import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.extensions.selectedFiles
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.observeFileCleanWork
@@ -111,19 +112,26 @@ class LargeFilesViewModel(
                 .apply { this[file.absolutePath] = isChecked }
             current.copy(
                 fileSelectionStates = updated,
-                selectedFileCount = updated.count { it.value }
+                selectedFileCount =
+                    updated.count { it.value && !File(it.key).isProtectedAndroidDir() }
             )
         }
     }
 
     private fun deleteSelected() {
         launch(context = dispatchers.io) {
-            val files = _uiState.value.data?.fileSelectionStates.selectedFiles()
+            val selection = _uiState.value.data?.fileSelectionStates ?: emptyMap()
+            val files = selection.selectedFiles()
             if (files.isEmpty()) {
+                val resId = if (selection.any { it.value }) {
+                    R.string.protected_android_folder
+                } else {
+                    R.string.no_files_selected_to_delete
+                }
                 sendAction(
                     LargeFilesAction.ShowSnackbar(
                         UiSnackbar(
-                            message = UiTextHelper.DynamicString("No files selected")
+                            message = UiTextHelper.StringResource(resId)
                         )
                     )
                 )
@@ -157,7 +165,8 @@ class LargeFilesViewModel(
                     info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
                 val failedCount = failedPaths?.size ?: 0
                 val selectedCount =
-                    _uiState.value.data?.fileSelectionStates?.count { it.value } ?: 0
+                    _uiState.value.data?.fileSelectionStates
+                        ?.count { it.value && !File(it.key).isProtectedAndroidDir() } ?: 0
                 val successCount = selectedCount - failedCount
 
                 onEvent(LargeFilesEvent.LoadLargeFiles)

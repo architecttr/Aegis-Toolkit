@@ -396,6 +396,7 @@
     <string name="data_not_available">Hindi magagamit ang data.</string>
     <string name="feature_not_available">Hindi pa magagamit ang tampok.</string>
     <string name="no_files_selected_to_clean">Walang mga file na napili upang linisin.</string>
+    <string name="protected_android_folder">Ang folder na ito ay protektado at hindi maaaring linisin.</string>
     <string name="failed_to_update_trash_size">Nabigong i -update ang laki ng basurahan: %1$s</string>
     <string name="no_cleaning_options_selected">Mangyaring piliin ang iyong mga kagustuhan sa paglilinis sa mga setting upang magpatuloy.</string>
     <string name="cleaning_in_progress">Isinasagawa ang paglilinis</string>

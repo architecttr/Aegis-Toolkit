@@ -404,6 +404,7 @@
     <string name="data_not_available">Datele nu sunt disponibile.</string>
     <string name="feature_not_available">Funcția nu este disponibilă încă.</string>
     <string name="no_files_selected_to_clean">Nu există fișiere selectate pentru a curăța.</string>
+    <string name="protected_android_folder">Acest folder este protejat și nu poate fi curățat.</string>
     <string name="failed_to_update_trash_size">Nu a reușit să actualizeze dimensiunea gunoiului: %1$s</string>
     <string name="no_cleaning_options_selected">Vă rugăm să alegeți preferințele dvs. de curățare în setări pentru a continua.</string>
     <string name="cleaning_in_progress">Curățare în curs</string>
