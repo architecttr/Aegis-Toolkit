@@ -90,6 +90,8 @@
     <string name="install_button_icon_description">ไอคอนติดตั้งแอป</string>
     <string name="move_to_trash_icon_description">ไอคอนย้ายไปถังขยะ</string>
     <string name="delete_forever_icon_description">ไอคอนลบถาวร</string>
+    <string name="protected_icon_description">โฟลเดอร์ระบบที่มีการป้องกัน</string>
+    <string name="protected_system_folder_message">โฟลเดอร์ระบบนี้ได้รับการป้องกันโดย Android และไม่สามารถล้างได้โดยอัตโนมัติ</string>
     <string name="clean_streak_title">🧹 สถิติการล้างประจำสัปดาห์</string>
     <string name="clean_streak_start">เริ่มสถิติการล้างของคุณวันนี้</string>
         <plurals name="clean_streak_in_progress">

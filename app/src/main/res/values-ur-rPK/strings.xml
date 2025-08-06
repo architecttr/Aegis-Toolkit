@@ -91,6 +91,8 @@
     <string name="install_button_icon_description">ایپ انسٹال آئیکن</string>
     <string name="move_to_trash_icon_description">ردی میں منتقل کرنے کا آئیکن</string>
     <string name="delete_forever_icon_description">ہمیشہ کے لیے حذف کرنے کا آئیکن</string>
+    <string name="protected_icon_description">محفوظ نظام فولڈر</string>
+    <string name="protected_system_folder_message">یہ سسٹم فولڈر Android کے ذریعے محفوظ ہے اور اسے خودکار طور پر صاف نہیں کیا جا سکتا۔</string>
     <string name="clean_streak_title">🧹 ہفتہ وار صفائی سلسلہ</string>
     <string name="clean_streak_start">اپنا صفائی سلسلہ آج ہی شروع کریں۔</string>
         <plurals name="clean_streak_in_progress">

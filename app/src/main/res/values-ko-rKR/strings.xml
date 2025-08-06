@@ -90,6 +90,8 @@
     <string name="install_button_icon_description">앱 설치 아이콘</string>
     <string name="move_to_trash_icon_description">휴지통으로 이동 아이콘</string>
     <string name="delete_forever_icon_description">완전 삭제 아이콘</string>
+    <string name="protected_icon_description">보호된 시스템 폴더</string>
+    <string name="protected_system_folder_message">이 시스템 폴더는 Android에서 보호되어 자동으로 정리할 수 없습니다.</string>
     <string name="clean_streak_title">🧹 주간 클린 연속 기록</string>
     <string name="clean_streak_start">오늘부터 클린 연속 기록을 시작하세요.</string>
         <plurals name="clean_streak_in_progress">

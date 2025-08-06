@@ -92,6 +92,8 @@
     <string name="install_button_icon_description">Ícone de instalar app</string>
     <string name="move_to_trash_icon_description">Ícone mover para lixeira</string>
     <string name="delete_forever_icon_description">Ícone excluir para sempre</string>
+    <string name="protected_icon_description">Pasta do sistema protegida</string>
+    <string name="protected_system_folder_message">Esta pasta do sistema é protegida pelo Android e não pode ser limpa automaticamente.</string>
     <string name="clean_streak_title">🧹 Sequência Semanal de Limpeza</string>
     <string name="clean_streak_start">Comece sua sequência de limpeza hoje.</string>
         <plurals name="clean_streak_in_progress">

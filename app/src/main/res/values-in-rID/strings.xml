@@ -90,6 +90,8 @@
     <string name="install_button_icon_description">Ikon instal aplikasi</string>
     <string name="move_to_trash_icon_description">Ikon pindahkan ke sampah</string>
     <string name="delete_forever_icon_description">Ikon hapus permanen</string>
+    <string name="protected_icon_description">Folder sistem terlindungi</string>
+    <string name="protected_system_folder_message">Folder sistem ini dilindungi oleh Android dan tidak dapat dibersihkan secara otomatis.</string>
     <string name="clean_streak_title">🧹 Rangkaian Bersih Mingguan</string>
     <string name="clean_streak_start">Mulai rangkaian bersihmu hari ini.</string>
         <plurals name="clean_streak_in_progress">

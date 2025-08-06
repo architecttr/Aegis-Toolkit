@@ -95,6 +95,8 @@
     <string name="install_button_icon_description">أيقونة تثبيت التطبيق</string>
     <string name="move_to_trash_icon_description">أيقونة نقل إلى المهملات</string>
     <string name="delete_forever_icon_description">أيقونة حذف نهائيًا</string>
+    <string name="protected_icon_description">مجلد نظام محمي</string>
+    <string name="protected_system_folder_message">هذا المجلد الخاص بالنظام محمي بواسطة Android ولا يمكن تنظيفه تلقائيًا.</string>
     <string name="clean_streak_title">🧹 سلسلة التنظيف الأسبوعي</string>
     <string name="clean_streak_start">ابدأ سلسلة التنظيف اليوم.</string>
         <plurals name="clean_streak_in_progress">
