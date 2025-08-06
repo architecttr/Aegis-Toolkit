@@ -92,7 +92,7 @@ class Cleaner : BaseCoreManager(), SingletonImageLoader.Factory, DefaultLifecycl
     }
 
     override fun onLowMemory() {
-        FilePreviewHelper.onTrimMemory(ComponentCallbacks2.TRIM_MEMORY_MODERATE)
+        FilePreviewHelper.onTrimMemory(TRIM_MEMORY_MODERATE)
         super.onLowMemory()
     }
 }

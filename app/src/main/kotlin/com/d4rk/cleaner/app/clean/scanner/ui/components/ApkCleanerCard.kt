@@ -1,6 +1,5 @@
 package com.d4rk.cleaner.app.clean.scanner.ui.components
 
-import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.horizontalScroll
@@ -25,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,7 +45,6 @@ fun ApkCleanerCard(
     onCleanClick: (List<ApkInfo>) -> Unit
 ) {
     val preview = apkFiles.take(4)
-    val context: Context = LocalContext.current
 
     OutlinedCard(
         modifier = modifier.fillMaxWidth(),

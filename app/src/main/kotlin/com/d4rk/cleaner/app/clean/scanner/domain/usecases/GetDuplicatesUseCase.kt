@@ -24,7 +24,7 @@ class GetDuplicatesUseCase(
             .filter { it.size > 1 }
             .flatten()
 
-        if (candidates.isEmpty()) return@runBlocking emptyList<List<FileEntry>>()
+        if (candidates.isEmpty()) return@runBlocking emptyList()
 
         val hashed = coroutineScope {
             candidates.chunked(chunkSize).map { chunk ->
