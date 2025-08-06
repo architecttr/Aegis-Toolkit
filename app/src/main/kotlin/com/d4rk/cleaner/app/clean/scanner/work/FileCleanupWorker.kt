@@ -19,6 +19,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.DeleteFilesUseCase
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import com.google.android.material.color.MaterialColors
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -51,9 +52,15 @@ class FileCleanupWorker(
         val paths = rawPaths.toList()
         println("FileCleanupWorker ---> Received paths: $paths")
         val files = mutableListOf<File>()
+        var hasNonProtectedPath = false
         for (path in paths) {
             println("FileCleanupWorker ---> Checking path: $path")
             val file = File(path)
+            if (file.isProtectedAndroidDir()) {
+                Log.i(TAG, "Skipping protected path: ${file.absolutePath}")
+                continue
+            }
+            hasNonProtectedPath = true
             val exists = file.exists()
             val isFile = file.isFile
             val isDirectory = file.isDirectory
@@ -67,10 +74,15 @@ class FileCleanupWorker(
             }
         }
         if (files.isEmpty()) {
-            Log.e(TAG, "NO_DATA: no valid files for paths=$paths")
-            return Result.failure(
-                Data.Builder().putString(KEY_ERROR, Errors.UseCase.NO_DATA.toString()).build(),
-            )
+            return if (hasNonProtectedPath) {
+                Log.e(TAG, "NO_DATA: no valid files for paths=$paths")
+                Result.failure(
+                    Data.Builder().putString(KEY_ERROR, Errors.UseCase.NO_DATA.toString()).build(),
+                )
+            } else {
+                CleaningEventBus.notifyCleaned(success = true)
+                Result.success()
+            }
         }
 
         createChannelIfNeeded()
