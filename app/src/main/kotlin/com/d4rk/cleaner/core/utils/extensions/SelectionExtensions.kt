@@ -1,6 +1,7 @@
 package com.d4rk.cleaner.core.utils.extensions
 
 import java.io.File
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 
 /**
  * Converts a map of file path selections into a set of existing [File]s.
@@ -16,7 +17,7 @@ import java.io.File
 fun Map<String, Boolean>?.selectedFiles(): Set<File> {
     return this?.mapNotNull { (path, isSelected) ->
         if (!isSelected || path.isBlank()) return@mapNotNull null
-        File(path).takeIf { it.exists() }
+        File(path).takeIf { it.exists() && !it.isProtectedAndroidDir() }
     }?.toSet() ?: emptySet()
 }
 

@@ -21,6 +21,7 @@ import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.helpers.FileGroupingHelper
 import com.d4rk.cleaner.core.utils.extensions.selectedFiles
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import kotlinx.coroutines.CoroutineScope
@@ -167,11 +168,15 @@ class CleanOperationHandler(
             return
         }
 
-        val filesToDelete = currentScreenData.analyzeState.selectedFiles
-            .associateWith { true }
-            .selectedFiles()
+        val selected = currentScreenData.analyzeState.selectedFiles
+        val filesToDelete = selected.associateWith { true }.selectedFiles()
         if (filesToDelete.isEmpty()) {
-            postSnackbar(UiTextHelper.StringResource(R.string.no_files_selected_to_clean), false)
+            val resId = if (selected.isNotEmpty()) {
+                R.string.protected_android_folder
+            } else {
+                R.string.no_files_selected_to_clean
+            }
+            postSnackbar(UiTextHelper.StringResource(resId), false)
             return
         }
 
@@ -209,8 +214,14 @@ class CleanOperationHandler(
             return
         }
 
-        val paths = files.map { it.path }
-        val totalFileSizeToMove: Long = files.sumOf { it.toFile().length() }
+        val accessible = files.filterNot { File(it.path).isProtectedAndroidDir() }
+        if (accessible.isEmpty()) {
+            postSnackbar(UiTextHelper.StringResource(R.string.protected_android_folder), false)
+            return
+        }
+
+        val paths = accessible.map { it.path }
+        val totalFileSizeToMove: Long = accessible.sumOf { it.toFile().length() }
 
         scope.launch(dispatchers.io) {
             FileCleaner.enqueue(

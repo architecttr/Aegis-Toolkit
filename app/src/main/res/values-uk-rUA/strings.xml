@@ -412,6 +412,7 @@
     <string name="data_not_available">Дані недоступні.</string>
     <string name="feature_not_available">Функція поки недоступна.</string>
     <string name="no_files_selected_to_clean">Жодних файлів, вибраних для очищення.</string>
+    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
     <string name="failed_to_update_trash_size">Не вдалося оновити розмір сміття: %1$s</string>
     <string name="no_cleaning_options_selected">Будь ласка, виберіть свої вподобання прибирання в налаштуваннях для продовження.</string>
     <string name="cleaning_in_progress">Триває очищення</string>

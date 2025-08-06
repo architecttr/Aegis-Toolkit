@@ -395,6 +395,7 @@
     <string name="data_not_available">ডেটা উপলভ্য নয়।</string>
     <string name="feature_not_available">ফিচারটি এখনও উপলভ্য নয়।</string>
     <string name="no_files_selected_to_clean">কোনও ফাইল পরিষ্কার করার জন্য নির্বাচিত নয়।</string>
+    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
     <string name="failed_to_update_trash_size">আবর্জনার আকার আপডেট করতে ব্যর্থ: %1$s</string>
     <string name="no_cleaning_options_selected">এগিয়ে যেতে সেটিংসে আপনার পরিষ্কারের পছন্দগুলি চয়ন করুন।</string>
     <string name="cleaning_in_progress">পরিষ্কার চলছে</string>

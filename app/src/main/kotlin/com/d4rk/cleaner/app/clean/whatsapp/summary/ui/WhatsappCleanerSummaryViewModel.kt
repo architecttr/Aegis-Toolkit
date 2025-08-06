@@ -21,6 +21,7 @@ import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstant
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import com.d4rk.cleaner.core.work.FileCleanWorkEnqueuer
 import com.d4rk.cleaner.core.work.FileCleaner
 import com.d4rk.cleaner.core.work.observeFileCleanWork
@@ -156,11 +157,21 @@ class WhatsappCleanerSummaryViewModel(
 
             if (files.isEmpty()) return@launch
 
-            pendingDeleteSizes = files.associate { it.absolutePath to it.length() }
+            val accessible = files.filterNot { it.isProtectedAndroidDir() }
+            if (accessible.isEmpty()) {
+                sendAction(
+                    WhatsAppCleanerAction.ShowSnackbar(
+                        UiSnackbar(message = UiTextHelper.StringResource(R.string.protected_android_folder))
+                    )
+                )
+                return@launch
+            }
+
+            pendingDeleteSizes = accessible.associate { it.absolutePath to it.length() }
 
             FileCleaner.enqueue(
                 enqueuer = fileCleanWorkEnqueuer,
-                paths = files.map { it.absolutePath },
+                paths = accessible.map { it.absolutePath },
                 action = FileCleanupWorker.ACTION_DELETE,
                 getWorkId = { dataStore.whatsappCleanWorkId.first() },
                 saveWorkId = { dataStore.saveWhatsAppCleanWorkId(it) },
@@ -179,11 +190,21 @@ class WhatsappCleanerSummaryViewModel(
     private fun deleteSelected(files: List<File>) {
         if (files.isEmpty()) return
         launch(context = dispatchers.io) {
-            pendingDeleteSizes = files.associate { it.absolutePath to it.length() }
+            val accessible = files.filterNot { it.isProtectedAndroidDir() }
+            if (accessible.isEmpty()) {
+                sendAction(
+                    WhatsAppCleanerAction.ShowSnackbar(
+                        UiSnackbar(message = UiTextHelper.StringResource(R.string.protected_android_folder))
+                    )
+                )
+                return@launch
+            }
+
+            pendingDeleteSizes = accessible.associate { it.absolutePath to it.length() }
 
             FileCleaner.enqueue(
                 enqueuer = fileCleanWorkEnqueuer,
-                paths = files.map { it.absolutePath },
+                paths = accessible.map { it.absolutePath },
                 action = FileCleanupWorker.ACTION_DELETE,
                 getWorkId = { dataStore.whatsappCleanWorkId.first() },
                 saveWorkId = { dataStore.saveWhatsAppCleanWorkId(it) },
@@ -194,7 +215,7 @@ class WhatsappCleanerSummaryViewModel(
                     _uiState.update { state ->
                         state.copy(data = state.data?.copy(cleaningState = CleaningState.Error))
                     }
-                }
+                },
             )
         }
     }
