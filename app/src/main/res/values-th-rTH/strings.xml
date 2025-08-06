@@ -388,7 +388,7 @@
     <string name="data_not_available">ข้อมูลไม่พร้อมใช้งาน</string>
     <string name="feature_not_available">ฟีเจอร์ยังไม่พร้อมใช้งาน</string>
     <string name="no_files_selected_to_clean">ไม่มีไฟล์ที่เลือกเพื่อทำความสะอาด</string>
-    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
+    <string name="protected_android_folder">โฟลเดอร์นี้ได้รับการป้องกันและไม่สามารถทำความสะอาดได้</string>
     <string name="failed_to_update_trash_size">ไม่สามารถอัปเดตขนาดถังขยะ: %1$s</string>
     <string name="no_cleaning_options_selected">โปรดเลือกการตั้งค่าการทำความสะอาดของคุณในการตั้งค่าเพื่อดำเนินการต่อ</string>
     <string name="cleaning_in_progress">กำลังทำความสะอาด</string>

@@ -396,7 +396,7 @@
     <string name="data_not_available">Az adatok nem állnak rendelkezésre.</string>
     <string name="feature_not_available">A funkció még nem elérhető.</string>
     <string name="no_files_selected_to_clean">A tisztításhoz nincs kiválasztott fájl.</string>
-    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
+    <string name="protected_android_folder">Ez a mappa védett, és nem tisztítható meg.</string>
     <string name="failed_to_update_trash_size">Nem sikerült frissíteni a szemét méretét: %1$s</string>
     <string name="no_cleaning_options_selected">Kérjük, válassza ki a tisztítási beállításokat a beállításokban.</string>
     <string name="cleaning_in_progress">Tisztítás folyamatban</string>

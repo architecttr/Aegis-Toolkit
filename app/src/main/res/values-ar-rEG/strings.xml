@@ -428,7 +428,7 @@
     <string name="data_not_available">البيانات غير متوفرة.</string>
     <string name="feature_not_available">الميزة غير متوفرة بعد.</string>
     <string name="no_files_selected_to_clean">لم يتم تحديد ملفات لتنظيف.</string>
-    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
+    <string name="protected_android_folder">هذا المجلد محمي ولا يمكن تنظيفه.</string>
     <string name="failed_to_update_trash_size">فشل في تحديث حجم القمامة: %1$s</string>
     <string name="no_cleaning_options_selected">يرجى اختيار تفضيلات التنظيف الخاصة بك في الإعدادات للمتابعة.</string>
     <string name="cleaning_in_progress">جاري التنظيف</string>

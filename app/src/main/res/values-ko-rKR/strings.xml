@@ -388,7 +388,7 @@
     <string name="data_not_available">데이터를 사용할 수 없습니다.</string>
     <string name="feature_not_available">기능을 아직 사용할 수 없습니다.</string>
     <string name="no_files_selected_to_clean">청소할 파일이 없습니다.</string>
-    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
+    <string name="protected_android_folder">이 폴더는 보호되어 있어 청소할 수 없습니다.</string>
     <string name="failed_to_update_trash_size">쓰레기 크기를 업데이트하지 못했습니다 : %1$s</string>
     <string name="no_cleaning_options_selected">진행할 설정에서 청소 환경 설정을 선택하십시오.</string>
     <string name="cleaning_in_progress">정리 진행 중</string>

@@ -388,7 +388,7 @@
     <string name="data_not_available">Data tidak tersedia.</string>
     <string name="feature_not_available">Fitur belum tersedia.</string>
     <string name="no_files_selected_to_clean">Tidak ada file yang dipilih untuk dibersihkan.</string>
-    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
+    <string name="protected_android_folder">Folder ini dilindungi dan tidak dapat dibersihkan.</string>
     <string name="failed_to_update_trash_size">Gagal memperbarui ukuran sampah: %1$s</string>
     <string name="no_cleaning_options_selected">Pilih preferensi pembersihan Anda dalam pengaturan untuk melanjutkan.</string>
     <string name="cleaning_in_progress">Pembersihan sedang berlangsung</string>

@@ -395,7 +395,7 @@
     <string name="data_not_available">Данните не са налични.</string>
     <string name="feature_not_available">Функцията все още не е налична.</string>
     <string name="no_files_selected_to_clean">Не са избрани файлове за почистване.</string>
-    <string name="protected_android_folder">This folder is protected and cannot be cleaned.</string>
+    <string name="protected_android_folder">Тази папка е защитена и не може да бъде почистена.</string>
     <string name="failed_to_update_trash_size">Неуспешно актуализиране на размера на боклука: %1$s</string>
     <string name="no_cleaning_options_selected">Моля, изберете вашите предпочитания за почистване в настройките, за да продължите.</string>
     <string name="cleaning_in_progress">Почистването е в ход</string>
