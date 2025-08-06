@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="protected_android_folder">Deze map is beschermd en kan niet worden opgeschoond.</string>
+</resources>
