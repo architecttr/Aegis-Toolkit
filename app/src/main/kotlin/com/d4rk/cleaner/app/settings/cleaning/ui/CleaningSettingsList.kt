@@ -45,6 +45,7 @@ fun CleaningSettingsList(paddingValues: PaddingValues) {
     val otherExtensions: Boolean by dataStore.deleteOtherFiles.collectAsState(initial = false)
     val deleteImageFiles: Boolean by dataStore.deleteImageFiles.collectAsState(initial = false)
     val deleteDuplicateFiles: Boolean by dataStore.deleteDuplicateFiles.collectAsState(initial = false)
+    val showHiddenFiles: Boolean by dataStore.showHiddenFiles.collectAsState(initial = false)
     val streakReminderEnabled: Boolean by dataStore.streakReminderEnabled.collectAsState(initial = false)
     val showStreakCardPref: Boolean by dataStore.showStreakCard.collectAsState(initial = true)
     val autoCleanEnabled: Boolean by dataStore.autoCleanEnabled.collectAsState(initial = false)
@@ -236,6 +237,18 @@ fun CleaningSettingsList(paddingValues: PaddingValues) {
                     .padding(horizontal = SizeConstants.LargeSize)
                     .clip(shape = RoundedCornerShape(size = SizeConstants.LargeSize))
             ) {
+                SwitchPreferenceItem(
+                    title = stringResource(id = R.string.show_hidden_files),
+                    summary = stringResource(id = R.string.summary_preference_settings_show_hidden_files),
+                    checked = showHiddenFiles,
+                ) { isChecked ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        dataStore.saveShowHiddenFiles(isChecked)
+                    }
+                }
+
+                ExtraTinyVerticalSpacer()
+
                 SwitchPreferenceItem(
                     title = stringResource(id = R.string.duplicates),
                     summary = stringResource(id = R.string.summary_preference_settings_delete_duplicates),

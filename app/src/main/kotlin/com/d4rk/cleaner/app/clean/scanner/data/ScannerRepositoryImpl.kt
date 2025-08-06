@@ -125,11 +125,15 @@ class ScannerRepositoryImpl(
             File(root, "Android/obb")
         ).map { it.absolutePath }
 
+        val showHidden = dataStore.showHiddenFiles.first()
+
         while (stack.isNotEmpty()) {
             val currentFile: File = stack.removeFirst()
+            if (!showHidden && currentFile.isHidden) continue
             if (currentFile.isDirectory) {
                 if (!currentFile.absolutePath.startsWith(trashDir.absolutePath)) {
                     currentFile.listFiles()?.forEach { child ->
+                        if (!showHidden && child.isHidden) return@forEach
                         if (child.isDirectory) {
                             if (lockedDirs.any { locked -> child.absolutePath.startsWith(locked) }) {
                                 onLockedDir?.invoke(child)
@@ -273,6 +277,7 @@ class ScannerRepositoryImpl(
             val root = Environment.getExternalStorageDirectory()
             val minSize = 100L * 1024 * 1024 // 100MB threshold
             val trashed = dataStore.trashFileOriginalPaths.first()
+            val showHidden = dataStore.showHiddenFiles.first()
 
             // Load extension lists for basic type detection
             val apkExt =
@@ -307,10 +312,11 @@ class ScannerRepositoryImpl(
                 skipDir = { dir ->
                     dir.absolutePath.startsWith(trashDir.absolutePath) ||
                             dir.absolutePath.startsWith(File(root, "Android").absolutePath) ||
-                            dir.isHidden
+                            (!showHidden && dir.isHidden)
                 }
             ) { file ->
-                if (file.length() >= minSize && file.absolutePath !in trashed) {
+                if ((!showHidden && file.isHidden) || file.absolutePath in trashed) return@scan
+                if (file.length() >= minSize) {
                     val hash = file.partialMd5() ?: return@scan
                     if (seenHashes.add(hash)) {
                         val type = fileType(file)
@@ -344,10 +350,12 @@ class ScannerRepositoryImpl(
         val stack: ArrayDeque<File> = ArrayDeque()
         val root = Environment.getExternalStorageDirectory()
         stack.addFirst(root)
+        val showHidden = dataStore.showHiddenFiles.first()
         while (stack.isNotEmpty()) {
             val dir = stack.removeFirst()
+            if (!showHidden && dir.isHidden) continue
             if (dir.isDirectory && !dir.absolutePath.startsWith(trashDir.absolutePath)) {
-                val children = dir.listFiles()
+                val children = dir.listFiles()?.filter { showHidden || !it.isHidden }
                 if (children == null || children.isEmpty()) {
                     emit(dir)
                 } else {
