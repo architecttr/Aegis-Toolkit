@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -34,7 +35,9 @@ fun FilesByDateSection(
                         files = files,
                         fileSelectionStates = fileSelectionStates,
                         onFileSelectionChange = onFileSelectionChange,
-                        onDateSelectionChange = onDateSelectionChange,
+                        onDateSelectionChange = { list, checked ->
+                            onDateSelectionChange(list.filterNot { it.isProtectedAndroidDir() }, checked)
+                        },
                         view = view
                     )
                 }

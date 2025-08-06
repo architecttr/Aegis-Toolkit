@@ -81,6 +81,7 @@ import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.UiWhatsAppCleane
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.WhatsappCleanerSummaryViewModel
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
 import com.d4rk.cleaner.app.clean.whatsapp.utils.helpers.openFile
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -255,7 +256,8 @@ fun DetailsScreen(
                                 onTabCheckedChange = { index, checked ->
                                     val listFiles = tabFiles.getOrNull(index) ?: emptyList()
                                     if (checked) {
-                                        listFiles.filterNot { it in selected }
+                                        listFiles
+                                            .filterNot { it in selected || it.isProtectedAndroidDir() }
                                             .forEach { selected.add(it) }
                                     } else {
                                         selected.removeAll(listFiles)
@@ -284,15 +286,18 @@ fun DetailsScreen(
                         if (tabs.size <= 1) {
                             DetailsStatusRow(
                                 modifier = Modifier.padding(horizontal = 8.dp),
-                                selectedCount = selected.size,
-                                allSelected = selected.size == sortedFiles.size && sortedFiles.isNotEmpty(),
+                                selectedCount = selected.count { !it.isProtectedAndroidDir() },
+                                allSelected = selected.count { !it.isProtectedAndroidDir() } ==
+                                        sortedFiles.count { !it.isProtectedAndroidDir() } &&
+                                        sortedFiles.any { !it.isProtectedAndroidDir() },
                                 view = view,
                                 onClickSelectAll = {
-                                    if (selected.size == sortedFiles.size && sortedFiles.isNotEmpty()) {
-                                        selected.clear()
+                                    val accessible = sortedFiles.filterNot { it.isProtectedAndroidDir() }
+                                    if (selected.count { !it.isProtectedAndroidDir() } == accessible.size && accessible.isNotEmpty()) {
+                                        selected.removeAll(accessible)
                                     } else {
-                                        selected.clear()
-                                        selected.addAll(sortedFiles)
+                                        selected.removeAll { it.isProtectedAndroidDir() }
+                                        selected.addAll(accessible)
                                     }
                                 }
                             )
@@ -303,7 +308,7 @@ fun DetailsScreen(
                                 .align(Alignment.CenterHorizontally)
                                 .padding(8.dp),
                             onClick = { showConfirm = true },
-                            enabled = selected.isNotEmpty() &&
+                            enabled = selected.any { !it.isProtectedAndroidDir() } &&
                                 state.data?.cleaningState != CleaningState.Cleaning &&
                                 state.data?.cleaningState != CleaningState.Error,
                             iconContentDescription = null,
@@ -336,7 +341,7 @@ fun DetailsScreen(
             onDismiss = { showConfirm = false },
             onConfirm = {
                 showConfirm = false
-                onDelete(selected.toList())
+                onDelete(selected.filterNot { it.isProtectedAndroidDir() })
                 selected.clear()
             },
             onCancel = { showConfirm = false },
@@ -381,22 +386,28 @@ fun DetailsScreenContent(
                 ) {
                     items(files) { file ->
                         val checked = file in selected
+                        val isProtected = file.isProtectedAndroidDir()
                         Box(
                             modifier = Modifier
                                 .padding(4.dp)
-                                .pointerInput(file, checked) {
-                                    detectTapGestures(onLongPress = {
-                                        if (checked) selected.remove(file) else selected.add(file)
-                                    })
-                                }
+                                .then(
+                                    if (!isProtected) Modifier.pointerInput(file, checked) {
+                                        detectTapGestures(onLongPress = {
+                                            if (checked) selected.remove(file) else selected.add(file)
+                                        })
+                                    } else Modifier
+                                )
                         ) {
                             FileCard(
                                 file = file,
                                 isChecked = checked,
                                 onCheckedChange = { isChecked ->
-                                    if (isChecked) selected.add(file) else selected.remove(file)
+                                    if (!isProtected) {
+                                        if (isChecked) selected.add(file) else selected.remove(file)
+                                    }
                                 },
                                 view = view,
+                                isProtected = isProtected,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -411,20 +422,21 @@ fun DetailsScreenContent(
                             previewType is FilePreviewHelper.PreviewType.Image ||
                                     previewType is FilePreviewHelper.PreviewType.Video
                         }
+                        val isProtected = file.isProtectedAndroidDir()
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(4.dp)
-                                .pointerInput(file) {
-                                    detectTapGestures(
-                                        onLongPress = {
-                                            if (checked) selected.remove(file) else selected.add(
-                                                file
-                                            )
-                                        },
-                                        onTap = { openFile(context, file) }
-                                    )
-                                }
+                                .then(
+                                    if (!isProtected) Modifier.pointerInput(file) {
+                                        detectTapGestures(
+                                            onLongPress = {
+                                                if (checked) selected.remove(file) else selected.add(file)
+                                            },
+                                            onTap = { openFile(context, file) }
+                                        )
+                                    } else Modifier
+                                )
                         ) {
                             if (isMedia) {
                                 FilePreviewCard(file = file, modifier = Modifier.weight(1f))
@@ -434,8 +446,11 @@ fun DetailsScreenContent(
                             TriStateCheckbox(
                                 state = if (checked) ToggleableState.On else ToggleableState.Off,
                                 onClick = {
-                                    if (checked) selected.remove(file) else selected.add(file)
+                                    if (!isProtected) {
+                                        if (checked) selected.remove(file) else selected.add(file)
+                                    }
                                 },
+                                enabled = !isProtected,
                                 modifier = Modifier.align(Alignment.CenterVertically)
                             )
                         }
@@ -474,27 +489,33 @@ private fun SmartSuggestionsCard(
             LazyRow(modifier = Modifier.fillMaxWidth()) {
                 items(suggested) { file ->
                     val checked = file in selected
-                    Box(modifier = Modifier.padding(4.dp)) {
-                        FilePreviewCard(
-                            file = file,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .pointerInput(file) {
+                    val isProtected = file.isProtectedAndroidDir()
+                    Box(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .then(
+                                if (!isProtected) Modifier.pointerInput(file) {
                                     detectTapGestures(
                                         onLongPress = {
-                                            if (checked) selected.remove(file) else selected.add(
-                                                file
-                                            )
+                                            if (checked) selected.remove(file) else selected.add(file)
                                         },
                                         onTap = { openFile(context, file) }
                                     )
-                                }
+                                } else Modifier
+                            )
+                    ) {
+                        FilePreviewCard(
+                            file = file,
+                            modifier = Modifier.size(64.dp)
                         )
                         TriStateCheckbox(
                             state = if (checked) ToggleableState.On else ToggleableState.Off,
                             onClick = {
-                                if (checked) selected.remove(file) else selected.add(file)
+                                if (!isProtected) {
+                                    if (checked) selected.remove(file) else selected.add(file)
+                                }
                             },
+                            enabled = !isProtected,
                             modifier = Modifier.align(Alignment.TopEnd)
                         )
                     }
@@ -503,7 +524,7 @@ private fun SmartSuggestionsCard(
             IconButtonWithText(
                 onClick = {
                     selected.clear()
-                    selected.addAll(suggested)
+                    selected.addAll(suggested.filterNot { it.isProtectedAndroidDir() })
                     onShowConfirmChange(true)
                 },
                 modifier = Modifier.align(Alignment.End),
