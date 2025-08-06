@@ -9,7 +9,7 @@ import java.io.File
 interface ScannerRepositoryInterface : FileDeletionRepository<Unit> {
     suspend fun getStorageInfo(): UiScannerModel
     suspend fun getFileTypes(): FileTypesData
-    fun getAllFiles(): Flow<File>
+    fun getAllFiles(onLockedDir: ((File) -> Unit)? = null): Flow<File>
     fun getEmptyFolders(): Flow<File>
     suspend fun getTrashFiles(): List<File>
     suspend fun getLargestFiles(limit: Int): List<File>
