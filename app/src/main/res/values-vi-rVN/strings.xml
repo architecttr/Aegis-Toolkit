@@ -90,6 +90,8 @@
     <string name="install_button_icon_description">Biểu tượng cài đặt ứng dụng</string>
     <string name="move_to_trash_icon_description">Biểu tượng chuyển vào thùng rác</string>
     <string name="delete_forever_icon_description">Biểu tượng xóa vĩnh viễn</string>
+    <string name="protected_icon_description">Thư mục hệ thống được bảo vệ</string>
+    <string name="protected_system_folder_message">Thư mục hệ thống này được Android bảo vệ và không thể dọn dẹp tự động.</string>
     <string name="clean_streak_title">🧹 Chuỗi dọn dẹp hàng tuần</string>
     <string name="clean_streak_start">Bắt đầu chuỗi dọn dẹp của bạn ngay hôm nay.</string>
         <plurals name="clean_streak_in_progress">

@@ -17,6 +17,7 @@ import androidx.compose.ui.state.ToggleableState
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.bounceClick
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.app.clean.analyze.utils.helpers.TimeHelper
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import java.io.File
 import java.util.Date
 
@@ -45,16 +46,22 @@ fun DateHeader(
                 )
             )
         }
-        val allFilesForDateSelected: Boolean = files.all { fileSelectionStates[it] == true }
-        val noneSelected: Boolean = files.none { fileSelectionStates[it] == true }
+        val accessible = files.filterNot { it.isProtectedAndroidDir() }
+        val allFilesForDateSelected: Boolean = accessible.isNotEmpty() && accessible.all { fileSelectionStates[it] == true }
+        val noneSelected: Boolean = accessible.none { fileSelectionStates[it] == true }
         val toggleState = when {
             allFilesForDateSelected -> ToggleableState.On
             noneSelected -> ToggleableState.Off
             else -> ToggleableState.Indeterminate
         }
-        TriStateCheckbox(modifier = Modifier.bounceClick(), state = toggleState, onClick = {
-            view.playSoundEffect(SoundEffectConstants.CLICK)
-            onDateSelectionChange(files, toggleState != ToggleableState.On)
-        })
+        TriStateCheckbox(
+            modifier = Modifier.bounceClick(),
+            state = toggleState,
+            enabled = accessible.isNotEmpty(),
+            onClick = {
+                view.playSoundEffect(SoundEffectConstants.CLICK)
+                onDateSelectionChange(accessible, toggleState != ToggleableState.On)
+            }
+        )
     }
 }

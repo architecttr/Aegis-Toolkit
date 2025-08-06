@@ -91,6 +91,8 @@
     <string name="install_button_icon_description">App-Installationsicon</string>
     <string name="move_to_trash_icon_description">Icon \'In den Papierkorb\'</string>
     <string name="delete_forever_icon_description">Icon \'Endgültig löschen\'</string>
+    <string name="protected_icon_description">Geschützter Systemordner</string>
+    <string name="protected_system_folder_message">Dieser Systemordner ist durch Android geschützt und kann nicht automatisch bereinigt werden.</string>
     <string name="clean_streak_title">🧹 Wöchentliche Reinigungsserie</string>
     <string name="clean_streak_start">Beginne deine Reinigungsserie heute.</string>
         <plurals name="clean_streak_in_progress">

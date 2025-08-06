@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.android.libs.apptoolkit.core.utils.helpers.ScreenHelper
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -54,7 +55,9 @@ fun DuplicateGroupsSection(
                         files = allFiles,
                         fileSelectionStates = fileSelectionStates,
                         onFileSelectionChange = onFileSelectionChange,
-                        onDateSelectionChange = onDateSelectionChange,
+                        onDateSelectionChange = { list, checked ->
+                            onDateSelectionChange(list.filterNot { it.isProtectedAndroidDir() }, checked)
+                        },
                         view = view
                     )
                 }
@@ -74,6 +77,7 @@ fun DuplicateGroupsSection(
                             onCheckedChange = { checked -> onFileSelectionChange(file, checked) },
                             isOriginal = file in originals,
                             view = view,
+                            isProtected = file.isProtectedAndroidDir(),
                             modifier = Modifier
                                 .padding(
                                     end = SizeConstants.SmallSize,

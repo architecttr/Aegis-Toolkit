@@ -92,6 +92,8 @@
     <string name="install_button_icon_description">Icono de instalar aplicación</string>
     <string name="move_to_trash_icon_description">Icono de mover a la papelera</string>
     <string name="delete_forever_icon_description">Icono de borrar para siempre</string>
+    <string name="protected_icon_description">Carpeta del sistema protegida</string>
+    <string name="protected_system_folder_message">Esta carpeta del sistema está protegida por Android y no se puede limpiar automáticamente.</string>
     <string name="clean_streak_title">🧹 Racha Semanal de Limpieza</string>
     <string name="clean_streak_start">Comienza tu racha de limpieza hoy.</string>
         <plurals name="clean_streak_in_progress">

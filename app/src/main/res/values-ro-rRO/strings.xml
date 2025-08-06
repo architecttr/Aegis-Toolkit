@@ -92,6 +92,8 @@
     <string name="install_button_icon_description">Pictograma instalare aplicație</string>
     <string name="move_to_trash_icon_description">Pictograma mutare la gunoi</string>
     <string name="delete_forever_icon_description">Pictograma ștergere definitivă</string>
+    <string name="protected_icon_description">Folder de sistem protejat</string>
+    <string name="protected_system_folder_message">Acest folder de sistem este protejat de Android și nu poate fi curățat automat.</string>
     <string name="clean_streak_title">🧹 Serie Săptămânală de Curățare</string>
     <string name="clean_streak_start">Începe seria de curățare chiar azi.</string>
         <plurals name="clean_streak_in_progress">

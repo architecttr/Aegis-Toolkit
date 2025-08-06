@@ -91,6 +91,8 @@
     <string name="install_button_icon_description">Икона за инсталиране</string>
     <string name="move_to_trash_icon_description">Икона за преместване в кошчето</string>
     <string name="delete_forever_icon_description">Икона за изтриване завинаги</string>
+    <string name="protected_icon_description">Защитена системна папка</string>
+    <string name="protected_system_folder_message">Тази системна папка е защитена от Android и не може да бъде почистена автоматично.</string>
     <string name="clean_streak_title">🧹 Седмична серия за почистване</string>
     <string name="clean_streak_start">Започнете серията за почистване днес.</string>
         <plurals name="clean_streak_in_progress">

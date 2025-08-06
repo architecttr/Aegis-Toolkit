@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.NonLazyGrid
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.android.libs.apptoolkit.core.utils.helpers.ScreenHelper
+import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import java.io.File
 
 @Composable
@@ -37,6 +38,7 @@ fun FilesGrid(
                 onCheckedChange = { isChecked -> onFileSelectionChange(file, isChecked) },
                 isOriginal = file in originals,
                 view = view,
+                isProtected = file.isProtectedAndroidDir(),
                 modifier = Modifier
             )
         }
