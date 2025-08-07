@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -112,7 +114,7 @@ fun WeeklyCleanStreakCard(
                             contentDescription = null,
                             tint = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                             modifier = Modifier
-                                .size(20.dp)
+                                .size(18.dp)
                                 .graphicsLayer {
                                     scaleX = scale
                                     scaleY = scale

@@ -1,6 +1,7 @@
 package com.d4rk.cleaner.app.images.compressor.ui
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,6 +24,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -34,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -90,7 +96,11 @@ fun ImageOptimizerScreen(
         viewModel.setCurrentTab(pagerState.currentPage)
     }
 
+    val scrollBehavior: TopAppBarScrollBehavior =
+        TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     LargeTopAppBarWithScaffold(
+        scrollBehavior = scrollBehavior,
         title = stringResource(id = R.string.image_optimizer),
         onBackClicked = { activity.finish() }) { paddingValues ->
         if (isTabletOrLandscape) {
@@ -288,7 +298,12 @@ fun ImageDisplay(
         ) {
             Switch(checked = showPreview, onCheckedChange = onTogglePreview)
             SmallHorizontalSpacer()
-            Text(text = stringResource(id = R.string.show_compressed_preview))
+            Text(
+                text = stringResource(id = R.string.show_compressed_preview),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(SizeConstants.ExtraSmallSize))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(SizeConstants.ExtraSmallSize))
         }
 
         Box(
