@@ -208,6 +208,9 @@
     </plurals>
     <string name="status_no_files_selected">Katayuan: Walang napiling file</string>
     <string name="select_all">Piliin Lahat</string>
+    <string name="select_all_files_title">Piliin ang Lahat ng File?</string>
+    <string name="select_all_files_message">Pipiliin mo ang lahat ng file na ipinapakita sa screen na ito.\\n\\nSigurado ka bang gusto mong magpatuloy?</string>
+    <string name="dont_show_warning_again">Huwag nang ipakita muli ang babalang ito</string>
     <string name="delete_confirmation_title">Tanggalin ang Napili</string>
     <plurals name="delete_confirmation_message">
         <item quantity="one">Tanggalin ang %1$d item?</item>

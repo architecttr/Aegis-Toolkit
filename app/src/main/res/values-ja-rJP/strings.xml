@@ -203,6 +203,9 @@
     </plurals>
     <string name="status_no_files_selected">ステータス: ファイルが選択されていません</string>
     <string name="select_all">すべて選択</string>
+    <string name="select_all_files_title">すべてのファイルを選択しますか？</string>
+    <string name="select_all_files_message">この画面に表示されているすべてのファイルを選択しようとしています。\\n\\n続行してもよろしいですか？</string>
+    <string name="dont_show_warning_again">今後この警告を表示しない</string>
     <string name="delete_confirmation_title">選択項目を削除</string>
     <string name="delete">削除</string>
     <string name="merge">統合</string>

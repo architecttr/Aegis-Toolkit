@@ -218,6 +218,9 @@
     </plurals>
     <string name="status_no_files_selected">Status: Nie wybrano plików</string>
     <string name="select_all">Zaznacz wszystko</string>
+    <string name="select_all_files_title">Zaznaczyć wszystkie pliki?</string>
+    <string name="select_all_files_message">Zaraz zaznaczysz wszystkie pliki wyświetlane na tym ekranie.\\n\\nCzy na pewno chcesz kontynuować?</string>
+    <string name="dont_show_warning_again">Nie pokazuj ponownie tego ostrzeżenia</string>
     <string name="delete_confirmation_title">Usuń zaznaczone</string>
     <plurals name="delete_confirmation_message">
         <item quantity="one">Usunąć %1$d element?</item>

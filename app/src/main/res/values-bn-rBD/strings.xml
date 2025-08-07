@@ -208,6 +208,9 @@
     </plurals>
     <string name="status_no_files_selected">স্থিতি: কোনও ফাইল নির্বাচিত নেই</string>
     <string name="select_all">সব নির্বাচন করুন</string>
+    <string name="select_all_files_title">সব ফাইল নির্বাচন করবেন?</string>
+    <string name="select_all_files_message">আপনি এই স্ক্রিনে দেখানো প্রতিটি ফাইল নির্বাচন করতে যাচ্ছেন।\\n\\nআপনি কি চালিয়ে যেতে নিশ্চিত?</string>
+    <string name="dont_show_warning_again">এই সতর্কতাটি আর দেখাবেন না</string>
     <string name="delete_confirmation_title">নির্বাচিত মুছে ফেলুন</string>
     <plurals name="delete_confirmation_message">
         <item quantity="one">কী %1$d আইটেম মুছে ফেলতে চান?</item>
