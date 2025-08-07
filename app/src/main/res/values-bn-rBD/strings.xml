@@ -285,6 +285,10 @@
     <string name="width">প্রস্থ (px)</string>
     <string name="height">উচ্চতা (px)</string>
     <string name="quality">গুণমান</string>
+    <string name="show_compressed_preview">সংকুচিত প্রিভিউ দেখান</string>
+    <string name="reset">রিসেট করুন</string>
+    <string name="target_label">লক্ষ্য: %1$s</string>
+    <string name="compression_value_format">সংকোচন: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ট্র্যাশ</string>
@@ -410,4 +414,6 @@
     <string name="cleanup_failed_details">কিছু ফাইল মুছে ফেলা যায়নি</string>
     <string name="cleanup_cancelled">পরিষ্কার বাতিল করা হয়েছে</string>
     <string name="cleanup_partial">%1$d টি ফাইল মুছে ফেলা হয়েছে, %2$d টি ব্যর্থ হয়েছে</string>
+    <string name="current_streak_label">বর্তমান স্ট্রীক: পরপর %1$d দিন</string>
+    <string name="longest_streak_label">দীর্ঘতম স্ট্রীক: %1$d দিনের রেকর্ড!</string>
 </resources>

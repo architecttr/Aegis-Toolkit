@@ -83,6 +83,7 @@ class ScannerViewModel(
     val clipboardPreview: StateFlow<String?> get() = clipboardHandler.clipboardPreview
 
     val cleanStreak: StateFlow<Int> get() = streakHandler.cleanStreak
+    val streakRecord: StateFlow<Int> get() = streakHandler.streakRecord
     val showStreakCard: StateFlow<Boolean> get() = streakHandler.showStreakCard
     val streakHideUntil: StateFlow<Long> get() = streakHandler.streakHideUntil
 

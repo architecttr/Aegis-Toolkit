@@ -278,6 +278,10 @@
     <string name="width">ความกว้าง (px)</string>
     <string name="height">ความสูง (px)</string>
     <string name="quality">คุณภาพ</string>
+    <string name="show_compressed_preview">แสดงตัวอย่างที่บีบอัด</string>
+    <string name="reset">รีเซ็ต</string>
+    <string name="target_label">เป้าหมาย: %1$s</string>
+    <string name="compression_value_format">การบีบอัด: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ถังขยะ</string>
@@ -403,4 +407,6 @@
     <string name="cleanup_failed_details">ไม่สามารถลบไฟล์บางไฟล์ได้</string>
     <string name="cleanup_cancelled">ยกเลิกการล้าง</string>
     <string name="cleanup_partial">ลบไฟล์ %1$d ไฟล์แล้ว, ล้มเหลว %2$d ไฟล์</string>
+    <string name="current_streak_label">สตรีคปัจจุบัน: %1$d วันติดต่อกัน</string>
+    <string name="longest_streak_label">สตรีคที่ยาวที่สุด: สถิติ %1$d วัน!</string>
 </resources>

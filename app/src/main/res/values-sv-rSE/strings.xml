@@ -286,6 +286,10 @@
     <string name="width">Bredd (px)</string>
     <string name="height">Höjd (px)</string>
     <string name="quality">Kvalitet</string>
+    <string name="show_compressed_preview">Visa komprimerad förhandsvisning</string>
+    <string name="reset">Återställ</string>
+    <string name="target_label">Mål: %1$s</string>
+    <string name="compression_value_format">Komprimering: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Papperskorg</string>
@@ -411,4 +415,6 @@
     <string name="cleanup_failed_details">Vissa filer kunde inte tas bort</string>
     <string name="cleanup_cancelled">Rensning avbruten</string>
     <string name="cleanup_partial">%1$d filer raderades, %2$d misslyckades</string>
+    <string name="current_streak_label">Aktuell svit: %1$d dagar i rad</string>
+    <string name="longest_streak_label">Längsta svit: rekord på %1$d dagar!</string>
 </resources>

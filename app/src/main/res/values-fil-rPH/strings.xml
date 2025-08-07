@@ -286,6 +286,10 @@
     <string name="width">Lapad (px)</string>
     <string name="height">Taas (px)</string>
     <string name="quality">Kalidad</string>
+    <string name="show_compressed_preview">Ipakita ang pinigang preview</string>
+    <string name="reset">I-reset</string>
+    <string name="target_label">Layunin: %1$s</string>
+    <string name="compression_value_format">Pag-compress: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Trash</string>
@@ -411,4 +415,6 @@
     <string name="cleanup_failed_details">May ilang file na hindi matanggal</string>
     <string name="cleanup_cancelled">Kinansela ang paglilinis</string>
     <string name="cleanup_partial">Na-delete ang %1$d na file, nabigo ang %2$d</string>
+    <string name="current_streak_label">Kasalukuyang streak: %1$d araw nang sunod-sunod</string>
+    <string name="longest_streak_label">Pinakamahabang streak: rekord na %1$d araw!</string>
 </resources>

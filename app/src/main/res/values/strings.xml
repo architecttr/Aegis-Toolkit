@@ -104,6 +104,8 @@
     <string name="streak_reward_day3">Did you know you can sort by size?</string>
     <string name="streak_reward_day5">Estimate system junk!</string>
     <string name="streak_reward_day7">Perfect Week 🏅</string>
+    <string name="current_streak_label">Current streak: %1$d days in a row</string>
+    <string name="longest_streak_label">Longest streak: %1$d-day record!</string>
     <string name="streak_notification_title">Keep your Clean Streak going!</string>
     <string name="streak_notification_daily">Time to clean up your device and keep your streak going.</string>
     <string name="streak_notification_missed">You didn\'t clean yesterday — clean now to keep the 🔥 alive!</string>
@@ -286,6 +288,10 @@
     <string name="width">Width (px)</string>
     <string name="height">Height (px)</string>
     <string name="quality">Quality</string>
+    <string name="show_compressed_preview">Show compressed preview</string>
+    <string name="reset">Reset</string>
+    <string name="target_label">Target: %1$s</string>
+    <string name="compression_value_format">Compression: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Trash</string>

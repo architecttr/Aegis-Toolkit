@@ -278,6 +278,10 @@
     <string name="width">幅 (px)</string>
     <string name="height">高さ (px)</string>
     <string name="quality">品質</string>
+    <string name="show_compressed_preview">圧縮後のプレビューを表示</string>
+    <string name="reset">リセット</string>
+    <string name="target_label">目標: %1$s</string>
+    <string name="compression_value_format">圧縮率: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ゴミ箱</string>
@@ -403,4 +407,6 @@
     <string name="cleanup_failed_details">一部のファイルを削除できませんでした</string>
     <string name="cleanup_cancelled">クリーンアップをキャンセルしました</string>
     <string name="cleanup_partial">%1$d 件のファイルを削除、%2$d 件が失敗しました</string>
+    <string name="current_streak_label">現在の連続記録：%1$d日連続</string>
+    <string name="longest_streak_label">最長記録：%1$d日間の記録！</string>
 </resources>

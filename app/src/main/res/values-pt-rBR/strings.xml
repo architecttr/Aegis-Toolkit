@@ -294,6 +294,10 @@
     <string name="width">Largura (px)</string>
     <string name="height">Altura (px)</string>
     <string name="quality">Qualidade</string>
+    <string name="show_compressed_preview">Mostrar prévia comprimida</string>
+    <string name="reset">Redefinir</string>
+    <string name="target_label">Meta: %1$s</string>
+    <string name="compression_value_format">Compressão: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Lixeira</string>
@@ -419,4 +423,6 @@
     <string name="cleanup_failed_details">Alguns arquivos não puderam ser excluídos</string>
     <string name="cleanup_cancelled">Limpeza cancelada</string>
     <string name="cleanup_partial">%1$d arquivos excluídos, %2$d falharam</string>
+    <string name="current_streak_label">Sequência atual: %1$d dias seguidos</string>
+    <string name="longest_streak_label">Maior sequência: recorde de %1$d dias!</string>
 </resources>

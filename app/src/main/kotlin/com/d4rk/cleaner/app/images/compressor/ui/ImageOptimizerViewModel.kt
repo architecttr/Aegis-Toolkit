@@ -148,9 +148,32 @@ class ImageOptimizerViewModel(
                 _uiState.value.copy(
                     selectedImageUri = uri,
                     compressedImageUri = uri,
-                    manualWidth = if (_uiState.value.manualWidth == 0) w else _uiState.value.manualWidth,
-                    manualHeight = if (_uiState.value.manualHeight == 0) h else _uiState.value.manualHeight,
-                    compressedSizeKB = originalSizeKB
+                    originalWidth = w,
+                    originalHeight = h,
+                    manualWidth = w,
+                    manualHeight = h,
+                    manualQuality = 50,
+                    originalSizeKB = originalSizeKB,
+                    compressedSizeKB = originalSizeKB,
+                    quickCompressValue = 50,
+                    fileSizeKB = 0
+                )
+            )
+        }
+    }
+
+    fun resetSettings() {
+        viewModelScope.launch {
+            val current = _uiState.value
+            _uiState.emit(
+                current.copy(
+                    compressedImageUri = current.selectedImageUri,
+                    compressedSizeKB = current.originalSizeKB,
+                    quickCompressValue = 50,
+                    fileSizeKB = 0,
+                    manualWidth = current.originalWidth,
+                    manualHeight = current.originalHeight,
+                    manualQuality = 50
                 )
             )
         }

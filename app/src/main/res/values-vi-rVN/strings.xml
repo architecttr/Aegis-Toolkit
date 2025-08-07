@@ -278,6 +278,10 @@
     <string name="width">Chiều rộng (px)</string>
     <string name="height">Chiều cao (px)</string>
     <string name="quality">Chất lượng</string>
+    <string name="show_compressed_preview">Hiển thị bản xem trước đã nén</string>
+    <string name="reset">Đặt lại</string>
+    <string name="target_label">Mục tiêu: %1$s</string>
+    <string name="compression_value_format">Nén: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Thùng rác</string>
@@ -403,4 +407,6 @@
     <string name="cleanup_failed_details">Không thể xóa một số tệp</string>
     <string name="cleanup_cancelled">Đã hủy dọn dẹp</string>
     <string name="cleanup_partial">%1$d tệp đã xóa, %2$d thất bại</string>
+    <string name="current_streak_label">Chuỗi hiện tại: %1$d ngày liên tiếp</string>
+    <string name="longest_streak_label">Chuỗi dài nhất: kỷ lục %1$d ngày!</string>
 </resources>

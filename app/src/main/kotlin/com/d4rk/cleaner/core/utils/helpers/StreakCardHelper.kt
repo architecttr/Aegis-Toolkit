@@ -14,8 +14,12 @@ class StreakCardHelper(
     private val scope: CoroutineScope,
     private val dispatchers: DispatcherProvider,
 ) {
-    fun observeCleanStreak(onUpdate: (Int) -> Unit) {
-        scope.launch(dispatchers.io) { dataStore.streakCount.collect { onUpdate(it) } }
+    fun observeStreak(onUpdate: (Int, Int) -> Unit) {
+        scope.launch(dispatchers.io) {
+            combine(dataStore.streakCount, dataStore.streakRecord) { count, record ->
+                count to record
+            }.collect { (count, record) -> onUpdate(count, record) }
+        }
     }
 
     fun observeStreakVisibility(onUpdate: (Boolean) -> Unit, onHideUntil: (Long) -> Unit) {

@@ -286,6 +286,10 @@
     <string name="width">चौड़ाई (px)</string>
     <string name="height">ऊंचाई (px)</string>
     <string name="quality">गुणवत्ता</string>
+    <string name="show_compressed_preview">संपीड़ित पूर्वावलोकन दिखाएं</string>
+    <string name="reset">रीसेट करें</string>
+    <string name="target_label">लक्ष्य: %1$s</string>
+    <string name="compression_value_format">संपीड़न: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ट्रैश</string>
@@ -411,4 +415,6 @@
     <string name="cleanup_failed_details">कुछ फ़ाइलें हटाई नहीं जा सकीं</string>
     <string name="cleanup_cancelled">सफाई रद्द की गई</string>
     <string name="cleanup_partial">%1$d फ़ाइलें हटाई गईं, %2$d असफल रहीं</string>
+    <string name="current_streak_label">वर्तमान स्ट्रीक: लगातार %1$d दिन</string>
+    <string name="longest_streak_label">सबसे लंबी स्ट्रीक: %1$d दिनों का रिकॉर्ड!</string>
 </resources>

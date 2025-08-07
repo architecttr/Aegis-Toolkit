@@ -286,6 +286,10 @@
     <string name="width">Genişlik (px)</string>
     <string name="height">Yükseklik (px)</string>
     <string name="quality">Kalite</string>
+    <string name="show_compressed_preview">Sıkıştırılmış önizlemeyi göster</string>
+    <string name="reset">Sıfırla</string>
+    <string name="target_label">Hedef: %1$s</string>
+    <string name="compression_value_format">Sıkıştırma: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Çöp Kutusu</string>
@@ -411,4 +415,6 @@
     <string name="cleanup_failed_details">Bazı dosyalar silinemedi</string>
     <string name="cleanup_cancelled">Temizlik iptal edildi</string>
     <string name="cleanup_partial">%1$d dosya silindi, %2$d başarısız oldu</string>
+    <string name="current_streak_label">Mevcut seri: art arda %1$d gün</string>
+    <string name="longest_streak_label">En uzun seri: %1$d günlük rekor!</string>
 </resources>

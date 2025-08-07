@@ -278,6 +278,10 @@
     <string name="width">너비 (px)</string>
     <string name="height">높이 (px)</string>
     <string name="quality">품질</string>
+    <string name="show_compressed_preview">압축된 미리보기 표시</string>
+    <string name="reset">재설정</string>
+    <string name="target_label">목표: %1$s</string>
+    <string name="compression_value_format">압축률: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">휴지통</string>
@@ -403,4 +407,6 @@
     <string name="cleanup_failed_details">일부 파일을 삭제할 수 없습니다</string>
     <string name="cleanup_cancelled">정리가 취소되었습니다</string>
     <string name="cleanup_partial">%1$d개의 파일 삭제, %2$d개 실패</string>
+    <string name="current_streak_label">현재 스트릭: %1$d일 연속</string>
+    <string name="longest_streak_label">가장 긴 스트릭: %1$d일 기록!</string>
 </resources>

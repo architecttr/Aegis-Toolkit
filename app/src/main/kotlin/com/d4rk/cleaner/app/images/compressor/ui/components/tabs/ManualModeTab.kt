@@ -129,7 +129,7 @@ fun ManualModeTab(viewModel: ImageOptimizerViewModel) {
         Row(
             modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "${qualityValue.toInt()}%")
+            Text(text = stringResource(id = R.string.compression_value_format, qualityValue.toInt()))
             Slider(
                 value = qualityValue,
                 onValueChange = { newValue: Float -> qualityValue = newValue },
