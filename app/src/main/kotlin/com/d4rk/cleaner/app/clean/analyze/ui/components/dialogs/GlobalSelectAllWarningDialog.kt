@@ -30,7 +30,7 @@ fun GlobalSelectAllWarningDialog(
                 Text(text = stringResource(id = R.string.select_all_files_message))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = dontShowAgain, onCheckedChange = { dontShowAgain = it })
-                    Text(text = stringResource(id = R.string.dont_show_again))
+                    Text(text = stringResource(id = R.string.dont_show_warning_again))
                 }
             }
         },
