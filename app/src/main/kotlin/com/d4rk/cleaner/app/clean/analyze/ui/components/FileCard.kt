@@ -80,7 +80,7 @@ fun FileCard(
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .background(Color.Red.copy(alpha = 0.7f))
-                            .padding(horizontal = 4.dp, vertical = 2.dp),
+                            .padding(horizontal = 4.dp, vertical = SizeConstants.ExtraTinySize),
                     )
                 }
 

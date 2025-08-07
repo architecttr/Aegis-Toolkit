@@ -93,38 +93,37 @@ fun WeeklyCleanStreakCard(
                         animationSpec = tween(durationMillis = 300),
                         label = "StreakBarScale$i",
                     ).value
-                    Box(
+                    Column(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .padding(horizontal = 2.dp),
-                        contentAlignment = Alignment.Center
+                            .padding(horizontal = SizeConstants.ExtraTinySize),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Icon(
+                            imageVector = if (filled) Icons.Rounded.AutoAwesome else Icons.Outlined.AutoAwesome,
+                            contentDescription = null,
+                            tint = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                            modifier = Modifier
+                                .size(if (filled) 18.dp else 16.dp)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
+                        )
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(top = SizeConstants.ExtraTinySize)
                                 .height(4.dp)
                                 .background(
                                     color = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                     shape = RoundedCornerShape(SizeConstants.SmallSize)
                                 )
                         )
-                        Icon(
-                            imageVector = if (filled) Icons.Rounded.AutoAwesome else Icons.Outlined.AutoAwesome,
-                            contentDescription = null,
-                            tint = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                            modifier = Modifier
-                                .size(18.dp)
-                                .graphicsLayer {
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                        )
                     }
                 }
             }
-
-            MediumVerticalSpacer()
 
             Text(
                 text = stringResource(id = R.string.current_streak_label, streakDays),
