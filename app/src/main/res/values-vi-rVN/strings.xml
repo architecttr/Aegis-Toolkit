@@ -204,7 +204,7 @@
     <string name="status_no_files_selected">Trạng thái: Chưa chọn tệp nào</string>
     <string name="select_all">Chọn tất cả</string>
     <string name="select_all_files_title">Chọn tất cả tệp?</string>
-    <string name="select_all_files_message">Bạn sắp chọn tất cả các tệp hiển thị trên màn hình này.\\n\\nBạn có chắc muốn tiếp tục không?</string>
+    <string name="select_all_files_message">Bạn sắp chọn tất cả các tệp hiển thị trên màn hình này.&#10;&#10;Bạn có chắc muốn tiếp tục không?</string>
     <string name="dont_show_warning_again">Không hiện lại cảnh báo này</string>
     <string name="delete_confirmation_title">Xóa đã chọn</string>
     <plurals name="delete_confirmation_message">

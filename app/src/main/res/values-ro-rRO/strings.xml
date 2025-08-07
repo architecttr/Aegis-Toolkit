@@ -214,7 +214,7 @@
     <string name="status_no_files_selected">Stare: Niciun fișier selectat</string>
     <string name="select_all">Selectează tot</string>
     <string name="select_all_files_title">Selectezi toate fișierele?</string>
-    <string name="select_all_files_message">Ești pe cale să selectezi toate fișierele afișate pe acest ecran.\\n\\nSigur vrei să continui?</string>
+    <string name="select_all_files_message">Ești pe cale să selectezi toate fișierele afișate pe acest ecran.&#10;&#10;Sigur vrei să continui?</string>
     <string name="dont_show_warning_again">Nu mai afișa acest avertisment</string>
     <string name="delete_confirmation_title">Șterge selectate</string>
     <plurals name="delete_confirmation_message">

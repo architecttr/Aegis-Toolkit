@@ -211,8 +211,8 @@
     <string name="status_no_files_selected">Status: No files selected</string>
     <string name="select_all">Select All</string>
     <string name="select_all_files_title">Select All Files?</string>
-    <string name="select_all_files_message">You're about to select every file shown on this screen.\n\nAre you sure you want to continue?</string>
-    <string name="dont_show_warning_again">Don't show this warning again</string>
+    <string name="select_all_files_message">You&#39;re about to select every file shown on this screen.&#10;&#10;Are you sure you want to continue?</string>
+    <string name="dont_show_warning_again">Don&#39;t show this warning again</string>
     <string name="delete_confirmation_title">Delete Selected</string>
     <plurals name="delete_confirmation_message">
         <item quantity="one">Delete %1$d item?</item>

@@ -214,7 +214,7 @@
     <string name="status_no_files_selected">Stato: Nessun file selezionato</string>
     <string name="select_all">Seleziona tutto</string>
     <string name="select_all_files_title">Selezionare tutti i file?</string>
-    <string name="select_all_files_message">Stai per selezionare tutti i file mostrati in questa schermata.\\n\\nSei sicuro di voler continuare?</string>
+    <string name="select_all_files_message">Stai per selezionare tutti i file mostrati in questa schermata.&#10;&#10;Sei sicuro di voler continuare?</string>
     <string name="dont_show_warning_again">Non mostrare più questo avviso</string>
     <string name="delete_confirmation_title">Elimina selezionati</string>
     <plurals name="delete_confirmation_message">

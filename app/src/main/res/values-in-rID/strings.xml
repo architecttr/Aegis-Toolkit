@@ -204,7 +204,7 @@
     <string name="status_no_files_selected">Status: Tidak ada file yang dipilih</string>
     <string name="select_all">Pilih Semua</string>
     <string name="select_all_files_title">Pilih Semua File?</string>
-    <string name="select_all_files_message">Anda akan memilih semua file yang ditampilkan di layar ini.\\n\\nAnda yakin ingin melanjutkan?</string>
+    <string name="select_all_files_message">Anda akan memilih semua file yang ditampilkan di layar ini.&#10;&#10;Anda yakin ingin melanjutkan?</string>
     <string name="dont_show_warning_again">Jangan tampilkan peringatan ini lagi</string>
     <string name="delete_confirmation_title">Hapus yang Dipilih</string>
     <plurals name="delete_confirmation_message">
