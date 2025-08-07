@@ -18,3 +18,11 @@ fun File.isProtectedAndroidDir(): Boolean {
     }
     return false
 }
+
+/**
+ * Returns true if this file should be skipped from listings based on the hidden files
+ * preference and Android protected directory rules.
+ */
+fun File.shouldSkip(showHidden: Boolean): Boolean {
+    return (!showHidden && isHidden) || isProtectedAndroidDir()
+}

@@ -28,6 +28,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import com.d4rk.cleaner.core.utils.helpers.shouldSkip
 
 class ScannerRepositoryImpl(
     private val application: Application, private val dataStore: DataStore
@@ -353,9 +354,9 @@ class ScannerRepositoryImpl(
         val showHidden = dataStore.showHiddenFiles.first()
         while (stack.isNotEmpty()) {
             val dir = stack.removeFirst()
-            if (!showHidden && dir.isHidden) continue
-            if (dir.isDirectory && !dir.absolutePath.startsWith(trashDir.absolutePath)) {
-                val children = dir.listFiles()?.filter { showHidden || !it.isHidden }
+            if (dir.shouldSkip(showHidden) || dir.absolutePath.startsWith(trashDir.absolutePath)) continue
+            if (dir.isDirectory) {
+                val children = dir.listFiles()?.filterNot { it.shouldSkip(showHidden) }
                 if (children == null || children.isEmpty()) {
                     emit(dir)
                 } else {
