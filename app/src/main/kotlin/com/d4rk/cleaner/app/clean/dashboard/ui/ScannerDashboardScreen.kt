@@ -90,6 +90,7 @@ fun ScannerDashboardScreen(
     val emptyFolders by viewModel.emptyFolders.collectAsState()
     val emptyFoldersHideUntil by viewModel.emptyFoldersHideUntil.collectAsState()
     val streakDays by viewModel.cleanStreak.collectAsState()
+    val streakRecord by viewModel.streakRecord.collectAsState()
     val showStreakCard by viewModel.showStreakCard.collectAsState()
     val streakHideUntil by viewModel.streakHideUntil.collectAsState()
     val cleaningApks by viewModel.cleaningApks.collectAsState()
@@ -258,14 +259,15 @@ fun ScannerDashboardScreen(
                 exit = DashboardTransitions.exit
             ) {
                 val streakIndex = nextIndex()
-                WeeklyCleanStreakCard(
-                    modifier = Modifier
-                        .animateVisibility(
-                            visible = visibilityStates.getOrElse(index = streakIndex) { false },
-                            index = streakIndex
-                        )
-                        .animateContentSize(),
+                    WeeklyCleanStreakCard(
+                        modifier = Modifier
+                            .animateVisibility(
+                                visible = visibilityStates.getOrElse(index = streakIndex) { false },
+                                index = streakIndex
+                            )
+                            .animateContentSize(),
                     streakDays = streakDays,
+                    streakRecord = streakRecord,
                     onDismiss = { viewModel.onEvent(ScannerEvent.SetHideStreakDialogVisibility(true)) })
             }
         } else if (streakHideUntil > System.currentTimeMillis()) {

@@ -35,6 +35,10 @@ object StreakTracker : KoinComponent {
             else -> streak
         }
         dataStore.saveStreakCount(newStreak)
+        val record = dataStore.streakRecord.first()
+        if (newStreak > record) {
+            dataStore.saveStreakRecord(newStreak)
+        }
         dataStore.saveLastCleanDay(System.currentTimeMillis())
     }
 }

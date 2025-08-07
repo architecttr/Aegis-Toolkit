@@ -22,13 +22,16 @@ class StreakHandler(
     private val _cleanStreak = MutableStateFlow(0)
     val cleanStreak: StateFlow<Int> = _cleanStreak
 
+    private val _streakRecord = MutableStateFlow(0)
+    val streakRecord: StateFlow<Int> = _streakRecord
+
     private val _showStreakCard = MutableStateFlow(true)
     val showStreakCard: StateFlow<Boolean> = _showStreakCard
     private val _streakHideUntil = MutableStateFlow(0L)
     val streakHideUntil: StateFlow<Long> = _streakHideUntil
 
     init {
-        loadCleanStreak()
+        loadStreakStats()
         loadStreakCardVisibility()
     }
 
@@ -46,8 +49,11 @@ class StreakHandler(
         setHideStreakDialogVisibility(false)
     }
 
-    private fun loadCleanStreak() {
-        streakHelper.observeCleanStreak { _cleanStreak.value = it }
+    private fun loadStreakStats() {
+        streakHelper.observeStreak { current, record ->
+            _cleanStreak.value = current
+            _streakRecord.value = record
+        }
     }
 
     private fun loadStreakCardVisibility() {

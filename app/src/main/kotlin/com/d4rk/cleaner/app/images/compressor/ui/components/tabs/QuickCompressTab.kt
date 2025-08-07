@@ -25,6 +25,7 @@ import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.app.images.compressor.domain.data.model.CompressionLevel
 import com.d4rk.cleaner.app.images.compressor.ui.ImageOptimizerViewModel
 import com.d4rk.cleaner.app.images.utils.getCompressionLevelFromSliderValue
+import com.d4rk.cleaner.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -58,6 +59,8 @@ fun QuickCompressTab(viewModel: ImageOptimizerViewModel) {
         }
 
         LargeVerticalSpacer()
+
+        Text(text = stringResource(id = R.string.compression_value_format, sliderValue.toInt()))
 
         Slider(
             value = sliderValue,

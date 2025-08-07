@@ -7,6 +7,7 @@ data class UiImageOptimizerState(
     val selectedImageUri: Uri? = null,
     val compressedImageUri: Uri? = null,
     val compressedSizeKB: Double = 0.0,
+    val originalSizeKB: Double = 0.0,
     val isLoading: Boolean = false,
     val quickCompressValue: Int = 50,
     val fileSizeKB: Int = 0,

@@ -435,9 +435,21 @@ class DataStore(val context: Context) : CommonDataStore(context = context) {
         prefs[streakCountKey] ?: 0
     }
 
+    private val streakRecordKey =
+        intPreferencesKey(name = AppDataStoreConstants.DATA_STORE_STREAK_RECORD)
+    val streakRecord: Flow<Int> = dataStore.data.map { prefs ->
+        prefs[streakRecordKey] ?: 0
+    }
+
     suspend fun saveStreakCount(count: Int) {
         dataStore.edit { prefs ->
             prefs[streakCountKey] = count
+        }
+    }
+
+    suspend fun saveStreakRecord(record: Int) {
+        dataStore.edit { prefs ->
+            prefs[streakRecordKey] = record
         }
     }
 

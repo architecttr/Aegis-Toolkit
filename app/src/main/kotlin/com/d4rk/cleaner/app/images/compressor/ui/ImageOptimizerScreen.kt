@@ -1,6 +1,7 @@
 package com.d4rk.cleaner.app.images.compressor.ui
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -42,6 +45,7 @@ import com.d4rk.android.libs.apptoolkit.core.domain.model.ads.AdsConfig
 import com.d4rk.android.libs.apptoolkit.core.ui.components.ads.AdBanner
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.OutlinedIconButtonWithText
 import com.d4rk.android.libs.apptoolkit.core.ui.components.navigation.LargeTopAppBarWithScaffold
+import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.SmallHorizontalSpacer
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.android.libs.apptoolkit.core.utils.helpers.ScreenHelper
 import com.d4rk.cleaner.R
@@ -74,6 +78,12 @@ fun ImageOptimizerScreen(
         stringResource(id = R.string.manual),
     )
     val pagerState: PagerState = rememberPagerState(pageCount = { tabs.size })
+
+    var showPreview by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = uiState.selectedImageUri) {
+        showPreview = false
+    }
 
     LaunchedEffect(key1 = pagerState.currentPage) {
         viewModel.setCurrentTab(pagerState.currentPage)
@@ -112,19 +122,22 @@ fun ImageOptimizerScreen(
                         }
                     }
 
-                    OutlinedIconButtonWithText(
-                        onClick = {
-                            coroutineScope.launch { viewModel.optimizeImage() }
-                        },
+                    OptimizerButtons(
                         enabled = if (pagerState.currentPage == 1) {
                             uiState.fileSizeKB != 0
                         } else {
                             true
                         },
+                        onOptimize = {
+                            coroutineScope.launch { viewModel.optimizeImage() }
+                        },
+                        onReset = {
+                            showPreview = false
+                            viewModel.resetSettings()
+                        },
                         modifier = Modifier
                             .padding(all = SizeConstants.MediumSize)
-                            .align(Alignment.CenterHorizontally),
-                        label = stringResource(id = R.string.optimize_image)
+                            .align(Alignment.CenterHorizontally)
                     )
 
                     if (adsState) {
@@ -141,7 +154,7 @@ fun ImageOptimizerScreen(
                         .fillMaxHeight()
                         .padding(24.dp)
                 ) {
-                    ImageDisplay(viewModel)
+                    ImageDisplay(viewModel = viewModel, showPreview = showPreview, onTogglePreview = { showPreview = it })
                 }
             }
         } else {
@@ -163,7 +176,7 @@ fun ImageOptimizerScreen(
                         }
                         .padding(all = 24.dp),
                 ) {
-                    ImageDisplay(viewModel)
+                    ImageDisplay(viewModel = viewModel, showPreview = showPreview, onTogglePreview = { showPreview = it })
                 }
 
                 TabRow(
@@ -200,16 +213,18 @@ fun ImageOptimizerScreen(
                     }
                 }
 
-                OutlinedIconButtonWithText(
-                    onClick = {
-                        coroutineScope.launch {
-                            viewModel.optimizeImage()
-                        }
-                    },
+                OptimizerButtons(
                     enabled = if (pagerState.currentPage == 1) {
                         uiState.fileSizeKB != 0
                     } else {
                         true
+                    },
+                    onOptimize = {
+                        coroutineScope.launch { viewModel.optimizeImage() }
+                    },
+                    onReset = {
+                        showPreview = false
+                        viewModel.resetSettings()
                     },
                     modifier = Modifier
                         .constrainAs(ref = compressButton) {
@@ -221,8 +236,7 @@ fun ImageOptimizerScreen(
                                 bottom.linkTo(anchor = parent.bottom)
                             }
                         }
-                        .padding(all = SizeConstants.MediumSize),
-                    label = stringResource(id = R.string.optimize_image)
+                        .padding(all = SizeConstants.MediumSize)
                 )
 
                 if (adsState) {
@@ -239,15 +253,13 @@ fun ImageOptimizerScreen(
 }
 
 @Composable
-fun ImageDisplay(viewModel: ImageOptimizerViewModel) {
+fun ImageDisplay(
+    viewModel: ImageOptimizerViewModel,
+    showPreview: Boolean,
+    onTogglePreview: (Boolean) -> Unit,
+) {
     val state: State<UiImageOptimizerState> = viewModel.uiState.collectAsState()
-    val showCompressedImage: MutableState<Boolean> = remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = state.value.compressedImageUri) {
-        if (state.value.compressedImageUri != null) {
-            showCompressedImage.value = true
-        }
-    }
+    val imageUri = if (showPreview) state.value.compressedImageUri else state.value.selectedImageUri
 
     Box(
         modifier = Modifier
@@ -257,31 +269,66 @@ fun ImageDisplay(viewModel: ImageOptimizerViewModel) {
         if (state.value.isLoading) {
             CircularProgressIndicator()
         } else {
-            if (showCompressedImage.value) {
-                state.value.compressedImageUri?.let { imageUri ->
-                    AsyncImage(
-                        model = imageUri,
-                        contentDescription = "Selected Image",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+            imageUri?.let { uri ->
+                AsyncImage(
+                    model = uri,
+                    contentDescription = "Selected Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
             }
         }
+
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(SizeConstants.SmallSize),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Switch(checked = showPreview, onCheckedChange = onTogglePreview)
+            SmallHorizontalSpacer()
+            Text(text = stringResource(id = R.string.show_compressed_preview))
+        }
+
         Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart
         ) {
             Card(
                 shape = RoundedCornerShape(topEnd = SizeConstants.MediumSize),
             ) {
+                val size = if (showPreview) state.value.compressedSizeKB else state.value.originalSizeKB
                 Text(
-
-                    text = FileSizeFormatter.format((state.value.compressedSizeKB * 1024).toLong()),
+                    text = FileSizeFormatter.format((size * 1024).toLong()),
                     modifier = Modifier
                         .padding(all = SizeConstants.ExtraSmallSize)
                         .animateContentSize(),
                 )
             }
         }
+    }
+}
+
+@Composable
+fun OptimizerButtons(
+    enabled: Boolean,
+    onOptimize: () -> Unit,
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(SizeConstants.MediumSize),
+        horizontalArrangement = Arrangement.spacedBy(SizeConstants.MediumSize)
+    ) {
+        OutlinedButton(onClick = onReset, modifier = Modifier.weight(1f)) {
+            Text(text = stringResource(id = R.string.reset))
+        }
+        OutlinedIconButtonWithText(
+            onClick = onOptimize,
+            enabled = enabled,
+            modifier = Modifier.weight(1f),
+            label = stringResource(id = R.string.optimize_image)
+        )
     }
 }

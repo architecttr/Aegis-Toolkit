@@ -51,15 +51,19 @@ fun FileSizeTab(viewModel: ImageOptimizerViewModel) {
         stringArrayResource(id = R.array.file_sizes).toList()
     }
 
+    val defaultLabel = stringResource(id = R.string.default_value)
     var fileSizeText: String = if (state.value.fileSizeKB == 0) {
-        stringResource(id = R.string.default_value)
+        defaultLabel
     } else {
         state.value.fileSizeKB.toString()
     }
 
     var expanded: Boolean by remember { mutableStateOf(value = false) }
 
+    val displayLabel = if (fileSizeText == defaultLabel) fileSizeText else "$fileSizeText KB"
+
     Column(modifier = Modifier.padding(all = SizeConstants.LargeSize)) {
+        Text(text = stringResource(id = R.string.target_label, displayLabel))
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
                 value = fileSizeText,
