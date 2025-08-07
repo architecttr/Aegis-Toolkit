@@ -294,6 +294,10 @@
     <string name="width">Largura (px)</string>
     <string name="height">Altura (px)</string>
     <string name="quality">Qualidade</string>
+    <string name="show_compressed_preview">Mostrar prévia comprimida</string>
+    <string name="reset">Redefinir</string>
+    <string name="target_label">Meta: %1$s</string>
+    <string name="compression_value_format">Compressão: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Lixeira</string>

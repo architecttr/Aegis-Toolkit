@@ -285,6 +285,10 @@
     <string name="width">Широчина (px)</string>
     <string name="height">Височина (px)</string>
     <string name="quality">Качество</string>
+    <string name="show_compressed_preview">Показване на компресирания преглед</string>
+    <string name="reset">Нулиране</string>
+    <string name="target_label">Цел: %1$s</string>
+    <string name="compression_value_format">Компресия: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Кошче</string>

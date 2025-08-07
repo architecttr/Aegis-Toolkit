@@ -278,6 +278,10 @@
     <string name="width">Chiều rộng (px)</string>
     <string name="height">Chiều cao (px)</string>
     <string name="quality">Chất lượng</string>
+    <string name="show_compressed_preview">Hiển thị bản xem trước đã nén</string>
+    <string name="reset">Đặt lại</string>
+    <string name="target_label">Mục tiêu: %1$s</string>
+    <string name="compression_value_format">Nén: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Thùng rác</string>

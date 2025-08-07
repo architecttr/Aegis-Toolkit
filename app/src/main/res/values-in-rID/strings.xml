@@ -278,6 +278,10 @@
     <string name="width">Lebar (px)</string>
     <string name="height">Tinggi (px)</string>
     <string name="quality">Kualitas</string>
+    <string name="show_compressed_preview">Tampilkan pratinjau terkompres</string>
+    <string name="reset">Reset</string>
+    <string name="target_label">Target: %1$s</string>
+    <string name="compression_value_format">Kompresi: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Sampah</string>

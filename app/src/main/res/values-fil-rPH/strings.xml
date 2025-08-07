@@ -286,6 +286,10 @@
     <string name="width">Lapad (px)</string>
     <string name="height">Taas (px)</string>
     <string name="quality">Kalidad</string>
+    <string name="show_compressed_preview">Ipakita ang pinigang preview</string>
+    <string name="reset">I-reset</string>
+    <string name="target_label">Layunin: %1$s</string>
+    <string name="compression_value_format">Pag-compress: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Trash</string>

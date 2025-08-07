@@ -286,6 +286,10 @@
     <string name="width">چوڑائی (px)</string>
     <string name="height">اونچائی (px)</string>
     <string name="quality">کوالٹی</string>
+    <string name="show_compressed_preview">کمپریسڈ پیش نظارہ دکھائیں</string>
+    <string name="reset">ری سیٹ کریں</string>
+    <string name="target_label">ہدف: %1$s</string>
+    <string name="compression_value_format">کمپریشن: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ردی کی ٹوکری</string>

@@ -294,6 +294,10 @@
     <string name="width">Ancho (px)</string>
     <string name="height">Alto (px)</string>
     <string name="quality">Calidad</string>
+    <string name="show_compressed_preview">Mostrar vista previa comprimida</string>
+    <string name="reset">Restablecer</string>
+    <string name="target_label">Objetivo: %1$s</string>
+    <string name="compression_value_format">Compresión: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Papelera</string>

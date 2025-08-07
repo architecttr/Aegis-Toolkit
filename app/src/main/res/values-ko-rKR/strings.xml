@@ -278,6 +278,10 @@
     <string name="width">너비 (px)</string>
     <string name="height">높이 (px)</string>
     <string name="quality">품질</string>
+    <string name="show_compressed_preview">압축된 미리보기 표시</string>
+    <string name="reset">재설정</string>
+    <string name="target_label">목표: %1$s</string>
+    <string name="compression_value_format">압축률: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">휴지통</string>

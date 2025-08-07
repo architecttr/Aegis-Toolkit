@@ -286,6 +286,10 @@
     <string name="width">Szélesség (px)</string>
     <string name="height">Magasság (px)</string>
     <string name="quality">Minőség</string>
+    <string name="show_compressed_preview">Tömörített előnézet megjelenítése</string>
+    <string name="reset">Visszaállítás</string>
+    <string name="target_label">Cél: %1$s</string>
+    <string name="compression_value_format">Tömörítés: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Kuka</string>

@@ -302,6 +302,10 @@
     <string name="width">Szerokość (px)</string>
     <string name="height">Wysokość (px)</string>
     <string name="quality">Jakość</string>
+    <string name="show_compressed_preview">Pokaż skompresowany podgląd</string>
+    <string name="reset">Resetuj</string>
+    <string name="target_label">Cel: %1$s</string>
+    <string name="compression_value_format">Kompresja: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Kosz</string>

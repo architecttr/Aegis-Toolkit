@@ -294,6 +294,10 @@
     <string name="width">Larghezza (px)</string>
     <string name="height">Altezza (px)</string>
     <string name="quality">Qualità</string>
+    <string name="show_compressed_preview">Mostra anteprima compressa</string>
+    <string name="reset">Reimposta</string>
+    <string name="target_label">Obiettivo: %1$s</string>
+    <string name="compression_value_format">Compressione: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Cestino</string>

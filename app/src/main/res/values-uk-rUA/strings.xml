@@ -302,6 +302,10 @@
     <string name="width">Ширина (пікс.)</string>
     <string name="height">Висота (пікс.)</string>
     <string name="quality">Якість</string>
+    <string name="show_compressed_preview">Показати стиснутий попередній перегляд</string>
+    <string name="reset">Скинути</string>
+    <string name="target_label">Ціль: %1$s</string>
+    <string name="compression_value_format">Стиснення: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Кошик</string>

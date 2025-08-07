@@ -286,6 +286,10 @@
     <string name="width">Genişlik (px)</string>
     <string name="height">Yükseklik (px)</string>
     <string name="quality">Kalite</string>
+    <string name="show_compressed_preview">Sıkıştırılmış önizlemeyi göster</string>
+    <string name="reset">Sıfırla</string>
+    <string name="target_label">Hedef: %1$s</string>
+    <string name="compression_value_format">Sıkıştırma: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Çöp Kutusu</string>

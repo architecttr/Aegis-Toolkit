@@ -286,6 +286,10 @@
     <string name="width">चौड़ाई (px)</string>
     <string name="height">ऊंचाई (px)</string>
     <string name="quality">गुणवत्ता</string>
+    <string name="show_compressed_preview">संपीड़ित पूर्वावलोकन दिखाएं</string>
+    <string name="reset">रीसेट करें</string>
+    <string name="target_label">लक्ष्य: %1$s</string>
+    <string name="compression_value_format">संपीड़न: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ट्रैश</string>

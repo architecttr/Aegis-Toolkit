@@ -278,6 +278,10 @@
     <string name="width">ความกว้าง (px)</string>
     <string name="height">ความสูง (px)</string>
     <string name="quality">คุณภาพ</string>
+    <string name="show_compressed_preview">แสดงตัวอย่างที่บีบอัด</string>
+    <string name="reset">รีเซ็ต</string>
+    <string name="target_label">เป้าหมาย: %1$s</string>
+    <string name="compression_value_format">การบีบอัด: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ถังขยะ</string>

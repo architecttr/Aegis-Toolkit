@@ -318,6 +318,10 @@
     <string name="width">العرض (px)</string>
     <string name="height">الارتفاع (px)</string>
     <string name="quality">الجودة</string>
+    <string name="show_compressed_preview">عرض المعاينة المضغوطة</string>
+    <string name="reset">إعادة تعيين</string>
+    <string name="target_label">الهدف: %1$s</string>
+    <string name="compression_value_format">الضغط: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">سلة المهملات</string>

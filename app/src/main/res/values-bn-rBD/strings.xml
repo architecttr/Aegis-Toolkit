@@ -285,6 +285,10 @@
     <string name="width">প্রস্থ (px)</string>
     <string name="height">উচ্চতা (px)</string>
     <string name="quality">গুণমান</string>
+    <string name="show_compressed_preview">সংকুচিত প্রিভিউ দেখান</string>
+    <string name="reset">রিসেট করুন</string>
+    <string name="target_label">লক্ষ্য: %1$s</string>
+    <string name="compression_value_format">সংকোচন: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">ট্র্যাশ</string>

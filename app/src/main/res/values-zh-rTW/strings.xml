@@ -278,6 +278,10 @@
     <string name="width">寬度 (px)</string>
     <string name="height">高度 (px)</string>
     <string name="quality">品質</string>
+    <string name="show_compressed_preview">顯示壓縮預覽</string>
+    <string name="reset">重設</string>
+    <string name="target_label">目標：%1$s</string>
+    <string name="compression_value_format">壓縮率：%1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">垃圾桶</string>

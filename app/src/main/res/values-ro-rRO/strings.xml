@@ -294,6 +294,10 @@
     <string name="width">Lățime (px)</string>
     <string name="height">Înălțime (px)</string>
     <string name="quality">Calitate</string>
+    <string name="show_compressed_preview">Afișează previzualizarea comprimată</string>
+    <string name="reset">Resetează</string>
+    <string name="target_label">Țintă: %1$s</string>
+    <string name="compression_value_format">Compresie: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Coș</string>

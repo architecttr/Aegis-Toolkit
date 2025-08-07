@@ -302,6 +302,10 @@
     <string name="width">Ширина (пикс.)</string>
     <string name="height">Высота (пикс.)</string>
     <string name="quality">Качество</string>
+    <string name="show_compressed_preview">Показать сжатый предварительный просмотр</string>
+    <string name="reset">Сбросить</string>
+    <string name="target_label">Цель: %1$s</string>
+    <string name="compression_value_format">Сжатие: %1$d%%</string>
 
     <!-- Trash -->
     <string name="trash">Корзина</string>
