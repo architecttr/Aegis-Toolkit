@@ -550,6 +550,19 @@ class ScannerViewModel(
                 }
             },
             onSuccess = { info ->
+                _uiState.update { state ->
+                    val current = state.data ?: UiScannerModel()
+                    state.copy(
+                        data = current.copy(
+                            analyzeState = current.analyzeState.copy(
+                                state = CleaningState.Result
+                            )
+                        )
+                    )
+                }
+
+                _cleaningApks.value = false
+
                 val failedPaths =
                     info.outputData.getStringArray(FileCleanupWorker.KEY_FAILED_PATHS)
                 val failedCount = failedPaths?.size ?: 0
@@ -575,18 +588,7 @@ class ScannerViewModel(
                     pendingEmptyFoldersCleanup = false
                 }
                 dataStore.saveLastScanTimestamp(System.currentTimeMillis())
-                _cleaningApks.value = false
 
-                _uiState.update { state ->
-                    val current = state.data ?: UiScannerModel()
-                    state.copy(
-                        data = current.copy(
-                            analyzeState = current.analyzeState.copy(
-                                state = CleaningState.Result
-                            )
-                        )
-                    )
-                }
                 onEvent(ScannerEvent.RefreshData)
                 onCloseAnalyzeComposable()
             },
@@ -750,6 +752,7 @@ class ScannerViewModel(
 
     private fun toggleAnalyzeScreen(visible: Boolean) {
         if (visible) {
+            screenState.dismissSnackbar()
             launch(dispatchers.io) {
                 val anyEnabled = listOf(
                     dataStore.genericFilter.first(),

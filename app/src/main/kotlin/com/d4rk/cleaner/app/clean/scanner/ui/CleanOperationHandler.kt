@@ -189,7 +189,11 @@ class CleanOperationHandler(
                 getWorkId = { dataStore.scannerCleanWorkId.first() },
                 saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
                 clearWorkId = { dataStore.clearScannerCleanWorkId() },
-                showSnackbar = { postSnackbar(it.message, it.isError) },
+                showSnackbar = { snackbar ->
+                    if (snackbar.isError) {
+                        postSnackbar(snackbar.message, true)
+                    }
+                },
                 onEnqueued = { id ->
                     uiState.update { state ->
                         val currentData = state.data ?: UiScannerModel()
@@ -234,7 +238,11 @@ class CleanOperationHandler(
                 getWorkId = { dataStore.scannerCleanWorkId.first() },
                 saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
                 clearWorkId = { dataStore.clearScannerCleanWorkId() },
-                showSnackbar = { postSnackbar(it.message, it.isError) },
+                showSnackbar = { snackbar ->
+                    if (snackbar.isError) {
+                        postSnackbar(snackbar.message, true)
+                    }
+                },
                 onEnqueued = { id ->
                     uiState.update { state: UiStateScreen<UiScannerModel> ->
                         val currentData: UiScannerModel = state.data ?: UiScannerModel()
