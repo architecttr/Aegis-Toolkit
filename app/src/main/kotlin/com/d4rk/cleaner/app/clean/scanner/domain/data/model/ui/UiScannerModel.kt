@@ -36,6 +36,7 @@ data class UiAnalyzeModel(
     var fileTypesData: FileTypesData = FileTypesData(),
     var isDeleteForeverConfirmationDialogVisible: Boolean = false,
     var isMoveToTrashConfirmationDialogVisible: Boolean = false,
+    var isGlobalSelectAllWarningDialogVisible: Boolean = false,
 )
 
 data class FileTypesData(
