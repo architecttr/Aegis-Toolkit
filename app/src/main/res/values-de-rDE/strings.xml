@@ -415,4 +415,6 @@
     <string name="cleanup_failed_details">Einige Dateien konnten nicht gelöscht werden</string>
     <string name="cleanup_cancelled">Bereinigung abgebrochen</string>
     <string name="cleanup_partial">%1$d Dateien gelöscht, %2$d fehlgeschlagen</string>
+    <string name="current_streak_label">Aktuelle Serie: %1$d Tage in Folge</string>
+    <string name="longest_streak_label">Längste Serie: Rekord von %1$d Tagen!</string>
 </resources>

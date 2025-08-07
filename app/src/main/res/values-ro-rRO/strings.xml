@@ -423,4 +423,6 @@
     <string name="cleanup_failed_details">Unele fișiere nu au putut fi șterse</string>
     <string name="cleanup_cancelled">Curățare anulată</string>
     <string name="cleanup_partial">%1$d fișiere șterse, %2$d eșuate</string>
+    <string name="current_streak_label">Seria curentă: %1$d zile la rând</string>
+    <string name="longest_streak_label">Cea mai lungă serie: record de %1$d zile!</string>
 </resources>

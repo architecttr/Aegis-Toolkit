@@ -423,4 +423,6 @@
     <string name="cleanup_failed_details">Impossibile eliminare alcuni file</string>
     <string name="cleanup_cancelled">Pulizia annullata</string>
     <string name="cleanup_partial">%1$d file eliminati, %2$d non riusciti</string>
+    <string name="current_streak_label">Serie attuale: %1$d giorni di fila</string>
+    <string name="longest_streak_label">Serie più lunga: record di %1$d giorni!</string>
 </resources>

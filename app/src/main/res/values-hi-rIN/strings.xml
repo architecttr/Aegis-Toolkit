@@ -415,4 +415,6 @@
     <string name="cleanup_failed_details">कुछ फ़ाइलें हटाई नहीं जा सकीं</string>
     <string name="cleanup_cancelled">सफाई रद्द की गई</string>
     <string name="cleanup_partial">%1$d फ़ाइलें हटाई गईं, %2$d असफल रहीं</string>
+    <string name="current_streak_label">वर्तमान स्ट्रीक: लगातार %1$d दिन</string>
+    <string name="longest_streak_label">सबसे लंबी स्ट्रीक: %1$d दिनों का रिकॉर्ड!</string>
 </resources>

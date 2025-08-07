@@ -415,4 +415,6 @@
     <string name="cleanup_failed_details">Bazı dosyalar silinemedi</string>
     <string name="cleanup_cancelled">Temizlik iptal edildi</string>
     <string name="cleanup_partial">%1$d dosya silindi, %2$d başarısız oldu</string>
+    <string name="current_streak_label">Mevcut seri: art arda %1$d gün</string>
+    <string name="longest_streak_label">En uzun seri: %1$d günlük rekor!</string>
 </resources>
