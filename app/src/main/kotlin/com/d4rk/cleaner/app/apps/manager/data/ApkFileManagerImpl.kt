@@ -11,12 +11,19 @@ import com.d4rk.cleaner.app.apps.manager.domain.interfaces.ApkFileManager
 import com.d4rk.cleaner.core.domain.model.network.Errors
 import com.d4rk.cleaner.core.utils.extensions.toError
 import com.d4rk.cleaner.core.utils.helpers.DirectoryScanner
+import com.d4rk.cleaner.core.utils.helpers.shouldSkip
+import com.d4rk.cleaner.core.data.datastore.DataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import java.io.File
 
-class ApkFileManagerImpl(private val application: Application) : ApkFileManager {
+class ApkFileManagerImpl(
+    private val application: Application,
+    private val dataStore: DataStore,
+) : ApkFileManager {
     override fun getApkFilesFromStorage(): Flow<DataState<List<ApkInfo>, Errors>> = flow {
+        val showHidden = dataStore.showHiddenFiles.first()
         runCatching {
             val apkFiles: MutableList<ApkInfo> = mutableListOf()
             val addedPaths: MutableSet<String> = mutableSetOf()
@@ -48,7 +55,11 @@ class ApkFileManagerImpl(private val application: Application) : ApkFileManager 
                 }
             }
 
-            DirectoryScanner.scan(Environment.getExternalStorageDirectory()) { file ->
+            DirectoryScanner.scan(
+                root = Environment.getExternalStorageDirectory(),
+                skipDir = { dir -> dir.shouldSkip(showHidden) }
+            ) { file ->
+                if (file.shouldSkip(showHidden)) return@scan
                 if (file.extension.equals("apk", ignoreCase = true)) {
                     val path = file.absolutePath
                     if (file.exists() && file.canWrite() && addedPaths.add(path)) {
