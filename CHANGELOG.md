@@ -5,6 +5,9 @@
 - **New**: Introduced a link cleaner to remove tracking parameters from URLs before sharing.
 - **Minor**: Improved the UI of the Contacts Cleaner screen.
 - **Minor**: File previews are now faster and more reliable across all lists.
+- **Minor**: Improved search experience on app manager.
+- **Minor**: Redesigned the streak card for better visualisation.
+- **Minor**: Redesigned the image optimizer for better management.
 
 # Version 3.5.0:
 

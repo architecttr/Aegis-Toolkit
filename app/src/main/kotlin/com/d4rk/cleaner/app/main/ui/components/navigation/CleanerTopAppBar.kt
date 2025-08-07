@@ -24,12 +24,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.VolunteerActivism
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -118,7 +120,7 @@ fun CleanerTopAppBar(
                                     modifier = Modifier.size(SizeConstants.ButtonIconSize)
                                 )
                                 SmallHorizontalSpacer()
-                                Box(modifier = Modifier.fillMaxWidth()) {
+                                Box(modifier = Modifier.weight(1f)) { // Takes up available space
                                     if (searchQuery.isEmpty()) {
                                         Text(
                                             text = stringResource(id = R.string.search),
@@ -129,6 +131,21 @@ fun CleanerTopAppBar(
                                         )
                                     }
                                     innerTextField()
+                                }
+                                AnimatedVisibility(
+                                    visible = searchQuery.isNotEmpty(),
+                                    enter = scaleIn(),
+                                    exit = scaleOut()
+                                ) {
+                                    IconButton(
+                                        onClick = { onSearchQueryChange("") },
+                                        modifier = Modifier.size(SizeConstants.ButtonIconSize)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Close,
+                                            contentDescription = "Clear search" // Consider using stringResource
+                                        )
+                                    }
                                 }
                             }
                         })
