@@ -35,11 +35,21 @@ object FileCleaner {
             )
         ) {
             FileCleanWorkEnqueuer.Result.AlreadyRunning -> {
-                showSnackbar(UiSnackbar(message = inProgressMessage))
+                showSnackbar(
+                    UiSnackbar(
+                        message = inProgressMessage,
+                        isError = false,
+                    ),
+                )
             }
             is FileCleanWorkEnqueuer.Result.Enqueued -> {
                 onEnqueued(result.id)
-                showSnackbar(UiSnackbar(message = inProgressMessage))
+                showSnackbar(
+                    UiSnackbar(
+                        message = inProgressMessage,
+                        isError = false,
+                    ),
+                )
             }
             is FileCleanWorkEnqueuer.Result.Error -> {
                 onError()
