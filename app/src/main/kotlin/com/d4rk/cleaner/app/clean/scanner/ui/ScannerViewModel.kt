@@ -332,7 +332,11 @@ class ScannerViewModel(
                 getWorkId = { dataStore.scannerCleanWorkId.first() },
                 saveWorkId = { dataStore.saveScannerCleanWorkId(it) },
                 clearWorkId = { dataStore.clearScannerCleanWorkId() },
-                showSnackbar = { postSnackbar(it.message, it.isError) },
+                showSnackbar = { snackbar ->
+                    if (snackbar.isError) {
+                        postSnackbar(snackbar.message, true)
+                    }
+                },
                 onEnqueued = { id ->
                     if (fromApkCleaner) _cleaningApks.value = true
                     _uiState.update { state ->

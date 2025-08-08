@@ -289,7 +289,7 @@ class FileCleanupWorker(
         const val MAX_PATHS_PER_WORKER = 100
         private const val NOTIFICATION_ID = 2001
         private const val NOTIFICATION_CHANNEL = "file_cleanup"
-        private const val FINISH_DELAY_MS = 10000L
+        private const val FINISH_DELAY_MS = 2000L
         private const val TAG = "FileCleanupWorker"
     }
 }
