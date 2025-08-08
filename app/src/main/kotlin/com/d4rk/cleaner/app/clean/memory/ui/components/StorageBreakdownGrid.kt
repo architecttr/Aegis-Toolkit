@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.SnippetFolder
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -45,6 +46,7 @@ fun StorageBreakdownGrid(
             model = model,
             iconContainerColor = GroupedGridStyle.iconContainerColor,
             onClick = { onItemClick(label) },
+            iconShape = MaterialTheme.shapes.medium,
         )
     }
 }

@@ -253,7 +253,7 @@ private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
                     .shimmerEffect(),
             )
 
-            ExtraTinyHorizontalSpacer()
+            SmallHorizontalSpacer()
 
             Column {
                 Spacer(

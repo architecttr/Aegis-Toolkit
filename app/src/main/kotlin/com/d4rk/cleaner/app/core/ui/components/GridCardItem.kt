@@ -18,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -33,13 +35,13 @@ fun GridCardItem(
     title: String,
     subtitle: String,
     iconContainerColor: Color = GroupedGridStyle.iconContainerColor,
+    iconShape: Shape = CircleShape,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier.animateContentSize(),
         shape = GroupedGridStyle.cardShape,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         onClick = onClick,
     ) {
         Row(
@@ -53,7 +55,8 @@ fun GridCardItem(
                 modifier = Modifier
                     .padding(end = SizeConstants.SmallSize)
                     .size(48.dp)
-                    .background(iconContainerColor, CircleShape),
+                    .clip(iconShape)
+                    .background(iconContainerColor),
                 contentAlignment = Alignment.Center,
             ) {
                 when {
@@ -92,6 +95,7 @@ fun GridCardItem(
     model: GridCardModel,
     modifier: Modifier = Modifier,
     iconContainerColor: Color = GroupedGridStyle.iconContainerColor,
+    iconShape: Shape = CircleShape,
     onClick: () -> Unit,
 ) {
     GridCardItem(
@@ -100,6 +104,7 @@ fun GridCardItem(
         title = model.title,
         subtitle = model.subtitle,
         iconContainerColor = iconContainerColor,
+        iconShape = iconShape,
         onClick = onClick,
         modifier = modifier,
     )
