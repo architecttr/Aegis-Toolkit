@@ -229,7 +229,7 @@
     <string name="status_no_files_selected">الحالة: مفيش ملفات متحددة</string>
     <string name="select_all">تحديد الكل</string>
     <string name="select_all_files_title">تحديد كل الملفات؟</string>
-    <string name="select_all_files_message">أنت على وشك تحديد كل الملفات المعروضة على هذه الشاشة.&#10;&#10;هل أنت متأكد أنك تريد المتابعة؟</string>
+    <string name="select_all_files_message">أنت على وشك تحديد كل الملفات المعروضة على هذه الشاشة.\n\nهل أنت متأكد أنك تريد المتابعة؟</string>
     <string name="dont_show_warning_again">لا تظهر هذا التحذير مرة أخرى</string>
     <string name="delete_confirmation_title">حذف المحدد</string>
     <plurals name="delete_confirmation_message">

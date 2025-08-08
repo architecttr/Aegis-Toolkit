@@ -219,7 +219,7 @@
     <string name="status_no_files_selected">Статус: Файли не вибрано</string>
     <string name="select_all">Вибрати все</string>
     <string name="select_all_files_title">Вибрати всі файли?</string>
-    <string name="select_all_files_message">Ви збираєтеся вибрати всі файли, показані на цьому екрані.&#10;&#10;Ви впевнені, що хочете продовжити?</string>
+    <string name="select_all_files_message">Ви збираєтеся вибрати всі файли, показані на цьому екрані.\n\nВи впевнені, що хочете продовжити?</string>
     <string name="dont_show_warning_again">Більше не показувати це попередження</string>
     <string name="delete_confirmation_title">Видалити вибране</string>
     <plurals name="delete_confirmation_message">

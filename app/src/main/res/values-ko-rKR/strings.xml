@@ -204,7 +204,7 @@
     <string name="status_no_files_selected">상태: 선택된 파일 없음</string>
     <string name="select_all">모두 선택</string>
     <string name="select_all_files_title">모든 파일을 선택하시겠습니까?</string>
-    <string name="select_all_files_message">이 화면에 표시된 모든 파일을 선택하려고 합니다.&#10;&#10;계속하시겠습니까?</string>
+    <string name="select_all_files_message">이 화면에 표시된 모든 파일을 선택하려고 합니다.\n\n계속하시겠습니까?</string>
     <string name="dont_show_warning_again">이 경고를 다시 표시하지 않음</string>
     <string name="delete_confirmation_title">선택 항목 삭제</string>
     <plurals name="delete_confirmation_message">

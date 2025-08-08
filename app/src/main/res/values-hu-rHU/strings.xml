@@ -209,7 +209,7 @@
     <string name="status_no_files_selected">Állapot: Nincs kiválasztott fájl</string>
     <string name="select_all">Összes kijelölése</string>
     <string name="select_all_files_title">Minden fájl kijelölése?</string>
-    <string name="select_all_files_message">Éppen az összes ezen a képernyőn megjelenített fájlt készül kijelölni.&#10;&#10;Biztosan folytatja?</string>
+    <string name="select_all_files_message">Éppen az összes ezen a képernyőn megjelenített fájlt készül kijelölni.\n\nBiztosan folytatja?</string>
     <string name="dont_show_warning_again">Ne jelenjen meg többé ez a figyelmeztetés</string>
     <string name="delete_confirmation_title">Kiválasztottak törlése</string>
     <plurals name="delete_confirmation_message">

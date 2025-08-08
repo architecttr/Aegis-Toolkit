@@ -209,7 +209,7 @@
     <string name="status_no_files_selected">Status: Keine Dateien ausgewählt</string>
     <string name="select_all">Alle auswählen</string>
     <string name="select_all_files_title">Alle Dateien auswählen?</string>
-    <string name="select_all_files_message">Du bist dabei, alle auf diesem Bildschirm angezeigten Dateien auszuwählen.&#10;&#10;Bist du sicher, dass du fortfahren möchtest?</string>
+    <string name="select_all_files_message">Du bist dabei, alle auf diesem Bildschirm angezeigten Dateien auszuwählen.\n\nBist du sicher, dass du fortfahren möchtest?</string>
     <string name="dont_show_warning_again">Diese Warnung nicht mehr anzeigen</string>
     <string name="delete_confirmation_title">Auswahl löschen</string>
     <plurals name="delete_confirmation_message">

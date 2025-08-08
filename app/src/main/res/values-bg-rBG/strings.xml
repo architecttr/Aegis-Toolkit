@@ -209,7 +209,7 @@
     <string name="status_no_files_selected">Състояние: Няма избрани файлове</string>
     <string name="select_all">Избери всички</string>
     <string name="select_all_files_title">Избор на всички файлове?</string>
-    <string name="select_all_files_message">На път сте да изберете всички файлове, показани на този екран.&#10;&#10;Сигурни ли сте, че искате да продължите?</string>
+    <string name="select_all_files_message">На път сте да изберете всички файлове, показани на този екран.\n\nСигурни ли сте, че искате да продължите?</string>
     <string name="dont_show_warning_again">Не показвай повече това предупреждение</string>
     <string name="delete_confirmation_title">Изтриване на избраното</string>
     <plurals name="delete_confirmation_message">

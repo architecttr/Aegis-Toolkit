@@ -209,7 +209,7 @@
     <string name="status_no_files_selected">Durum: Hiçbir dosya seçilmedi</string>
     <string name="select_all">Tümünü Seç</string>
     <string name="select_all_files_title">Tüm dosyalar seçilsin mi?</string>
-    <string name="select_all_files_message">Bu ekranda gösterilen tüm dosyaları seçmek üzeresiniz.&#10;&#10;Devam etmek istediğinizden emin misiniz?</string>
+    <string name="select_all_files_message">Bu ekranda gösterilen tüm dosyaları seçmek üzeresiniz.\n\nDevam etmek istediğinizden emin misiniz?</string>
     <string name="dont_show_warning_again">Bu uyarıyı bir daha gösterme</string>
     <string name="delete_confirmation_title">Seçilenleri Sil</string>
     <plurals name="delete_confirmation_message">
