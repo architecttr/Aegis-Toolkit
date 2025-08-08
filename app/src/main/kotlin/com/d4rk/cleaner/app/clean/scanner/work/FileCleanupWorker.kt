@@ -5,15 +5,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import kotlinx.coroutines.delay
 import com.d4rk.android.libs.apptoolkit.core.domain.model.network.DataState
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.scanner.domain.operations.CleaningManager
@@ -137,7 +136,6 @@ class FileCleanupWorker(
                         .setContentTitle(applicationContext.getString(R.string.cleanup_cancelled))
                         .setContentText(applicationContext.getString(R.string.cleanup_cancelled))
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
-                    delay(FINISH_DELAY_MS)
                     notificationManager.cancel(NOTIFICATION_ID)
                 } else {
                     Log.w(TAG, "Notification permission not granted")
@@ -183,7 +181,6 @@ class FileCleanupWorker(
                     .setContentTitle(applicationContext.getString(R.string.cleanup_cancelled))
                     .setContentText(applicationContext.getString(R.string.cleanup_cancelled))
                 notificationManager.notify(NOTIFICATION_ID, builder.build())
-                delay(FINISH_DELAY_MS)
                 notificationManager.cancel(NOTIFICATION_ID)
             } else {
                 Log.w(TAG, "Notification permission not granted")
@@ -208,7 +205,6 @@ class FileCleanupWorker(
                     builder.setContentTitle(applicationContext.getString(R.string.cleanup_finished))
                         .setContentText(applicationContext.getString(R.string.all_clean))
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
-                    delay(FINISH_DELAY_MS)
                     notificationManager.cancel(NOTIFICATION_ID)
                 } else {
                     Log.w(TAG, "Notification permission not granted")
@@ -220,7 +216,6 @@ class FileCleanupWorker(
                     builder.setContentTitle(applicationContext.getString(R.string.cleanup_failed))
                         .setContentText(applicationContext.getString(R.string.cleanup_failed_details))
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
-                    delay(FINISH_DELAY_MS)
                     notificationManager.cancel(NOTIFICATION_ID)
                 } else {
                     Log.w(TAG, "Notification permission not granted")
@@ -239,7 +234,6 @@ class FileCleanupWorker(
                             ),
                         )
                     notificationManager.notify(NOTIFICATION_ID, builder.build())
-                    delay(FINISH_DELAY_MS)
                     notificationManager.cancel(NOTIFICATION_ID)
                 } else {
                     Log.w(TAG, "Notification permission not granted")
@@ -289,7 +283,6 @@ class FileCleanupWorker(
         const val MAX_PATHS_PER_WORKER = 100
         private const val NOTIFICATION_ID = 2001
         private const val NOTIFICATION_CHANNEL = "file_cleanup"
-        private const val FINISH_DELAY_MS = 2000L
         private const val TAG = "FileCleanupWorker"
     }
 }

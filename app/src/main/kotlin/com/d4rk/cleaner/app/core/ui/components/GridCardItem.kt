@@ -9,10 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,15 +32,14 @@ fun GridCardItem(
     iconVector: ImageVector? = null,
     title: String,
     subtitle: String,
-    colors: CardColors = GroupedGridStyle.cardColors(),
     iconContainerColor: Color = GroupedGridStyle.iconContainerColor,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier.animateContentSize(),
-        colors = colors,
         shape = GroupedGridStyle.cardShape,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         onClick = onClick,
     ) {
         Row(
@@ -93,7 +91,6 @@ fun GridCardItem(
 fun GridCardItem(
     model: GridCardModel,
     modifier: Modifier = Modifier,
-    colors: CardColors = GroupedGridStyle.cardColors(),
     iconContainerColor: Color = GroupedGridStyle.iconContainerColor,
     onClick: () -> Unit,
 ) {
@@ -102,7 +99,6 @@ fun GridCardItem(
         iconVector = model.iconVector,
         title = model.title,
         subtitle = model.subtitle,
-        colors = colors,
         iconContainerColor = iconContainerColor,
         onClick = onClick,
         modifier = modifier,

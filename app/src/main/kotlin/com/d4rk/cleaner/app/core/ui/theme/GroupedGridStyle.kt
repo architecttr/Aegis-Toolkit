@@ -12,10 +12,6 @@ object GroupedGridStyle {
     val cardShape = RoundedCornerShape(SizeConstants.ExtraTinySize)
     val gridClipShape = RoundedCornerShape(SizeConstants.LargeIncreasedSize)
 
-    @Composable
-    fun cardColors(containerColor: Color = MaterialTheme.colorScheme.surface): CardColors =
-        CardDefaults.cardColors(containerColor = containerColor)
-
     val iconContainerColor: Color
         @Composable get() = MaterialTheme.colorScheme.primaryContainer
 }

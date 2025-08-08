@@ -9,14 +9,12 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.SnippetFolder
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.weight
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.core.ui.components.GridCardItem
-import com.d4rk.cleaner.app.core.ui.components.GroupedGridLayout
 import com.d4rk.cleaner.app.core.ui.components.GridCardModel
+import com.d4rk.cleaner.app.core.ui.components.GroupedGridLayout
 import com.d4rk.cleaner.app.core.ui.theme.GroupedGridStyle
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter.format as formatSize
 
@@ -45,11 +43,8 @@ fun StorageBreakdownGrid(
 
         GridCardItem(
             model = model,
-            modifier = Modifier.weight(1f),
-            colors = GroupedGridStyle.cardColors(),
             iconContainerColor = GroupedGridStyle.iconContainerColor,
             onClick = { onItemClick(label) },
         )
     }
 }
-

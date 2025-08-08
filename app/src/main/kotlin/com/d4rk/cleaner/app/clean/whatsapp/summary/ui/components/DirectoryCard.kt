@@ -1,6 +1,5 @@
 package com.d4rk.cleaner.app.clean.whatsapp.summary.ui.components
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,7 +18,6 @@ fun DirectoryCard(
         iconPainter = painterResource(id = item.icon),
         title = item.name,
         subtitle = item.size,
-        colors = GroupedGridStyle.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         iconContainerColor = GroupedGridStyle.iconContainerColor,
         onClick = { onOpenDetails(item.type) },
     )
