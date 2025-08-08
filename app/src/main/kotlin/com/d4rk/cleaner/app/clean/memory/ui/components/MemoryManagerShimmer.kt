@@ -19,19 +19,21 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.carousel.DotsIndicator
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.hapticPagerSwipe
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.shimmerEffect
-import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraSmallHorizontalSpacer
+import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraTinyHorizontalSpacer
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraTinyVerticalSpacer
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.LargeVerticalSpacer
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.MediumVerticalSpacer
@@ -188,53 +190,59 @@ private fun CarouselShimmerCard(pageOffset: Float) {
 
 @Composable
 private fun StorageBreakdownGridShimmer() {
-    Column(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()
-            .padding(horizontal = SizeConstants.MediumSize)
+            .padding(horizontal = SizeConstants.MediumSize),
+        shape = RoundedCornerShape(SizeConstants.MediumSize),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
     ) {
-        repeat(3) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-
-            ) {
-                StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
-
-                StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
-            }
-
-        }
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(SizeConstants.ExtraTinySize)
         ) {
-            StorageBreakdownItemShimmer(modifier = Modifier.fillMaxWidth())
+            repeat(3) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
+
+                    StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+            ) {
+                StorageBreakdownItemShimmer(modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }
-
-@Composable
 private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .padding(all = SizeConstants.ExtraSmallSize),
+            .padding(all = SizeConstants.ExtraTinySize),
+        shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(all = SizeConstants.LargeSize),
+                .padding(all = SizeConstants.ExtraTinySize),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(SizeConstants.MediumSize))
-                    .shimmerEffect()
+                    .shimmerEffect(),
             )
 
-            ExtraSmallHorizontalSpacer()
+            ExtraTinyHorizontalSpacer()
 
             Column {
                 Spacer(
@@ -242,7 +250,7 @@ private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
                         .fillMaxWidth(0.8f)
                         .height(MaterialTheme.typography.bodyMedium.lineHeight.value.dp)
                         .clip(RoundedCornerShape(SizeConstants.ExtraSmallSize))
-                        .shimmerEffect()
+                        .shimmerEffect(),
                 )
                 ExtraTinyVerticalSpacer()
                 Spacer(
@@ -250,9 +258,10 @@ private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
                         .fillMaxWidth(0.6f)
                         .height(MaterialTheme.typography.bodySmall.lineHeight.value.dp)
                         .clip(RoundedCornerShape(SizeConstants.ExtraSmallSize))
-                        .shimmerEffect()
+                        .shimmerEffect(),
                 )
             }
         }
     }
+}
 }

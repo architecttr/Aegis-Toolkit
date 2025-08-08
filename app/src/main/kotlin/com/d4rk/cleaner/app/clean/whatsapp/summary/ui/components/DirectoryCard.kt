@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.bounceClick
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.DirectoryItem
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun DirectoryCard(
@@ -33,22 +34,23 @@ fun DirectoryCard(
 ) {
     Card(
         modifier = modifier
-            .padding(all = SizeConstants.ExtraSmallSize)
+            .padding(all = SizeConstants.ExtraTinySize)
             .animateContentSize()
             .bounceClick(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
         onClick = { onOpenDetails(item.type) }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .animateContentSize()
-                .padding(all = SizeConstants.LargeSize),
+                .padding(all = SizeConstants.ExtraTinySize),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .padding(end = 16.dp)
+                    .padding(end = SizeConstants.SmallSize)
                     .size(48.dp)
                     .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                 contentAlignment = Alignment.Center
