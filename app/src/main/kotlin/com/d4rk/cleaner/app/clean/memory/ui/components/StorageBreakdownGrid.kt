@@ -1,61 +1,55 @@
 package com.d4rk.cleaner.app.clean.memory.ui.components
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Android
+import androidx.compose.material.icons.outlined.Apps
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.FolderOpen
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.SnippetFolder
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
+import androidx.compose.foundation.layout.weight
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.d4rk.cleaner.R
+import com.d4rk.cleaner.app.core.ui.components.GridCardItem
+import com.d4rk.cleaner.app.core.ui.components.GroupedGridLayout
+import com.d4rk.cleaner.app.core.ui.components.GridCardModel
+import com.d4rk.cleaner.app.core.ui.theme.GroupedGridStyle
+import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter.format as formatSize
 
 @Composable
 fun StorageBreakdownGrid(
     storageBreakdown: Map<String, Long>,
     onItemClick: (String) -> Unit = {},
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(SizeConstants.MediumSize)
-            .animateContentSize(),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(SizeConstants.LargeIncreasedSize))
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(SizeConstants.ExtraTinySize)) {
-                storageBreakdown.entries.toList().chunked(size = 2)
-                    .forEach { chunk: List<Map.Entry<String, Long>> ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .animateContentSize(),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                space = SizeConstants.ExtraTinySize,
-                                alignment = Alignment.CenterHorizontally
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            for (item: Map.Entry<String, Long> in chunk) {
-                                val (icon: String, size: Long) = item
-                                StorageBreakdownItem(
-                                    icon = icon,
-                                    size = size,
-                                    modifier = Modifier.weight(1f),
-                                    onClick = { onItemClick(icon) }
-                                )
-                            }
-                        }
-                    }
-            }
+    val storageIcons: Map<String, ImageVector> = mapOf(
+        stringResource(id = R.string.installed_apps) to Icons.Outlined.Apps,
+        stringResource(id = R.string.system) to Icons.Outlined.Android,
+        stringResource(id = R.string.music) to Icons.Outlined.MusicNote,
+        stringResource(id = R.string.images) to Icons.Outlined.Image,
+        stringResource(id = R.string.documents) to Icons.Outlined.FolderOpen,
+        stringResource(id = R.string.downloads) to Icons.Outlined.Download,
+        stringResource(id = R.string.other_files) to Icons.Outlined.FolderOpen,
+    )
+
+    GroupedGridLayout(items = storageBreakdown.entries.toList()) { (label, bytes) ->
+        val model = object : GridCardModel {
+            override val title = label
+            override val subtitle = formatSize(bytes)
+            override val iconVector = storageIcons[label] ?: Icons.Outlined.SnippetFolder
+            override val iconPainter = null
         }
+
+        GridCardItem(
+            model = model,
+            modifier = Modifier.weight(1f),
+            colors = GroupedGridStyle.cardColors(),
+            iconContainerColor = GroupedGridStyle.iconContainerColor,
+            onClick = { onItemClick(label) },
+        )
     }
 }
 
