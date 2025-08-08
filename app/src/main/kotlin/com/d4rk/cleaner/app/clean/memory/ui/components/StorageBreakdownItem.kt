@@ -26,12 +26,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.bounceClick
-import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraSmallHorizontalSpacer
+import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraTinyHorizontalSpacer
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.core.utils.helpers.FileSizeFormatter.format as formatSize
@@ -54,10 +55,9 @@ fun StorageBreakdownItem(
     )
     Card(
         modifier = modifier
-            .padding(all = SizeConstants.ExtraSmallSize)
             .animateContentSize()
-            .bounceClick()
-            .clickable { onClick() }
+            .clickable { onClick() },
+        shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
     ) {
         Row(
             modifier = Modifier
@@ -80,7 +80,7 @@ fun StorageBreakdownItem(
                 }
             }
 
-            ExtraSmallHorizontalSpacer()
+            ExtraTinyHorizontalSpacer()
 
             Column {
                 Text(

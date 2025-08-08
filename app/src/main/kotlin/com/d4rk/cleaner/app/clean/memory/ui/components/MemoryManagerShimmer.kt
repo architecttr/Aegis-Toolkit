@@ -4,6 +4,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,7 +33,7 @@ import androidx.compose.ui.util.lerp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.carousel.DotsIndicator
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.hapticPagerSwipe
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.shimmerEffect
-import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraSmallHorizontalSpacer
+import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraTinyHorizontalSpacer
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraTinyVerticalSpacer
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.LargeVerticalSpacer
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.MediumVerticalSpacer
@@ -188,29 +190,46 @@ private fun CarouselShimmerCard(pageOffset: Float) {
 
 @Composable
 private fun StorageBreakdownGridShimmer() {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize()
-            .padding(horizontal = SizeConstants.MediumSize)
+            .padding(SizeConstants.MediumSize)
+            .animateContentSize(),
     ) {
-        repeat(3) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-
-            ) {
-                StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
-
-                StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
-            }
-
-        }
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(SizeConstants.LargeIncreasedSize))
         ) {
-            StorageBreakdownItemShimmer(modifier = Modifier.fillMaxWidth())
+            Column(verticalArrangement = Arrangement.spacedBy(SizeConstants.ExtraTinySize)) {
+                repeat(3) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize(),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            space = SizeConstants.ExtraTinySize,
+                            alignment = Alignment.CenterHorizontally
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
+                        StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateContentSize(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = SizeConstants.ExtraTinySize,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    StorageBreakdownItemShimmer(modifier = Modifier.fillMaxWidth())
+                }
+            }
         }
     }
 }
@@ -218,8 +237,8 @@ private fun StorageBreakdownGridShimmer() {
 @Composable
 private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier
-            .padding(all = SizeConstants.ExtraSmallSize),
+        modifier = modifier,
+        shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
     ) {
         Row(
             modifier = Modifier
@@ -231,10 +250,10 @@ private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(SizeConstants.MediumSize))
-                    .shimmerEffect()
+                    .shimmerEffect(),
             )
 
-            ExtraSmallHorizontalSpacer()
+            ExtraTinyHorizontalSpacer()
 
             Column {
                 Spacer(
@@ -242,7 +261,7 @@ private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
                         .fillMaxWidth(0.8f)
                         .height(MaterialTheme.typography.bodyMedium.lineHeight.value.dp)
                         .clip(RoundedCornerShape(SizeConstants.ExtraSmallSize))
-                        .shimmerEffect()
+                        .shimmerEffect(),
                 )
                 ExtraTinyVerticalSpacer()
                 Spacer(
@@ -250,7 +269,7 @@ private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
                         .fillMaxWidth(0.6f)
                         .height(MaterialTheme.typography.bodySmall.lineHeight.value.dp)
                         .clip(RoundedCornerShape(SizeConstants.ExtraSmallSize))
-                        .shimmerEffect()
+                        .shimmerEffect(),
                 )
             }
         }
