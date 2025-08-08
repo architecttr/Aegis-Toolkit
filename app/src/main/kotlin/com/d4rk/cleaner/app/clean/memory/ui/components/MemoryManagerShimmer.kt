@@ -234,6 +234,7 @@ private fun StorageBreakdownGridShimmer() {
     }
 }
 
+@Composable
 private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
