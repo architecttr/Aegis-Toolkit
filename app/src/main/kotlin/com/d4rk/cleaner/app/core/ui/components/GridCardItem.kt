@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.bounceClick
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
+import com.d4rk.cleaner.app.core.ui.theme.GroupedGridStyle
 
 @Composable
 fun GridCardItem(
@@ -32,15 +32,15 @@ fun GridCardItem(
     iconVector: ImageVector? = null,
     title: String,
     subtitle: String,
-    containerColor: Color,
-    iconBgColor: Color,
+    colors: CardColors = GroupedGridStyle.cardColors,
+    iconContainerColor: Color = GroupedGridStyle.iconContainerColor,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier.animateContentSize(),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
+        colors = colors,
+        shape = GroupedGridStyle.cardShape,
         onClick = onClick,
     ) {
         Row(
@@ -54,7 +54,7 @@ fun GridCardItem(
                 modifier = Modifier
                     .padding(end = SizeConstants.SmallSize)
                     .size(48.dp)
-                    .background(iconBgColor, CircleShape),
+                    .background(iconContainerColor, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
                 when {

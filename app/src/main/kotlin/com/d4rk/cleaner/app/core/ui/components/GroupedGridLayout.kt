@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
+import com.d4rk.cleaner.app.core.ui.theme.GroupedGridStyle
 
 @Composable
 fun <T> GroupedGridLayout(
@@ -30,7 +30,7 @@ fun <T> GroupedGridLayout(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(SizeConstants.LargeIncreasedSize)),
+                .clip(GroupedGridStyle.gridClipShape),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(SizeConstants.ExtraTinySize)) {
                 items.chunked(chunkSize).forEach { chunk ->
