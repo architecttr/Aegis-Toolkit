@@ -13,6 +13,9 @@ sealed class ScannerEvent : UiEvent {
     data class ToggleAnalyzeScreen(val visible: Boolean) : ScannerEvent()
     data class OnFileSelectionChange(val file: File, val isChecked: Boolean) : ScannerEvent()
     object ToggleSelectAllFiles : ScannerEvent()
+    object OnGlobalSelectAllClick : ScannerEvent()
+    data class ConfirmGlobalSelectAll(val dontShowAgain: Boolean) : ScannerEvent()
+    object DismissGlobalSelectAllWarning : ScannerEvent()
     data class ToggleSelectFilesForCategory(val category: String) : ScannerEvent()
     data class ToggleSelectFilesForDate(val files: List<File>, val isChecked: Boolean) :
         ScannerEvent()

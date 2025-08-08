@@ -182,6 +182,9 @@ class ScannerViewModel(
             )
 
             is ScannerEvent.ToggleSelectAllFiles -> toggleSelectAllFiles()
+            is ScannerEvent.OnGlobalSelectAllClick -> onGlobalSelectAllClick()
+            is ScannerEvent.ConfirmGlobalSelectAll -> confirmGlobalSelectAll(event.dontShowAgain)
+            is ScannerEvent.DismissGlobalSelectAllWarning -> setGlobalSelectAllWarningDialogVisibility(false)
             is ScannerEvent.ToggleSelectFilesForCategory -> toggleSelectFilesForCategory(category = event.category)
             is ScannerEvent.ToggleSelectFilesForDate -> toggleSelectFilesForDate(
                 event.files,
@@ -442,6 +445,40 @@ class ScannerViewModel(
                     )
                 )
             }
+        }
+    }
+
+    private fun setGlobalSelectAllWarningDialogVisibility(isVisible: Boolean) {
+        _uiState.update { state: UiStateScreen<UiScannerModel> ->
+            val currentData: UiScannerModel = state.data ?: UiScannerModel()
+            state.copy(
+                data = currentData.copy(
+                    analyzeState = currentData.analyzeState.copy(
+                        isGlobalSelectAllWarningDialogVisible = isVisible
+                    )
+                )
+            )
+        }
+    }
+
+    private fun onGlobalSelectAllClick() {
+        launch(context = dispatchers.io) {
+            val showDialog = dataStore.showGlobalSelectAllWarning.first()
+            if (showDialog) {
+                setGlobalSelectAllWarningDialogVisibility(true)
+            } else {
+                toggleSelectAllFiles()
+            }
+        }
+    }
+
+    private fun confirmGlobalSelectAll(dontShowAgain: Boolean) {
+        launch(context = dispatchers.io) {
+            if (dontShowAgain) {
+                dataStore.saveShowGlobalSelectAllWarning(false)
+            }
+            toggleSelectAllFiles()
+            setGlobalSelectAllWarningDialogVisibility(false)
         }
     }
 

@@ -208,6 +208,9 @@
     </plurals>
     <string name="status_no_files_selected">حیثیت: کوئی فائل منتخب نہیں کی گئی</string>
     <string name="select_all">سب کو منتخب کریں</string>
+    <string name="select_all_files_title">تمام فائلیں منتخب کریں؟</string>
+    <string name="select_all_files_message">آپ اس اسکرین پر دکھائی جانے والی تمام فائلیں منتخب کرنے والے ہیں۔\n\nکیا آپ واقعی جاری رکھنا چاہتے ہیں؟</string>
+    <string name="dont_show_warning_again">یہ انتباہ دوبارہ نہ دکھائیں</string>
     <string name="delete_confirmation_title">منتخب حذف کریں</string>
     <plurals name="delete_confirmation_message">
         <item quantity="one">کیا %1$d آئٹم حذف کریں؟</item>

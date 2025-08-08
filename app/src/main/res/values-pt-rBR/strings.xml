@@ -213,6 +213,9 @@
     </plurals>
     <string name="status_no_files_selected">Status: Nenhum arquivo selecionado</string>
     <string name="select_all">Selecionar Tudo</string>
+    <string name="select_all_files_title">Selecionar todos os arquivos?</string>
+    <string name="select_all_files_message">Você está prestes a selecionar todos os arquivos exibidos nesta tela.\n\nTem certeza de que deseja continuar?</string>
+    <string name="dont_show_warning_again">Não mostrar este aviso novamente</string>
     <string name="delete_confirmation_title">Excluir selecionados</string>
     <plurals name="delete_confirmation_message">
         <item quantity="one">Excluir %1$d item?</item>

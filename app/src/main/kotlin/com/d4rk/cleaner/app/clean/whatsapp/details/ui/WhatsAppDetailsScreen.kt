@@ -68,12 +68,14 @@ import com.d4rk.android.libs.apptoolkit.core.ui.components.navigation.LargeTopAp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraSmallHorizontalSpacer
 import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.analyze.ui.components.FileCard
+import com.d4rk.cleaner.app.clean.analyze.ui.components.dialogs.GlobalSelectAllWarningDialog
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FileListItem
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FilePreviewCard
 import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
 import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.actions.WhatsAppDetailsEvent
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.model.UiWhatsAppDetailsModel
+import com.d4rk.cleaner.app.clean.whatsapp.details.domain.model.SortType
 import com.d4rk.cleaner.app.clean.whatsapp.details.ui.components.CustomTabLayout
 import com.d4rk.cleaner.app.clean.whatsapp.details.ui.components.DetailsStatusRow
 import com.d4rk.cleaner.app.clean.whatsapp.details.ui.components.dialogs.SortAlertDialog
@@ -82,9 +84,11 @@ import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.UiWhatsAppCleane
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.WhatsappCleanerSummaryViewModel
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
 import com.d4rk.cleaner.app.clean.whatsapp.utils.helpers.openFile
+import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import org.koin.compose.koinInject
 import org.koin.core.qualifier.named
 import java.io.File
@@ -119,6 +123,9 @@ fun DetailsScreen(
     val isGrid = detailsState.data?.isGridView ?: true
     var showSort by remember { mutableStateOf(false) }
     var showConfirm by remember { mutableStateOf(false) }
+    val dataStore: DataStore = koinInject()
+    val coroutineScope = rememberCoroutineScope()
+    var showGlobalSelectAllWarning by remember { mutableStateOf(false) }
 
     val scrollBehavior: TopAppBarScrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -290,6 +297,16 @@ fun DetailsScreen(
 
                         AdBanner(modifier = Modifier.fillMaxWidth(), adsConfig = adsConfig)
 
+                        val toggleSelectAll = {
+                            val accessible = sortedFiles.filterNot { it.isProtectedAndroidDir() }
+                            if (selected.count { !it.isProtectedAndroidDir() } == accessible.size && accessible.isNotEmpty()) {
+                                selected.removeAll(accessible)
+                            } else {
+                                selected.removeAll { it.isProtectedAndroidDir() }
+                                selected.addAll(accessible)
+                            }
+                        }
+
                         if (tabs.size <= 1) {
                             DetailsStatusRow(
                                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -299,12 +316,12 @@ fun DetailsScreen(
                                         sortedFiles.any { !it.isProtectedAndroidDir() },
                                 view = view,
                                 onClickSelectAll = {
-                                    val accessible = sortedFiles.filterNot { it.isProtectedAndroidDir() }
-                                    if (selected.count { !it.isProtectedAndroidDir() } == accessible.size && accessible.isNotEmpty()) {
-                                        selected.removeAll(accessible)
-                                    } else {
-                                        selected.removeAll { it.isProtectedAndroidDir() }
-                                        selected.addAll(accessible)
+                                    coroutineScope.launch {
+                                        if (dataStore.showGlobalSelectAllWarning.first()) {
+                                            showGlobalSelectAllWarning = true
+                                        } else {
+                                            toggleSelectAll()
+                                        }
                                     }
                                 }
                             )
@@ -340,6 +357,27 @@ fun DetailsScreen(
                     WhatsAppDetailsEvent.ApplySort(type, desc, start, end)
                 )
             }
+        )
+    }
+
+    if (showGlobalSelectAllWarning) {
+        GlobalSelectAllWarningDialog(
+            onConfirm = { dontShowAgain ->
+                coroutineScope.launch {
+                    if (dontShowAgain) {
+                        dataStore.saveShowGlobalSelectAllWarning(false)
+                    }
+                }
+                val accessible = sortedFiles.filterNot { it.isProtectedAndroidDir() }
+                if (selected.count { !it.isProtectedAndroidDir() } == accessible.size && accessible.isNotEmpty()) {
+                    selected.removeAll(accessible)
+                } else {
+                    selected.removeAll { it.isProtectedAndroidDir() }
+                    selected.addAll(accessible)
+                }
+                showGlobalSelectAllWarning = false
+            },
+            onDismiss = { showGlobalSelectAllWarning = false }
         )
     }
 

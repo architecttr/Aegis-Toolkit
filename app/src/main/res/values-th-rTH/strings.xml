@@ -203,6 +203,9 @@
     </plurals>
     <string name="status_no_files_selected">สถานะ: ไม่ได้เลือกไฟล์</string>
     <string name="select_all">เลือกทั้งหมด</string>
+    <string name="select_all_files_title">เลือกไฟล์ทั้งหมดหรือไม่?</string>
+    <string name="select_all_files_message">คุณกำลังจะเลือกไฟล์ทั้งหมดที่แสดงบนหน้าจอนี้\n\nแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?</string>
+    <string name="dont_show_warning_again">ไม่ต้องแสดงคำเตือนนี้อีก</string>
     <string name="delete_confirmation_title">ลบที่เลือก</string>
     <plurals name="delete_confirmation_message">
         <item quantity="other">ลบ %1$d รายการหรือไม่?</item>

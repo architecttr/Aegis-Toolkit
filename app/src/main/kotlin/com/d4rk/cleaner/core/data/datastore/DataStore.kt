@@ -429,6 +429,18 @@ class DataStore(val context: Context) : CommonDataStore(context = context) {
         }
     }
 
+    private val showGlobalSelectAllWarningKey =
+        booleanPreferencesKey(AppDataStoreConstants.DATA_STORE_SHOW_GLOBAL_SELECT_ALL_WARNING)
+    val showGlobalSelectAllWarning: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[showGlobalSelectAllWarningKey] ?: true
+    }
+
+    suspend fun saveShowGlobalSelectAllWarning(show: Boolean) {
+        dataStore.edit { prefs ->
+            prefs[showGlobalSelectAllWarningKey] = show
+        }
+    }
+
     private val streakCountKey =
         intPreferencesKey(name = AppDataStoreConstants.DATA_STORE_STREAK_COUNT)
     val streakCount: Flow<Int> = dataStore.data.map { prefs ->

@@ -26,6 +26,7 @@ import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
 import com.d4rk.cleaner.app.clean.analyze.ui.components.StatusRowSelectAll
 import com.d4rk.cleaner.app.clean.analyze.ui.components.dialogs.DeleteOrTrashConfirmation
+import com.d4rk.cleaner.app.clean.analyze.ui.components.dialogs.GlobalSelectAllWarningDialog
 import com.d4rk.cleaner.app.clean.analyze.ui.components.tabs.TabsContent
 import com.d4rk.cleaner.app.clean.nofilesfound.ui.NoFilesFoundScreen
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
@@ -106,7 +107,7 @@ fun AnalyzeScreen(
             StatusRowSelectAll(
                 data = data,
                 view = view,
-                onClickSelectAll = { viewModel.toggleSelectAllFiles() },
+                onClickSelectAll = { viewModel.onEvent(ScannerEvent.OnGlobalSelectAllClick) },
             )
         }
 
@@ -129,6 +130,15 @@ fun AnalyzeScreen(
 
         if (data.analyzeState.isDeleteForeverConfirmationDialogVisible || data.analyzeState.isMoveToTrashConfirmationDialogVisible) {
             DeleteOrTrashConfirmation(data = data, viewModel = viewModel)
+        }
+
+        if (data.analyzeState.isGlobalSelectAllWarningDialogVisible) {
+            GlobalSelectAllWarningDialog(
+                onConfirm = { dontShowAgain ->
+                    viewModel.onEvent(ScannerEvent.ConfirmGlobalSelectAll(dontShowAgain))
+                },
+                onDismiss = { viewModel.onEvent(ScannerEvent.DismissGlobalSelectAllWarning) }
+            )
         }
     }
 }
