@@ -19,7 +19,7 @@ fun DirectoryCard(
         iconPainter = painterResource(id = item.icon),
         title = item.name,
         subtitle = item.size,
-        colors = GroupedGridStyle.cardColors(MaterialTheme.colorScheme.secondaryContainer),
+        colors = GroupedGridStyle.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         iconContainerColor = GroupedGridStyle.iconContainerColor,
         onClick = { onOpenDetails(item.type) },
     )
