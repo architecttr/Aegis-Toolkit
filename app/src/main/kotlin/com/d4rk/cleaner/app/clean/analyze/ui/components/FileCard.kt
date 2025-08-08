@@ -25,7 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,11 +47,11 @@ fun FileCard(
     onCheckedChange: (Boolean) -> Unit,
     isChecked: Boolean,
     isOriginal: Boolean = false,
-    view: View,
     isProtected: Boolean = false,
 ) {
     val context: Context = LocalContext.current
-
+    val haptic = LocalHapticFeedback.current
+    val view: View = LocalView.current
     val cardContent: @Composable () -> Unit = {
         Card(
             modifier = modifier
@@ -66,7 +69,8 @@ fun FileCard(
                 Checkbox(
                     checked = isChecked,
                     onCheckedChange = { checked ->
-                        view.playSoundEffect(SoundEffectConstants.CLICK)
+                        view.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+                        haptic.performHapticFeedback(if (checked) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
                         onCheckedChange(checked)
                     },
                     enabled = !isProtected,

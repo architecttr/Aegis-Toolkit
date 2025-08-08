@@ -48,7 +48,6 @@ fun FilesByDateSection(
                         fileSelectionStates = fileSelectionStates,
                         onFileSelectionChange = onFileSelectionChange,
                         originals = originals,
-                        view = view,
                     )
                 }
             }

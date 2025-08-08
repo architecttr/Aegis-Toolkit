@@ -19,7 +19,6 @@ fun FilesGrid(
     fileSelectionStates: Map<File, Boolean>,
     onFileSelectionChange: (File, Boolean) -> Unit,
     originals: Set<File> = emptySet(),
-    view: View,
 ) {
     val columns: Int = if (ScreenHelper.isTablet(context = LocalContext.current)) 6 else 3
 
@@ -37,7 +36,6 @@ fun FilesGrid(
                 isChecked = fileSelectionStates[file] == true,
                 onCheckedChange = { isChecked -> onFileSelectionChange(file, isChecked) },
                 isOriginal = file in originals,
-                view = view,
                 isProtected = file.isProtectedAndroidDir(),
                 modifier = Modifier
             )

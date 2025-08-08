@@ -13,6 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.bounceClick
@@ -27,15 +30,18 @@ import com.d4rk.cleaner.R
  */
 @Composable
 fun SelectAllComposable(
-    selected: Boolean, view: View, onClickSelectAll: () -> Unit
+    selected: Boolean, onClickSelectAll: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+    val view: View = LocalView.current
     val interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
     FilterChip(
         modifier = Modifier.bounceClick(),
         selected = selected,
         onClick = {
-            onClickSelectAll()
+            haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
             view.playSoundEffect(SoundEffectConstants.CLICK)
+            onClickSelectAll()
         },
         label = { Text(text = stringResource(id = R.string.select_all)) },
         leadingIcon = {

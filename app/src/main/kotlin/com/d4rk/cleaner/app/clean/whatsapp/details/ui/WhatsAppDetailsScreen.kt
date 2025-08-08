@@ -2,7 +2,6 @@ package com.d4rk.cleaner.app.clean.whatsapp.details.ui
 
 import android.app.Activity
 import android.content.Context
-import android.view.View
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -49,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -67,12 +65,13 @@ import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.ScreenStateHa
 import com.d4rk.android.libs.apptoolkit.core.ui.components.navigation.LargeTopAppBarWithScaffold
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.ExtraSmallHorizontalSpacer
 import com.d4rk.cleaner.R
+import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
 import com.d4rk.cleaner.app.clean.analyze.ui.components.FileCard
 import com.d4rk.cleaner.app.clean.analyze.ui.components.dialogs.GlobalSelectAllWarningDialog
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FileListItem
 import com.d4rk.cleaner.app.clean.scanner.ui.components.FilePreviewCard
 import com.d4rk.cleaner.app.clean.scanner.utils.helpers.FilePreviewHelper
-import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.actions.WhatsAppDetailsEvent
 import com.d4rk.cleaner.app.clean.whatsapp.details.domain.model.UiWhatsAppDetailsModel
 import com.d4rk.cleaner.app.clean.whatsapp.details.ui.components.CustomTabLayout
@@ -85,9 +84,8 @@ import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstant
 import com.d4rk.cleaner.app.clean.whatsapp.utils.helpers.openFile
 import com.d4rk.cleaner.core.data.datastore.DataStore
 import com.d4rk.cleaner.core.utils.helpers.isProtectedAndroidDir
-import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.qualifier.named
 import java.io.File
@@ -132,8 +130,6 @@ fun DetailsScreen(
     val suggested = detailsState.data?.suggested ?: emptyList()
 
     val adsConfig: AdsConfig = koinInject(qualifier = named(name = "full_banner"))
-
-    val view: View = LocalView.current
 
     val hasFiles = sortedFiles.isNotEmpty()
 
@@ -313,7 +309,6 @@ fun DetailsScreen(
                                 allSelected = selected.count { !it.isProtectedAndroidDir() } ==
                                         sortedFiles.count { !it.isProtectedAndroidDir() } &&
                                         sortedFiles.any { !it.isProtectedAndroidDir() },
-                                view = view,
                                 onClickSelectAll = {
                                     coroutineScope.launch {
                                         if (dataStore.showGlobalSelectAllWarning.first()) {
@@ -412,7 +407,6 @@ fun DetailsScreenContent(
     files: List<File>
 ) {
     val context: Context = LocalContext.current
-    val view: View = LocalView.current
 
     Column(
         modifier = Modifier
@@ -450,7 +444,6 @@ fun DetailsScreenContent(
                                         if (isChecked) selected.add(file) else selected.remove(file)
                                     }
                                 },
-                                view = view,
                                 isProtected = isProtected,
                                 modifier = Modifier.fillMaxWidth()
                             )

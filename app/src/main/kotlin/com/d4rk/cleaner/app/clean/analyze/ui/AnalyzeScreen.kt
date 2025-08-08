@@ -106,7 +106,6 @@ fun AnalyzeScreen(
         if (groupedFiles.isNotEmpty() && data.analyzeState.state == CleaningState.ReadyToClean) {
             StatusRowSelectAll(
                 data = data,
-                view = view,
                 onClickSelectAll = { viewModel.onEvent(ScannerEvent.OnGlobalSelectAllClick) },
             )
         }

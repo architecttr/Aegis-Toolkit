@@ -22,7 +22,7 @@ import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.UiScannerModel
 
 @Composable
 fun StatusRowSelectAll(
-    data: UiScannerModel, view: View, onClickSelectAll: () -> Unit
+    data: UiScannerModel, onClickSelectAll: () -> Unit
 ) {
     val statusText: String = if (data.analyzeState.selectedFilesCount > 0) {
         pluralStringResource(
@@ -56,7 +56,7 @@ fun StatusRowSelectAll(
             overflow = TextOverflow.Ellipsis
         )
         SelectAllComposable(
-            selected = data.analyzeState.areAllFilesSelected, view = view, onClickSelectAll = {
+            selected = data.analyzeState.areAllFilesSelected, onClickSelectAll = {
                 onClickSelectAll()
             },
         )

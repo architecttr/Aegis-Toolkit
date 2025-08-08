@@ -24,7 +24,6 @@ fun DetailsStatusRow(
     modifier: Modifier = Modifier,
     selectedCount: Int,
     allSelected: Boolean,
-    view: View,
     onClickSelectAll: () -> Unit
 ) {
     Row(
@@ -58,7 +57,6 @@ fun DetailsStatusRow(
         )
         SelectAllComposable(
             selected = allSelected,
-            view = view,
             onClickSelectAll = onClickSelectAll
         )
     }

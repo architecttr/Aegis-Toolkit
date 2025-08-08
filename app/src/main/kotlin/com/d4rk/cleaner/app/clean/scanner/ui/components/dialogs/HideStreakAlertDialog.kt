@@ -1,5 +1,6 @@
 package com.d4rk.cleaner.app.clean.scanner.ui.components.dialogs
 
+import android.view.View
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.d4rk.android.libs.apptoolkit.core.ui.components.dialogs.BasicAlertDialog
@@ -29,6 +33,8 @@ fun HideStreakAlertDialog(
     onDismiss: () -> Unit
 ) {
     var hidePermanently by remember { mutableStateOf(false) }
+    val haptic = LocalHapticFeedback.current
+    val view: View = LocalView.current
 
     BasicAlertDialog(
         onDismiss = onDismiss,
@@ -54,13 +60,21 @@ fun HideStreakAlertDialog(
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { hidePermanently = !hidePermanently }
+                            onClick = {
+                                hidePermanently = !hidePermanently
+                                view.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+                                haptic.performHapticFeedback(if (hidePermanently) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
+                            }
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
                         checked = hidePermanently,
-                        onCheckedChange = { isChecked -> hidePermanently = isChecked }
+                        onCheckedChange = {
+                            view.playSoundEffect(android.view.SoundEffectConstants.CLICK)
+                            haptic.performHapticFeedback(if (it) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
+                            hidePermanently = it
+                        }
                     )
                     Text(
                         text = stringResource(id = R.string.dont_show_again),
