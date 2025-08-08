@@ -55,9 +55,7 @@ fun StorageBreakdownItem(
     )
     Card(
         modifier = modifier
-            .padding(all = SizeConstants.ExtraTinySize)
             .animateContentSize()
-            .bounceClick()
             .clickable { onClick() },
         shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
     ) {
@@ -65,7 +63,7 @@ fun StorageBreakdownItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .animateContentSize()
-                .padding(all = SizeConstants.ExtraTinySize),
+                .padding(all = SizeConstants.LargeSize),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Card(

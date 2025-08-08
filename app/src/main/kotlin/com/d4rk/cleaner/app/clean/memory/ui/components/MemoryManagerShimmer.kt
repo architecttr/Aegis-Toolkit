@@ -4,6 +4,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,14 +21,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -190,49 +190,59 @@ private fun CarouselShimmerCard(pageOffset: Float) {
 
 @Composable
 private fun StorageBreakdownGridShimmer() {
-    Card(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .animateContentSize()
-            .padding(horizontal = SizeConstants.MediumSize),
-        shape = RoundedCornerShape(SizeConstants.MediumSize),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+            .padding(SizeConstants.MediumSize)
+            .animateContentSize(),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(SizeConstants.ExtraTinySize)
+                .clip(RoundedCornerShape(SizeConstants.LargeIncreasedSize))
         ) {
-            repeat(3) {
+            Column(verticalArrangement = Arrangement.spacedBy(SizeConstants.ExtraTinySize)) {
+                repeat(3) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize(),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            space = SizeConstants.ExtraTinySize,
+                            alignment = Alignment.CenterHorizontally
+                        ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
+                        StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
+                    }
+                }
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .animateContentSize(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = SizeConstants.ExtraTinySize,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
-
-                    StorageBreakdownItemShimmer(modifier = Modifier.weight(1f))
+                    StorageBreakdownItemShimmer(modifier = Modifier.fillMaxWidth())
                 }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                StorageBreakdownItemShimmer(modifier = Modifier.fillMaxWidth())
             }
         }
     }
 }
+
 private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier
-            .padding(all = SizeConstants.ExtraTinySize),
+        modifier = modifier,
         shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(all = SizeConstants.ExtraTinySize),
+                .padding(all = SizeConstants.LargeSize),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(
@@ -263,5 +273,4 @@ private fun StorageBreakdownItemShimmer(modifier: Modifier = Modifier) {
             }
         }
     }
-}
 }

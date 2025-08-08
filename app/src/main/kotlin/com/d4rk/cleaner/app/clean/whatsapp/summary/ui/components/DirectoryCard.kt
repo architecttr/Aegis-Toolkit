@@ -34,9 +34,7 @@ fun DirectoryCard(
 ) {
     Card(
         modifier = modifier
-            .padding(all = SizeConstants.ExtraTinySize)
-            .animateContentSize()
-            .bounceClick(),
+            .animateContentSize(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         shape = RoundedCornerShape(SizeConstants.ExtraTinySize),
         onClick = { onOpenDetails(item.type) }
@@ -45,7 +43,7 @@ fun DirectoryCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .animateContentSize()
-                .padding(all = SizeConstants.ExtraTinySize),
+                .padding(all = SizeConstants.LargeSize),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -56,6 +54,7 @@ fun DirectoryCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
+                    modifier = Modifier.bounceClick(),
                     painter = painterResource(id = item.icon),
                     contentDescription = null,
                     tint = Color.Unspecified
