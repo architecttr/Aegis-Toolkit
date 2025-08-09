@@ -467,7 +467,9 @@ class ScannerViewModel(
 
     private fun onGlobalSelectAllClick() {
         launch(context = dispatchers.io) {
-            val showDialog = dataStore.showGlobalSelectAllWarning.first()
+            // Only show the warning dialog when the user is selecting all items.
+            val isSelectingAll = _uiState.value.data?.analyzeState?.areAllFilesSelected != true
+            val showDialog = isSelectingAll && dataStore.showGlobalSelectAllWarning.first()
             if (showDialog) {
                 setGlobalSelectAllWarningDialogVisibility(true)
             } else {

@@ -311,7 +311,13 @@ fun DetailsScreen(
                                         sortedFiles.any { !it.isProtectedAndroidDir() },
                                 onClickSelectAll = {
                                     coroutineScope.launch {
-                                        if (dataStore.showGlobalSelectAllWarning.first()) {
+                                        val accessible = sortedFiles.filterNot { it.isProtectedAndroidDir() }
+                                        val allSelected =
+                                            selected.count { !it.isProtectedAndroidDir() } ==
+                                                accessible.size && accessible.isNotEmpty()
+                                        val showDialog =
+                                            !allSelected && dataStore.showGlobalSelectAllWarning.first()
+                                        if (showDialog) {
                                             showGlobalSelectAllWarning = true
                                         } else {
                                             toggleSelectAll()
