@@ -1,6 +1,7 @@
 package com.d4rk.cleaner.app.clean.dashboard.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -21,10 +23,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.TonalIconButtonWithText
+import com.d4rk.android.libs.apptoolkit.core.ui.components.modifiers.bounceClick
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 
 @Composable
 fun DashboardActionCard(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     title: String,
     subtitle: String,
@@ -32,7 +36,6 @@ fun DashboardActionCard(
     actionIcon: ImageVector? = null,
     actionPainter: Painter? = null,
     onActionClick: () -> Unit,
-    modifier: Modifier = Modifier,
     badgeText: String? = null,
     actionEnabled: Boolean = true,
     onHeaderClick: (() -> Unit)? = null,
@@ -52,7 +55,14 @@ fun DashboardActionCard(
             ) {
                 Row(
                     modifier = onHeaderClick?.let {
-                        Modifier.clickable(enabled = headerEnabled, onClick = it)
+                        Modifier
+                            .bounceClick()
+                            .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            enabled = headerEnabled,
+                            onClick = it
+                        )
                     } ?: Modifier,
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(SizeConstants.MediumSize)

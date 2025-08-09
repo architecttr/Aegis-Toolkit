@@ -50,7 +50,6 @@ fun LinkCleanerCard(
         actionIcon = Icons.Outlined.LinkOff,
         onActionClick = openLinkCleaner,
         actionEnabled = linkText.isValidUrl(),
-        onHeaderClick = openLinkCleaner
     ) {
         OutlinedTextField(
             value = linkText,
