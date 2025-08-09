@@ -33,6 +33,10 @@ import org.koin.android.ext.android.getKoin
 class Cleaner : BaseCoreManager(), SingletonImageLoader.Factory, DefaultLifecycleObserver {
     private var currentActivity: Activity? = null
 
+    companion object {
+        var sessionStartTime: Long = System.currentTimeMillis()
+    }
+
     private val adsCoreManager: AdsCoreManager by lazy { getKoin().get<AdsCoreManager>() }
 
     override fun onCreate() {
@@ -40,6 +44,7 @@ class Cleaner : BaseCoreManager(), SingletonImageLoader.Factory, DefaultLifecycl
         StreakTracker.initialize()
         SingletonImageLoader.setSafe { newImageLoader(this) }
         super<BaseCoreManager>.onCreate()
+        sessionStartTime = System.currentTimeMillis()
         CleanupReminderScheduler.schedule(this)
         StreakReminderScheduler.schedule(this)
         runBlocking {
