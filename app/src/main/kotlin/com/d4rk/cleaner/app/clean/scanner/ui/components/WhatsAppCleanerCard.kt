@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material.icons.outlined.Description
@@ -22,7 +21,6 @@ import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -34,10 +32,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.d4rk.android.libs.apptoolkit.core.ui.components.buttons.TonalIconButtonWithText
 import com.d4rk.android.libs.apptoolkit.core.ui.components.spacers.SmallVerticalSpacer
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
+import com.d4rk.cleaner.app.clean.dashboard.ui.components.DashboardActionCard
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.WhatsAppMediaSummary
 import java.io.File
 
@@ -47,62 +45,35 @@ fun WhatsAppCleanerCard(
     modifier: Modifier = Modifier,
     onCleanClick: () -> Unit
 ) {
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(SizeConstants.ExtraLargeSize),
+    DashboardActionCard(
+        modifier = modifier,
+        icon = Icons.Filled.Whatsapp,
+        title = stringResource(id = R.string.whatsapp_card_title),
+        subtitle = stringResource(id = R.string.whatsapp_card_subtitle),
+        actionLabel = stringResource(id = R.string.clean_whatsapp),
+        actionPainter = painterResource(id = R.drawable.ic_folder_search),
+        onActionClick = onCleanClick
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = SizeConstants.LargeSize),
-            verticalArrangement = Arrangement.spacedBy(SizeConstants.MediumSize)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Whatsapp,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Column(modifier = Modifier.padding(start = SizeConstants.MediumSize)) {
-                    Text(
-                        text = stringResource(id = R.string.whatsapp_card_title),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    SmallVerticalSpacer()
-                    Text(
-                        text = stringResource(id = R.string.whatsapp_card_subtitle),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
-
-            AnimatedVisibility(visible = mediaSummary.images.isNotEmpty()) {
-                CategoryRow(
-                    icon = Icons.Outlined.Image,
-                    label = stringResource(id = R.string.images),
-                    files = mediaSummary.images
-                )
-            }
-            AnimatedVisibility(visible = mediaSummary.videos.isNotEmpty()) {
-                CategoryRow(
-                    icon = Icons.Outlined.Videocam,
-                    label = stringResource(id = R.string.videos),
-                    files = mediaSummary.videos
-                )
-            }
-            AnimatedVisibility(visible = mediaSummary.documents.isNotEmpty()) {
-                CategoryRow(
-                    icon = Icons.Outlined.Description,
-                    label = stringResource(id = R.string.documents),
-                    files = mediaSummary.documents
-                )
-            }
-
-            TonalIconButtonWithText(
-                label = stringResource(id = R.string.clean_whatsapp),
-                painter = painterResource(id = R.drawable.ic_folder_search),
-                onClick = onCleanClick,
-                modifier = Modifier.align(Alignment.End),
+        SmallVerticalSpacer()
+        AnimatedVisibility(visible = mediaSummary.images.isNotEmpty()) {
+            CategoryRow(
+                icon = Icons.Outlined.Image,
+                label = stringResource(id = R.string.images),
+                files = mediaSummary.images
+            )
+        }
+        AnimatedVisibility(visible = mediaSummary.videos.isNotEmpty()) {
+            CategoryRow(
+                icon = Icons.Outlined.Videocam,
+                label = stringResource(id = R.string.videos),
+                files = mediaSummary.videos
+            )
+        }
+        AnimatedVisibility(visible = mediaSummary.documents.isNotEmpty()) {
+            CategoryRow(
+                icon = Icons.Outlined.Description,
+                label = stringResource(id = R.string.documents),
+                files = mediaSummary.documents
             )
         }
     }
