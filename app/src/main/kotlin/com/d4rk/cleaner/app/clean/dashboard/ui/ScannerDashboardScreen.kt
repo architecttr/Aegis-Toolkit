@@ -52,6 +52,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.qualifier.named
 import java.io.File
 
 private enum class AdSlot { A, B, C, D, E, F }
@@ -83,6 +84,9 @@ fun ScannerDashboardScreen(
     val context: Context = LocalContext.current
 
     val promotedApp = uiState.data?.promotedApp
+    val mrecAdsConfig: AdsConfig = koinInject(qualifier = named("banner_medium_rectangle"))
+    val largeBannerAdsConfig: AdsConfig = koinInject(qualifier = named("large_banner"))
+    val leaderboardAdsConfig: AdsConfig = koinInject(qualifier = named("leaderboard"))
     val bannerAdsConfig: AdsConfig = koinInject()
 
     val appManagerState: UiStateScreen<UiAppManagerModel> by appManagerViewModel.uiState.collectAsState()
@@ -152,6 +156,20 @@ fun ScannerDashboardScreen(
         promotedApp?.let { add(12 to ContentCard.PROMOTED_APP) }
     }
     val visibleCount = content.size
+
+    fun chooseAdsConfigFor(slot: AdSlot, visibleContent: Int, hasPromoted: Boolean): AdsConfig {
+        val density = when {
+            visibleContent >= 9 -> 2 // dense
+            visibleContent >= 7 -> 1 // medium
+            else -> 0 // sparse
+        }
+        val selected: AdsConfig? = when (slot) {
+            AdSlot.A, AdSlot.B, AdSlot.C -> if (density == 0) largeBannerAdsConfig else mrecAdsConfig
+            AdSlot.D, AdSlot.E -> if (density == 2) mrecAdsConfig else largeBannerAdsConfig
+            AdSlot.F -> if (hasPromoted) leaderboardAdsConfig else largeBannerAdsConfig
+        }
+        return selected ?: bannerAdsConfig
+    }
 
     val gmsAvailable = remember {
         GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
@@ -320,7 +338,8 @@ fun ScannerDashboardScreen(
                     }
                 }
                 is HomeItem.Ad -> {
-                    AdBanner(adsConfig = bannerAdsConfig)
+                    val config = chooseAdsConfigFor(item.slot, visibleCount, promotedApp != null)
+                    AdBanner(adsConfig = config)
                 }
             }
         }
