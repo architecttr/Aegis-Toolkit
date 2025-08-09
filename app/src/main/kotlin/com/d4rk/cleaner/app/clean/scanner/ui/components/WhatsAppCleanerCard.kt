@@ -52,7 +52,8 @@ fun WhatsAppCleanerCard(
         subtitle = stringResource(id = R.string.whatsapp_card_subtitle),
         actionLabel = stringResource(id = R.string.clean_whatsapp),
         actionPainter = painterResource(id = R.drawable.ic_folder_search),
-        onActionClick = onCleanClick
+        onActionClick = onCleanClick,
+        onHeaderClick = onCleanClick
     ) {
         SmallVerticalSpacer()
         AnimatedVisibility(visible = mediaSummary.images.isNotEmpty()) {

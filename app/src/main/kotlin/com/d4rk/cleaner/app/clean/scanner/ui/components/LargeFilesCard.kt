@@ -39,7 +39,8 @@ fun LargeFilesCard(
         subtitle = stringResource(id = R.string.large_files_card_subtitle),
         actionLabel = stringResource(id = R.string.open_large_files),
         actionPainter = painterResource(id = R.drawable.ic_folder_search),
-        onActionClick = onOpenClick
+        onActionClick = onOpenClick,
+        onHeaderClick = onOpenClick
     ) {
         SmallVerticalSpacer()
         AnimatedVisibility(visible = preview.isNotEmpty()) {

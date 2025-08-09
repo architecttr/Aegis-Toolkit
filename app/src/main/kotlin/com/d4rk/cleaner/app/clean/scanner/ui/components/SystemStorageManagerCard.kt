@@ -18,6 +18,7 @@ fun SystemStorageManagerCard(modifier: Modifier = Modifier, onOpen: () -> Unit) 
         subtitle = stringResource(id = R.string.storage_manager_card_subtitle),
         actionLabel = stringResource(id = R.string.open_storage_manager),
         actionIcon = Icons.AutoMirrored.Outlined.Launch,
-        onActionClick = onOpen
+        onActionClick = onOpen,
+        onHeaderClick = onOpen
     )
 }
