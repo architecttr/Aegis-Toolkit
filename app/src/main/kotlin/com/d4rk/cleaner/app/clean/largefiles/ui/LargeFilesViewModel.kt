@@ -14,6 +14,7 @@ import com.d4rk.cleaner.R
 import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesAction
 import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesEvent
 import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesModel
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import com.d4rk.cleaner.app.clean.scanner.domain.usecases.GetLargestFilesUseCase
 import com.d4rk.cleaner.app.clean.scanner.work.FileCleanupWorker
 import com.d4rk.cleaner.core.data.datastore.DataStore
@@ -78,7 +79,12 @@ class LargeFilesViewModel(
             getLargestFilesUseCase(limit).collectLatest { result ->
                 _uiState.update { current ->
                     when (result) {
-                        is DataState.Loading -> current.copy(screenState = ScreenState.IsLoading())
+                        is DataState.Loading -> current.copy(
+                            screenState = ScreenState.IsLoading(),
+                            data = current.data?.copy(cleaningState = CleaningState.Analyzing)
+                                ?: UiLargeFilesModel(cleaningState = CleaningState.Analyzing)
+                        )
+
                         is DataState.Success -> {
                             val groupedByDate = FileGroupingHelper.groupFilesByDate(result.data)
                             current.copy(
@@ -87,7 +93,8 @@ class LargeFilesViewModel(
                                     files = result.data,
                                     filesByDate = groupedByDate,
                                     fileSelectionStates = emptyMap(),
-                                    selectedFileCount = 0
+                                    selectedFileCount = 0,
+                                    cleaningState = CleaningState.Idle,
                                 )
                                     ?: UiLargeFilesModel(files = result.data, filesByDate = groupedByDate)
                             )
@@ -95,6 +102,7 @@ class LargeFilesViewModel(
 
                         is DataState.Error -> current.copy(
                             screenState = ScreenState.Error(),
+                            data = current.data?.copy(cleaningState = CleaningState.Error),
                             errors = current.errors + UiSnackbar(
                                 message = UiTextHelper.DynamicString("${result.error}"),
                                 isError = true
@@ -146,7 +154,12 @@ class LargeFilesViewModel(
                 saveWorkId = { dataStore.saveLargeFilesCleanWorkId(it) },
                 clearWorkId = { dataStore.clearLargeFilesCleanWorkId() },
                 showSnackbar = { sendAction(LargeFilesAction.ShowSnackbar(it)) },
-                onEnqueued = { id -> observeWork(id) }
+                onEnqueued = { id -> observeWork(id) },
+                onError = {
+                    _uiState.update {
+                        it.copy(data = it.data?.copy(cleaningState = CleaningState.Error))
+                    }
+                }
             )
         }
     }
@@ -158,7 +171,13 @@ class LargeFilesViewModel(
             workId = id,
             clearWorkId = { dataStore.clearLargeFilesCleanWorkId() },
             onRunning = {
-                _uiState.update { it.copy(screenState = ScreenState.IsLoading()) }
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.IsLoading(),
+                        data = it.data?.copy(cleaningState = CleaningState.Cleaning)
+                            ?: UiLargeFilesModel(cleaningState = CleaningState.Cleaning)
+                    )
+                }
             },
             onSuccess = { info ->
                 val failedPaths =
@@ -168,6 +187,10 @@ class LargeFilesViewModel(
                     _uiState.value.data?.fileSelectionStates
                         ?.count { it.value && !File(it.key).isProtectedAndroidDir() } ?: 0
                 val successCount = selectedCount - failedCount
+
+                _uiState.update {
+                    it.copy(data = it.data?.copy(cleaningState = CleaningState.Result))
+                }
 
                 onEvent(LargeFilesEvent.LoadLargeFiles)
 
@@ -190,6 +213,7 @@ class LargeFilesViewModel(
                 _uiState.update {
                     it.copy(
                         screenState = ScreenState.Error(),
+                        data = it.data?.copy(cleaningState = CleaningState.Error),
                         errors = it.errors + UiSnackbar(
                             message = UiTextHelper.StringResource(R.string.failed_to_delete_files),
                             isError = true
@@ -198,7 +222,12 @@ class LargeFilesViewModel(
                 }
             },
             onCancelled = {
-                _uiState.update { it.copy(screenState = ScreenState.Success()) }
+                _uiState.update {
+                    it.copy(
+                        screenState = ScreenState.Success(),
+                        data = it.data?.copy(cleaningState = CleaningState.Idle)
+                    )
+                }
             }
         )
     }

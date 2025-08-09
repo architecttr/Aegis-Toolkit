@@ -22,7 +22,9 @@ import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.ScreenStateHa
 import com.d4rk.android.libs.apptoolkit.core.ui.components.navigation.LargeTopAppBarWithScaffold
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
+import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
 import com.d4rk.cleaner.app.clean.analyze.ui.components.FilesByDateSection
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import com.d4rk.cleaner.app.clean.largefiles.domain.actions.LargeFilesEvent
 import com.d4rk.cleaner.app.clean.largefiles.domain.data.model.ui.UiLargeFilesModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -41,8 +43,12 @@ fun LargeFilesScreen(activity: LargeFilesActivity) {
         ScreenStateHandler(
             screenState = uiState,
             onLoading = {
-                LoadingScreen()
-                println("LoadingScreen")
+                if (uiState.data?.cleaningState == CleaningState.Cleaning) {
+                    CleaningAnimationScreen()
+                } else {
+                    LoadingScreen()
+                    println("LoadingScreen")
+                }
             },
             onEmpty = {
                 println("onEmpty")
@@ -56,7 +62,9 @@ fun LargeFilesScreen(activity: LargeFilesActivity) {
                         .fillMaxSize()
                 ) {
                     val (list, buttons) = createRefs()
-                    val enabled = data.selectedFileCount > 0
+                    val enabled = data.selectedFileCount > 0 &&
+                        data.cleaningState != CleaningState.Cleaning &&
+                        data.cleaningState != CleaningState.Error
                     FilesByDateSection(
                         modifier = Modifier.constrainAs(list) {
                             top.linkTo(parent.top)
