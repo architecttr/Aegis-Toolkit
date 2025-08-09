@@ -46,6 +46,8 @@ import com.d4rk.cleaner.app.clean.whatsapp.summary.domain.model.UiWhatsAppCleane
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.components.CleanerInfoCard
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.components.DirectoryGrid
 import com.d4rk.cleaner.app.clean.whatsapp.summary.ui.components.WhatsAppEmptyState
+import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
+import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
 import com.d4rk.cleaner.app.clean.whatsapp.utils.constants.WhatsAppMediaConstants
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -91,7 +93,11 @@ fun WhatsappCleanerSummaryScreen(activity: Activity) {
         ScreenStateHandler(
             screenState = state,
             onLoading = {
-                LoadingScreen()
+                if (state.data?.cleaningState == CleaningState.Cleaning) {
+                    CleaningAnimationScreen()
+                } else {
+                    LoadingScreen()
+                }
             },
             onEmpty = {
                 WhatsAppEmptyState(paddingValues)

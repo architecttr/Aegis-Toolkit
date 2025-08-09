@@ -23,6 +23,7 @@ import com.d4rk.android.libs.apptoolkit.core.ui.components.layouts.ScreenStateHa
 import com.d4rk.android.libs.apptoolkit.core.ui.components.navigation.LargeTopAppBarWithScaffold
 import com.d4rk.android.libs.apptoolkit.core.utils.constants.ui.SizeConstants
 import com.d4rk.cleaner.R
+import com.d4rk.cleaner.app.clean.analyze.ui.components.CleaningAnimationScreen
 import com.d4rk.cleaner.app.clean.analyze.ui.components.FilesByDateSection
 import com.d4rk.cleaner.app.clean.scanner.ui.components.TwoRowButtons
 import com.d4rk.cleaner.app.clean.scanner.domain.data.model.ui.CleaningState
@@ -44,7 +45,11 @@ fun TrashScreen(activity: TrashActivity) {
         title = stringResource(id = R.string.trash),
         onBackClicked = { activity.finish() }) { paddingValues ->
         ScreenStateHandler(screenState = uiStateScreen, onLoading = {
-            LoadingScreen()
+            if (uiStateScreen.data?.cleaningState == CleaningState.Cleaning) {
+                CleaningAnimationScreen()
+            } else {
+                LoadingScreen()
+            }
         }, onEmpty = {
             NoDataScreen(
                 textMessage = R.string.trash_is_empty,
