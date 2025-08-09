@@ -1,7 +1,5 @@
 package com.d4rk.cleaner.app.clean.scanner.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
@@ -11,7 +9,6 @@ import androidx.compose.material.icons.outlined.PhotoFilter
 import androidx.compose.material.icons.outlined.PhotoSizeSelectLarge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +20,6 @@ import com.d4rk.cleaner.app.clean.dashboard.ui.components.DashboardActionCard
 @Composable
 fun ImageOptimizerCard(
     modifier: Modifier = Modifier,
-    lastOptimized: String? = null,
     onOptimizeClick: () -> Unit,
 ) {
     DashboardActionCard(
@@ -56,15 +52,6 @@ fun ImageOptimizerCard(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary
             )
-        }
-        AnimatedVisibility(visible = lastOptimized != null) {
-            lastOptimized?.let { size ->
-                Text(
-                    text = stringResource(id = R.string.image_optimizer_last_format, size),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.animateContentSize()
-                )
-            }
         }
     }
 }
