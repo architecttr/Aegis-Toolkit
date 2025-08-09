@@ -18,6 +18,7 @@ fun ContactsCleanerCard(modifier: Modifier = Modifier, onOpen: () -> Unit) {
         subtitle = stringResource(id = R.string.contacts_cleaner_card_subtitle),
         actionLabel = stringResource(id = R.string.open_contacts_cleaner),
         actionIcon = Icons.Outlined.PersonSearch,
-        onActionClick = onOpen
+        onActionClick = onOpen,
+        onHeaderClick = onOpen
     )
 }

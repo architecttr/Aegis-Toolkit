@@ -22,6 +22,7 @@ fun CacheCleanerCard(
         actionLabel = stringResource(id = R.string.scan_cache),
         actionPainter = painterResource(id = R.drawable.ic_folder_search),
         onActionClick = onScanClick,
+        onHeaderClick = onScanClick,
         badgeText = "W.I.P"
     )
 }

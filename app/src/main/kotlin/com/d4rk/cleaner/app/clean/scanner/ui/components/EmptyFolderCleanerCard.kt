@@ -27,7 +27,8 @@ fun EmptyFolderCleanerCard(
         subtitle = stringResource(id = R.string.empty_folder_card_subtitle),
         actionLabel = stringResource(id = R.string.clean_empty_folders),
         actionIcon = Icons.Outlined.DeleteSweep,
-        onActionClick = { onCleanClick(folders) }
+        onActionClick = { onCleanClick(folders) },
+        onHeaderClick = { onCleanClick(folders) }
     ) {
         SmallVerticalSpacer()
         Text(

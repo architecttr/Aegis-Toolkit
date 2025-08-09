@@ -34,6 +34,13 @@ fun LinkCleanerCard(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
+    val openLinkCleaner = {
+        val intent = Intent(context, LinkCleanerActivity::class.java).apply {
+            putExtra(Intent.EXTRA_TEXT, linkText)
+        }
+        context.startActivity(intent)
+    }
+
     DashboardActionCard(
         modifier = modifier,
         icon = Icons.Outlined.Link,
@@ -41,13 +48,9 @@ fun LinkCleanerCard(
         subtitle = stringResource(id = R.string.link_cleaner_card_subtitle),
         actionLabel = stringResource(id = R.string.clean_link),
         actionIcon = Icons.Outlined.LinkOff,
-        onActionClick = {
-            val intent = Intent(context, LinkCleanerActivity::class.java).apply {
-                putExtra(Intent.EXTRA_TEXT, linkText)
-            }
-            context.startActivity(intent)
-        },
-        actionEnabled = linkText.isValidUrl()
+        onActionClick = openLinkCleaner,
+        actionEnabled = linkText.isValidUrl(),
+        onHeaderClick = openLinkCleaner
     ) {
         OutlinedTextField(
             value = linkText,

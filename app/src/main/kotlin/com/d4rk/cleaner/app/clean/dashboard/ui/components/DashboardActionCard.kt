@@ -1,6 +1,7 @@
 package com.d4rk.cleaner.app.clean.dashboard.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -34,6 +35,8 @@ fun DashboardActionCard(
     modifier: Modifier = Modifier,
     badgeText: String? = null,
     actionEnabled: Boolean = true,
+    onHeaderClick: (() -> Unit)? = null,
+    headerEnabled: Boolean = actionEnabled,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
     OutlinedCard(
@@ -48,6 +51,9 @@ fun DashboardActionCard(
                 verticalArrangement = Arrangement.spacedBy(SizeConstants.MediumSize)
             ) {
                 Row(
+                    modifier = onHeaderClick?.let {
+                        Modifier.clickable(enabled = headerEnabled, onClick = it)
+                    } ?: Modifier,
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(SizeConstants.MediumSize)
                 ) {

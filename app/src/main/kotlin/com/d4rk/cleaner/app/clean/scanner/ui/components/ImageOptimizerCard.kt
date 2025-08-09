@@ -29,7 +29,8 @@ fun ImageOptimizerCard(
         subtitle = stringResource(id = R.string.image_optimizer_card_subtitle),
         actionLabel = stringResource(id = R.string.optimize_image),
         actionIcon = Icons.Outlined.ImageSearch,
-        onActionClick = onOptimizeClick
+        onActionClick = onOptimizeClick,
+        onHeaderClick = onOptimizeClick
     ) {
         Icon(
             imageVector = Icons.Outlined.PhotoSizeSelectLarge,
