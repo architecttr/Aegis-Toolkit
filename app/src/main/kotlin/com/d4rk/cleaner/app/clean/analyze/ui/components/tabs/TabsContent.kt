@@ -106,7 +106,11 @@ fun TabsContent(
                                 state = toggleState,
                                 onClick = {
                                     if (hasFiles) {
+                                        view.playSoundEffect(SoundEffectConstants.CLICK)
                                         viewModel.toggleSelectFilesForCategory(category = title)
+                                        coroutineScope.launch {
+                                            pagerState.animateScrollToPage(page = index)
+                                        }
                                     }
                                 },
                                 enabled = hasFiles
