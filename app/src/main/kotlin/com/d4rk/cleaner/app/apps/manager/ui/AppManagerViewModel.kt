@@ -28,6 +28,7 @@ import com.d4rk.cleaner.app.apps.manager.domain.usecases.ShareApkUseCase
 import com.d4rk.cleaner.app.apps.manager.domain.usecases.ShareAppUseCase
 import com.d4rk.cleaner.app.apps.manager.domain.usecases.UninstallAppUseCase
 import com.d4rk.cleaner.core.utils.helpers.CleaningEventBus
+import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -162,10 +163,21 @@ class AppManagerViewModel(
                             )
 
                             is DataState.Success -> {
-                                currentState.copy(data = currentState.data?.copy(installedApps = result.data.sortedBy {
-                                    applicationContext.packageManager.getApplicationLabel(it)
-                                        .toString().lowercase()
-                                }, userAppsLoading = false, systemAppsLoading = false))
+                                val pm = applicationContext.packageManager
+                                val comparator = compareBy<android.content.pm.ApplicationInfo>(
+                                    { runCatching { pm.getApplicationLabel(it).toString() }
+                                        .getOrNull()
+                                        ?.lowercase(Locale.getDefault())
+                                        ?: it.packageName.lowercase(Locale.getDefault()) },
+                                    { it.packageName.lowercase(Locale.getDefault()) }
+                                )
+                                currentState.copy(
+                                    data = currentState.data?.copy(
+                                        installedApps = result.data.sortedWith(comparator),
+                                        userAppsLoading = false,
+                                        systemAppsLoading = false
+                                    )
+                                )
                             }
 
                             is DataState.Error -> currentState.copy(
